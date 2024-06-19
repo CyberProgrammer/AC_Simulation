@@ -1,0 +1,66 @@
+h1{
+    text-align: center;
+}
+
+
+
+.thermostat-body{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    background-color: yellow;
+    background-image: url('./assets/Thermostat.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    min-height: 500px;
+}
+
+.thermostat-content{
+    display: flex;
+    flex-direction: column;
+    background-color: red;
+    height: 290px;
+    width: 388px;
+    margin: auto;
+    transform: translateY(2px);
+}
+
+.thermostat-header{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 15%;
+    width: 100%;
+    background-color: lightblue;
+}
+
+.thermostat-button-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+}
+.thermostat-button{
+    background-color: transparent;
+    border: 1px solid black;
+    border-radius: 3px;
+    width: 15%;
+    margin: 0 1% 0 1%;
+    padding: 1% 0;
+}
+
+.thermostat-button:hover{
+    cursor: pointer;
+}
+
+.thermostat-textbox{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    background-color: green;
+    height: 30%;
+}
+
+.thermostat-info{
+    height: 55%;
+}
