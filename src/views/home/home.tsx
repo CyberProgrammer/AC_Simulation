@@ -1,3 +1,6 @@
+import {getCurrentTime} from '../../utils/index';
+import { handleSetTempUp, handleSetTempDown } from '../../utils/index';
+
 import TriangleUp from '../../assets/icons/triangle-up.svg';
 import TriangleDown from '../../assets/icons/triangle-down.svg';
 import {useEffect, useState } from 'react';
@@ -24,9 +27,6 @@ const Home:React.FC<HomeProps> = (
         setStatus
     }) => {
 
-
-
-
     const changeStatus = (status: string) => {
         setStatus("Wait");
         setTimeout(() => {
@@ -34,64 +34,35 @@ const Home:React.FC<HomeProps> = (
         }, 5000);
     }
 
-    // Setting the temp
-    const handleSetTempUp = () => {
-        const nextTemp = setTemp + 1;
-        setSetTemp(nextTemp);
-        if(nextTemp >= currentTemp){
-            if(callForCooling){
-                setCallForCooling(false);
-                changeStatus("At Temp");
-            }
-        }
-        else{
-            if(!callForCooling) {
-                setCallForCooling(true);
-                changeStatus("Cool");
-            }
-        }
+    // Set temp up
+    const handleUp = () => {
+        handleSetTempUp({
+            setTemp,
+            setSetTemp,
+            currentTemp,
+            callForCooling,
+            setCallForCooling,
+            changeStatus
+        });
     }
 
-    const handleSetTempDown = () => {
-        const nextTemp = setTemp - 1;
-        setSetTemp(nextTemp);
-        if(nextTemp < currentTemp) {
-            if (!callForCooling) {
-                setCallForCooling(true);
-                changeStatus("Cool");
-            }
-        }
-        else{
-            if(callForCooling){
-                setCallForCooling(false);
-                changeStatus("At Temp");
-            }
-        }
-
-
+    // Set temp down
+    const handleDown = () => {
+        handleSetTempDown({
+            setTemp,
+            setSetTemp,
+            currentTemp,
+            callForCooling,
+            setCallForCooling,
+            changeStatus
+        });
     }
 
-    // Get current time
-    const getCurrentTime = () => {
-        let hours = new Date().getHours();
-        const minutes = new Date().getMinutes();
-        const isAM = hours < 12;
-
-        if (hours >= 12) {
-            if (hours > 12) hours -= 12;
-        } else if (hours === 0) {
-            hours = 12;
-        }
-
-        return {
-            time: `${hours}:${minutes < 10 ? '0' : ''}${minutes}`,
-            isAM: isAM
-        };
-    }
-
+    // State for time and period
     const [currentTime, setCurrentTime] = useState(getCurrentTime().time);
     const [isAM, setIsAM] = useState(getCurrentTime().isAM);
 
+    //Checks for new time on interval
     useEffect(() => {
         const interval = setInterval(() => {
             const { time, isAM } = getCurrentTime();
@@ -131,14 +102,14 @@ const Home:React.FC<HomeProps> = (
                         <p className={"small-text"}>To</p>
                     </div>
                     <div className={"set-controls"}>
-                        <button className={"temp-button"} onClick={handleSetTempUp}>
+                        <button className={"temp-button"} onClick={handleUp}>
                             <img src={TriangleUp} alt={"Icon"} />
                         </button>
                         <div className={"temp-reading"}>
                             <h2 className={"digital-text"}>{setTemp}</h2>
                             <h3>&#176;</h3>
                         </div>
-                        <button className={"temp-button"} onClick={handleSetTempDown}>
+                        <button className={"temp-button"} onClick={handleDown}>
                             <img src={TriangleDown} alt={"Icon"} />
                         </button>
                     </div>

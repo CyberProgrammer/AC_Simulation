@@ -25,33 +25,7 @@ h1{
     transform: translateY(2px);
 }
 
-.thermostat-header{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 15%;
-    width: 100%;
-    background-color: lightblue;
-}
 
-.thermostat-button-container{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    width: 100%;
-}
-.thermostat-button{
-    background-color: transparent;
-    border: 1px solid black;
-    border-radius: 3px;
-    width: 15%;
-    margin: 0 1% 0 1%;
-    padding: 1% 0;
-}
-
-.thermostat-button:hover{
-    cursor: pointer;
-}
 
 .thermostat-textbox{
     display: flex;

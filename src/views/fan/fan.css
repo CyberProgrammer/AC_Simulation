@@ -1,0 +1,82 @@
+#fan-body{
+    display: flex;
+    width: 100%;
+    box-sizing: content-box;
+}
+
+.help-col{
+    display: flex;
+    justify-content: center;
+    width: 18%;
+}
+
+.help-button{
+    width: 85%;
+    height: 30px;
+    background-color: transparent;
+    border: 1px solid #111111;
+    border-radius: 5px;
+    padding-top: 10px;
+}
+
+.help-button p{
+    display: flex;
+    justify-content: center;
+}
+
+.fan-settings{
+    display: flex;
+    flex-direction: column;
+    width: 64%;
+}
+
+.fan-options{
+    display: flex;
+    height: 35px;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.fan-option{
+    font-size: 1.5em;
+    padding: 0 2% 0 2%;
+}
+
+#fan-body .selected{
+    color: #ADD8E6;
+    background-color: #111111;
+}
+
+.menu-controls{
+    display: flex;
+    justify-content: center;
+}
+
+.menu-controls button{
+    width: 50px;
+    height: 30px;
+    background-color: transparent;
+    border: 1px solid #111111;
+    border-radius: 5px;
+    margin: 0 0.5%;
+}
+
+.control-img{
+    width: 30px;
+}
+
+.done-control{
+    padding-bottom: 10px;
+}
+
+.left-control{
+    display: flex;
+    justify-content: start;
+}
+
+.right-control{
+    display: flex;
+    justify-content: end;
+    margin-left: 50px !important;
+}
