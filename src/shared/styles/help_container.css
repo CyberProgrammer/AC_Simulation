@@ -1,0 +1,19 @@
+.help-col{
+    display: flex;
+    justify-content: center;
+    width: 18%;
+}
+
+.help-button{
+    width: 85%;
+    height: 30px;
+    background-color: transparent;
+    border: 1px solid #111111;
+    border-radius: 5px;
+    padding-top: 10px;
+}
+
+.help-button p{
+    display: flex;
+    justify-content: center;
+}

@@ -7,8 +7,11 @@ function App() {
     return (
         <>
             <div id={"app"}>
-                <h1>Digital Thermostat</h1>
-                <VirtualThermostat />
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <VirtualThermostat/>
             </div>
         </>
     )

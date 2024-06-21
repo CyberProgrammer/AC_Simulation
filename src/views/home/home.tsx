@@ -5,6 +5,8 @@ import TriangleUp from '../../assets/icons/triangle-up.svg';
 import TriangleDown from '../../assets/icons/triangle-down.svg';
 import {useEffect, useState } from 'react';
 
+import {Mode, FanStatus, FanSetting, SystemStatus} from '../../types/enums';
+
 interface HomeProps{
     callForCooling: boolean;
     currentTemp: number;
@@ -12,11 +14,12 @@ interface HomeProps{
     setTemp: number;
     setSetTemp: (value:number) => void;
     setCallForCooling: (value: boolean) => void;
-    fanSetting: number;
-    fanStatus: number;
-    setFanStatus: (value:number) => void;
-    status: string;
-    setStatus: (value:string) => void;
+    fanSetting: FanSetting;
+    fanStatus: FanStatus;
+    setFanStatus: (val:FanStatus) => void;
+    status: SystemStatus;
+    setStatus: (val: SystemStatus) => void;
+    mode: Mode;
 }
 const Home:React.FC<HomeProps> = (
     {
@@ -30,26 +33,29 @@ const Home:React.FC<HomeProps> = (
         fanStatus,
         setFanStatus,
         status,
-        setStatus
+        setStatus,
+        mode,
     }) => {
 
-    const changeStatus = (updateStatus: string) => {
-        setStatus("Wait");
+    const changeStatus = (updateStatus: SystemStatus) => {
+        setStatus(SystemStatus.Wait);
         // If the fan is on auto, the fan follows the condenser status.
-        // When the compressor is on, the fan is on. When the compressor is off, the fan is off
-        // Each time a change in status occurs and the fan is on auto, the fan status is yellow
-        if((updateStatus === "Cool" || updateStatus === "At Temp") && fanSetting === 1)
-            setFanStatus(2);
+        // When the compressor is on, the fan is on. When the compressor is off, the fan is off.
+        // Each time a change in status occurs and the fan is on auto, the fan status is yellow.
+        if ((updateStatus === SystemStatus.Cool || updateStatus === SystemStatus.AtTemp) && fanSetting === FanSetting.Auto) {
+            setFanStatus(FanStatus.Wait);
+        }
 
         setTimeout(() => {
-            if(updateStatus === "Cool")
-                setFanStatus(1);
-            else if(updateStatus === "At Temp" && fanSetting === 1)
-                setFanStatus(0);
+            if (updateStatus === SystemStatus.Cool) {
+                setFanStatus(FanStatus.On);
+            } else if (updateStatus === SystemStatus.AtTemp && fanSetting === FanSetting.Auto) {
+                setFanStatus(FanStatus.Off);
+            }
 
             setStatus(updateStatus);
         }, 5000);
-    }
+    };
 
     // Set temp up
     const handleUp = () => {
@@ -61,7 +67,7 @@ const Home:React.FC<HomeProps> = (
             setCallForCooling,
             changeStatus
         });
-    }
+    };
 
     // Set temp down
     const handleDown = () => {
@@ -73,20 +79,20 @@ const Home:React.FC<HomeProps> = (
             setCallForCooling,
             changeStatus
         });
-    }
+    };
 
     // State for time and period
     const [currentTime, setCurrentTime] = useState(getCurrentTime().time);
     const [isAM, setIsAM] = useState(getCurrentTime().isAM);
 
-    //Checks for new time on interval
+    // Checks for new time on interval
     useEffect(() => {
         const interval = setInterval(() => {
             const { time, isAM } = getCurrentTime();
             console.log("Checking time...");
             setCurrentTime(time);
             setIsAM(isAM);
-        }, 10000); // Update every 10seconds
+        }, 10000); // Update every 10 seconds
 
         return () => clearInterval(interval);
     }, []);
@@ -94,7 +100,7 @@ const Home:React.FC<HomeProps> = (
     return(
         <>
             <div className={"thermostat-textbox"}>
-                <h3>System: {status}</h3>
+                <h3>System: {SystemStatus[status]}</h3>
                 <h3>Outdoor: 80&#176;/55%</h3>
             </div>
             <div className={"thermostat-info"}>
@@ -111,25 +117,28 @@ const Home:React.FC<HomeProps> = (
                         <p className={"digital-text"}>45%</p>
                         <p>Humidity</p>
                     </div>
-
                 </div>
                 <div className={"info-right"}>
-                    <div className={"set-info"}>
-                        <p className={"small-text"}>Set</p>
-                        <p className={"small-text"}>To</p>
-                    </div>
-                    <div className={"set-controls"}>
-                        <button className={"temp-button"} onClick={handleUp}>
-                            <img src={TriangleUp} alt={"Icon"} />
-                        </button>
-                        <div className={"temp-reading"}>
-                            <h2 className={"digital-text"}>{setTemp}</h2>
-                            <h3>&#176;</h3>
-                        </div>
-                        <button className={"temp-button"} onClick={handleDown}>
-                            <img src={TriangleDown} alt={"Icon"} />
-                        </button>
-                    </div>
+                    { mode != Mode.Off && (
+                        <>
+                            <div className={"set-info"}>
+                                <p className={"small-text"}>Set</p>
+                                <p className={"small-text"}>To</p>
+                            </div>
+                            <div className={"set-controls"}>
+                                <button className={"temp-button"} onClick={handleUp}>
+                                    <img src={TriangleUp} alt={"Icon"}/>
+                                </button>
+                                <div className={"temp-reading"}>
+                                    <h2 className={"digital-text"}>{setTemp}</h2>
+                                    <h3>&#176;</h3>
+                                </div>
+                                <button className={"temp-button"} onClick={handleDown}>
+                                    <img src={TriangleDown} alt={"Icon"}/>
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </>

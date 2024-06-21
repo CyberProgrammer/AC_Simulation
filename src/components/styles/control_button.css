@@ -1,0 +1,27 @@
+.menu-controls button{
+    width: 50px;
+    height: 30px;
+    background-color: transparent;
+    border: 1px solid #111111;
+    border-radius: 5px;
+    margin: 0 0.5%;
+}
+
+.control-img{
+    width: 30px;
+}
+
+.done-control{
+    padding-bottom: 10px;
+}
+
+.left-control{
+    display: flex;
+    justify-content: start;
+}
+
+.right-control{
+    display: flex;
+    justify-content: end;
+    margin-left: 50px !important;
+}

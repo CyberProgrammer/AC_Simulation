@@ -1,22 +1,26 @@
 import { useState } from 'react';
 import './fan.css'
 
+import {Mode, FanStatus, FanSetting, SystemStatus} from '../../types/enums';
+
 import TriangleLeft from '../../assets/icons/triangle-left.svg';
 import TriangleRight from '../../assets/icons/triangle-right.svg';
+import HelpContainer from '../../shared/help_container';
+import ControlButton from '../../components/buttons/control_button';
 
 interface FanProps{
     callForCooling: boolean;
-    status: string;
-    fanSetting: number;
+    status: SystemStatus;
+    fanSetting: FanSetting;
     setFanSetting: (value:number) => void;
-    fanStatus: number;
-    setFanStatus: (value:number) => void;
-    mode: number;
-    setMenu: (value:number) => void;
+    fanStatus: FanStatus;
+    setFanStatus: (value:FanStatus) => void;
+    mode: Mode;
+    setMenu: (value:Mode) => void;
 }
 const Fan = ({callForCooling, status, fanSetting, setFanSetting, setMenu, fanStatus, setFanStatus, mode}:FanProps) => {
 
-    const [selectedSetting, setSelectedSetting] = useState(fanSetting);
+    const [selectedSetting, setSelectedSetting] = useState<FanSetting>(fanSetting);
     const handleNextClick = () =>{
         if(selectedSetting != 2)
             setSelectedSetting(selectedSetting+1);
@@ -33,21 +37,21 @@ const Fan = ({callForCooling, status, fanSetting, setFanSetting, setMenu, fanSta
         // Auto -> On
         if(fanSetting === 1 && selectedSetting === 0){
             if(!callForCooling)
-                setFanStatus(2);
+                setFanStatus(FanStatus.Wait);
 
             setTimeout(() => {
-                setFanStatus(1);
+                setFanStatus(FanStatus.On);
             }, 5000);
         }
 
         // On -> Auto
         else if(fanSetting === 0 && selectedSetting === 1){
             if(!callForCooling)
-                setFanStatus(2);
+                setFanStatus(FanStatus.Wait);
 
             setTimeout(() => {
                 if(!callForCooling)
-                    setFanStatus(0);
+                    setFanStatus(FanStatus.On);
             }, 5000)
         }
 
@@ -55,33 +59,10 @@ const Fan = ({callForCooling, status, fanSetting, setFanSetting, setMenu, fanSta
         setMenu(0);
     }
 
-    // // Fan logic on cooling state change
-    // useEffect(() => {
-    //     console.log("Call for cooling change");
-    //     // Regardless of fan setting, if cooling is called, fan is on
-    //     if(callForCooling){
-    //         setFanStatus(2);
-    //         setTimeout(() => {
-    //             setFanStatus(1);
-    //         }, 5000)
-    //     } // If no call for cooling and the fan is not set to on, turn off
-    //     else if(!callForCooling){
-    //         setFanStatus(2);
-    //         setTimeout(() => {
-    //             setFanStatus(0);
-    //         }, 5000)
-    //     }
-    //
-    // }, [setCallForCooling]);
-
     return(
         <>
             <div id={"fan-body"}>
-                <div className={"help-col"}>
-                    <button className={"help-button"}>
-                        <p>Help</p>
-                    </button>
-                </div>
+                <HelpContainer />
                 <div className={"fan-settings"}>
                     <div className={"fan-options"}>
                         <p className={`fan-option ${selectedSetting === 0 ? 'selected' : ''}`}>On</p>
@@ -89,15 +70,24 @@ const Fan = ({callForCooling, status, fanSetting, setFanSetting, setMenu, fanSta
                         <p className={`fan-option ${selectedSetting === 2 ? 'selected' : ''}`}>Circ</p>
                     </div>
                     <div className={"menu-controls"}>
-                        <button className={"left-control"} onClick={handlePrevClick}>
-                            <img className={"control-img"} src={TriangleLeft} alt={"Prev"}/>
-                        </button>
-                        <button className={"done-control"} onClick={handleDoneClick}>
-                            <p className={`fan-control`}>Done</p>
-                        </button>
-                        <button className={"right-control"} onClick={handleNextClick}>
-                            <img className={"control-img"} src={TriangleRight} alt={"Next"}/>
-                        </button>
+                        <ControlButton
+                            buttonClass={"left-control"}
+                            imageClass={"control-img"}
+                            imageSource={TriangleLeft}
+                            clickEvent={handlePrevClick}
+                        />
+                        <ControlButton
+                            buttonClass={"done-control"}
+                            textClass={"fan-control"}
+                            text={"Done"}
+                            clickEvent={handleDoneClick}
+                        />
+                        <ControlButton
+                            buttonClass={"right-control"}
+                            imageClass={"control-img"}
+                            imageSource={TriangleRight}
+                            clickEvent={handleNextClick}
+                        />
                     </div>
                 </div>
             </div>
