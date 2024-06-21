@@ -12,6 +12,9 @@ interface HomeProps{
     setTemp: number;
     setSetTemp: (value:number) => void;
     setCallForCooling: (value: boolean) => void;
+    fanSetting: number;
+    fanStatus: number;
+    setFanStatus: (value:number) => void;
     status: string;
     setStatus: (value:string) => void;
 }
@@ -23,14 +26,28 @@ const Home:React.FC<HomeProps> = (
         setTemp,
         setSetTemp,
         setCallForCooling,
+        fanSetting,
+        fanStatus,
+        setFanStatus,
         status,
         setStatus
     }) => {
 
-    const changeStatus = (status: string) => {
+    const changeStatus = (updateStatus: string) => {
         setStatus("Wait");
+        // If the fan is on auto, the fan follows the condenser status.
+        // When the compressor is on, the fan is on. When the compressor is off, the fan is off
+        // Each time a change in status occurs and the fan is on auto, the fan status is yellow
+        if((updateStatus === "Cool" || updateStatus === "At Temp") && fanSetting === 1)
+            setFanStatus(2);
+
         setTimeout(() => {
-            setStatus(status);
+            if(updateStatus === "Cool")
+                setFanStatus(1);
+            else if(updateStatus === "At Temp" && fanSetting === 1)
+                setFanStatus(0);
+
+            setStatus(updateStatus);
         }, 5000);
     }
 

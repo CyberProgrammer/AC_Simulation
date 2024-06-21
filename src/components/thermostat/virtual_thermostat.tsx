@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useEffect, useState } from 'react';
 import Navigation from '../../views/navigation/navigation';
 import Home from '../../views/home/home';
 import Fan from '../../views/fan/fan';
@@ -14,8 +14,14 @@ const Virtual_Thermostat = () => {
     const [currentTemp, setCurrentTemp] = useState<number>(72);
     const [setTemp, setSetTemp] = useState<number>(73);
 
-    // Fan states
+    // Fan states (0: on, 1:auto, 2:circ)
     const [fanSetting, setFanSetting] = useState<number>(1);
+
+    // Fan status (0: off, 1: on, 2: wait)
+    const [fanStatus, setFanStatus] = useState<number>(0);
+
+    // Mode states (0: off, 1:cool, 2:heat)
+    const [mode, setMode] = useState<number>(0);
 
     // General states
     const [callForCooling, setCallForCooling] = useState<boolean>(false);
@@ -29,11 +35,14 @@ const Virtual_Thermostat = () => {
                     {menu === 0 ?
                         <Home
                             callForCooling={callForCooling}
+                            setCallForCooling={setCallForCooling}
                             currentTemp={currentTemp}
                             setCurrentTemp={setCurrentTemp}
                             setTemp={setTemp}
                             setSetTemp={setSetTemp}
-                            setCallForCooling={setCallForCooling}
+                            fanSetting={fanSetting}
+                            fanStatus={fanStatus}
+                            setFanStatus={setFanStatus}
                             status={status}
                             setStatus={setStatus}
                         /> : null}
@@ -43,6 +52,9 @@ const Virtual_Thermostat = () => {
                             status={status}
                             fanSetting={fanSetting}
                             setFanSetting={setFanSetting}
+                            fanStatus={fanStatus}
+                            setFanStatus={setFanStatus}
+                            mode={mode}
                             setMenu={setMenu}
                         /> : null}
                     {menu === 2 ? <h1>System</h1> : null}
@@ -56,21 +68,17 @@ const Virtual_Thermostat = () => {
                 </div>
                 <div className={"display"}>
                     <p>Fan Status: </p>
-                    {status === "Wait" && fanSetting == 1 || fanSetting == -1 ? (
-                        <img src={YellowLed} alt={"led"}/>
-                    ) : (
-                        status !== "Wait" && fanSetting != 1 ? (
-                            <img src={GreenLed} alt={"led"}/>
-                        ) : (
-                            status !== "Wait" && fanSetting === 1 && callForCooling ? (
-                                <img src={GreenLed} alt={"led"}/>
-                            ) : (
-                                <img src={RedLed} alt={"led"}/>
-                            )
-                        )
-                    )}
+                    {fanStatus === 2 ?
+                        <img src={YellowLed} alt={"Led"}/> : null
+                    }
 
+                    {fanStatus === 0 ?
+                        <img src={RedLed} alt={"Led"}/> : null
+                    }
 
+                    {fanStatus === 1 ?
+                        <img src={GreenLed} alt={"Led"}/> : null
+                    }
                 </div>
             </div>
         </>
