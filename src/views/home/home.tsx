@@ -42,12 +42,12 @@ const Home:React.FC<HomeProps> = (
         // If the fan is on auto, the fan follows the condenser status.
         // When the compressor is on, the fan is on. When the compressor is off, the fan is off.
         // Each time a change in status occurs and the fan is on auto, the fan status is yellow.
-        if ((updateStatus === SystemStatus.Cool || updateStatus === SystemStatus.AtTemp) && fanSetting === FanSetting.Auto) {
+        if ((updateStatus === SystemStatus.Cool || updateStatus === SystemStatus.AtTemp || updateStatus === SystemStatus.Heat) && fanSetting === FanSetting.Auto) {
             setFanStatus(FanStatus.Wait);
         }
 
         setTimeout(() => {
-            if (updateStatus === SystemStatus.Cool) {
+            if (updateStatus === SystemStatus.Cool || updateStatus === SystemStatus.Heat) {
                 setFanStatus(FanStatus.On);
             } else if (updateStatus === SystemStatus.AtTemp && fanSetting === FanSetting.Auto) {
                 setFanStatus(FanStatus.Off);
@@ -60,6 +60,7 @@ const Home:React.FC<HomeProps> = (
     // Set temp up
     const handleUp = () => {
         handleSetTempUp({
+            mode,
             setTemp,
             setSetTemp,
             currentTemp,
@@ -72,6 +73,7 @@ const Home:React.FC<HomeProps> = (
     // Set temp down
     const handleDown = () => {
         handleSetTempDown({
+            mode,
             setTemp,
             setSetTemp,
             currentTemp,
@@ -126,14 +128,14 @@ const Home:React.FC<HomeProps> = (
                                 <p className={"small-text"}>To</p>
                             </div>
                             <div className={"set-controls"}>
-                                <button className={"temp-button"} onClick={handleUp}>
+                                <button className={"temp-button"} disabled={status === SystemStatus.Wait} onClick={handleUp}>
                                     <img src={TriangleUp} alt={"Icon"}/>
                                 </button>
                                 <div className={"temp-reading"}>
                                     <h2 className={"digital-text"}>{setTemp}</h2>
                                     <h3>&#176;</h3>
                                 </div>
-                                <button className={"temp-button"} onClick={handleDown}>
+                                <button className={"temp-button"} disabled={status === SystemStatus.Wait} onClick={handleDown}>
                                     <img src={TriangleDown} alt={"Icon"}/>
                                 </button>
                             </div>

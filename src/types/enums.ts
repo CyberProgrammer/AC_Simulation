@@ -20,6 +20,7 @@ export enum FanSetting {
 export enum SystemStatus{
     Wait=0,
     Cool,
+    Heat,
     AtTemp,
     Off
 }

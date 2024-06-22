@@ -1,4 +1,4 @@
-import {useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import Navigation from '../../views/navigation/navigation';
 import Home from '../../views/home/home';
@@ -32,7 +32,7 @@ const Virtual_Thermostat = () => {
         <>
             <div className={"thermostat-body"}>
                 <div className={"thermostat-content"}>
-                    <Navigation menu={menu} setMenu={setMenu}/>
+                    <Navigation menu={menu} status={status} setMenu={setMenu}/>
                     {menu === 0 && (
                         <Home
                             callForCooling={callForCooling}
@@ -79,8 +79,8 @@ const Virtual_Thermostat = () => {
                 </div>
             </div>
             <div className={"led-displays"}>
-                <LEDDisplay label="Condenser Status" status={status} isCooling={callForCooling}/>
-                <LEDDisplay label="Fan Status" status={fanStatus} fanStatus={fanStatus}/>
+                <LEDDisplay label="Condenser Status" mode={mode} status={status} isCooling={callForCooling}/>
+                <LEDDisplay label="Fan Status" mode={mode} status={fanStatus} fanStatus={fanStatus}/>
             </div>
         </>
 

@@ -7,10 +7,6 @@ function App() {
     return (
         <>
             <div id={"app"}>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
                 <VirtualThermostat/>
             </div>
         </>

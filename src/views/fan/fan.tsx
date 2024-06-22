@@ -34,8 +34,8 @@ const Fan = ({callForCooling, status, fanSetting, setFanSetting, setMenu, fanSta
         console.log("Selected Setting: ", selectedSetting);
         console.log("Fan Setting: ", fanSetting);
 
-        // Auto -> On
-        if(fanSetting === 1 && selectedSetting === 0){
+        // Auto -> On || Auto -> Circ
+        if(fanSetting === 1 && selectedSetting === 0 || fanSetting === 1 && selectedSetting === 2){
             if(!callForCooling)
                 setFanStatus(FanStatus.Wait);
 
@@ -44,14 +44,14 @@ const Fan = ({callForCooling, status, fanSetting, setFanSetting, setMenu, fanSta
             }, 5000);
         }
 
-        // On -> Auto
-        else if(fanSetting === 0 && selectedSetting === 1){
+        // On -> Auto || Circ -> Auto
+        else if(fanSetting === 0 && selectedSetting === 1 || fanSetting === 2 && selectedSetting === 1){
             if(!callForCooling)
                 setFanStatus(FanStatus.Wait);
 
             setTimeout(() => {
                 if(!callForCooling)
-                    setFanStatus(FanStatus.On);
+                    setFanStatus(FanStatus.Off);
             }, 5000)
         }
 

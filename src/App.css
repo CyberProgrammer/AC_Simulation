@@ -2,15 +2,16 @@ h1{
     text-align: center;
 }
 
-.thermostat-body{
+.thermostat-body {
     display: flex;
     justify-content: center;
-    width: 100%;
-    /*background-color: yellow;*/
+    min-height: 500px;
+    width: 550px;
+    margin: 1% auto;
     background-image: url('./assets/Thermostat.png');
     background-repeat: no-repeat;
     background-position: center;
-    min-height: 500px;
+    background-size: contain;
 }
 
 .thermostat-content{
@@ -23,13 +24,10 @@ h1{
     transform: translateY(2px);
 }
 
-
-
 .thermostat-textbox{
     display: flex;
     flex-direction: column;
     text-align: center;
-    /*background-color: green;*/
     height: 30%;
 }
 

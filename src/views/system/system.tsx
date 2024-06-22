@@ -22,7 +22,6 @@ interface SystemParams{
 const System = ({setTemp, currentTemp, fanSetting, setFanStatus, mode, setMode, setMenu, callForCooling, setCallForCooling, setStatus}:SystemParams) => {
 
     const [selectedSetting, setSelectedSetting] = useState<Mode>(mode);
-    console.log("Initial setting: ", mode);
     const handleNextClick = () =>{
         if(selectedSetting < Mode.Auto)
             setSelectedSetting(selectedSetting+1);
@@ -33,8 +32,10 @@ const System = ({setTemp, currentTemp, fanSetting, setFanStatus, mode, setMode, 
     }
 
     const handleDoneClick = () => {
+        console.log("Done click mode:" , selectedSetting as Mode)
         // If setting to off
-        if(selectedSetting as Mode === Mode.Off){
+        if(selectedSetting === Mode.Off){
+            console.log("Setting to off...");
             // If cooling and fan is anything but auto, only turn off consender, set system status off
             if(callForCooling && fanSetting != FanSetting.Auto){
                 setStatus(SystemStatus.Wait);
@@ -60,9 +61,11 @@ const System = ({setTemp, currentTemp, fanSetting, setFanStatus, mode, setMode, 
         }
 
         // If setting to cool
-        if(selectedSetting as Mode === Mode.Cool){
+        if(selectedSetting === Mode.Cool){
+            console.log("Setting to cool...");
             // If the fan is already on and set temp < current temp, turn the condenser on
             if(fanSetting === FanSetting.On && setTemp < currentTemp){
+                console.log("Cool 1")
                 setStatus(SystemStatus.Wait);
                 setTimeout(() => {
                     setCallForCooling(true);
@@ -71,6 +74,7 @@ const System = ({setTemp, currentTemp, fanSetting, setFanStatus, mode, setMode, 
             }
             // If the fan is on auto and set temp < current temp, turn the condenser and fan on
             if(fanSetting === FanSetting.Auto && setTemp < currentTemp){
+                console.log("Cool 2")
                 setStatus(SystemStatus.Wait);
                 setFanStatus(FanStatus.Wait);
                 setTimeout(() => {
@@ -81,9 +85,62 @@ const System = ({setTemp, currentTemp, fanSetting, setFanStatus, mode, setMode, 
             }
             // If set temp > current temp, only set status to at temp
             if(setTemp > currentTemp){
+                console.log("Cool 3")
+                if(callForCooling){
+                    setStatus(SystemStatus.Wait);
+                    setFanStatus(FanStatus.Wait);
+                    setTimeout(() => {
+                        setCallForCooling(false);
+                        setFanStatus(FanStatus.Off)
+                        setStatus(SystemStatus.AtTemp);
+                    }, 5000)
+                }
+                else{
+                    setTimeout(() => {
+                        setStatus(SystemStatus.AtTemp);
+                    }, 1000)
+                }
+            }
+        }
+
+        // If setting to heat
+        if(selectedSetting === Mode.Heat){
+            console.log("Setting to heat...");
+
+            // If fan is on and set temp > current temp, turn the condenser on
+            if(fanSetting === FanSetting.On && setTemp > currentTemp){
+                setStatus(SystemStatus.Wait);
                 setTimeout(() => {
-                    setStatus(SystemStatus.AtTemp);
-                }, 1000)
+                    setCallForCooling(true);
+                    setStatus(SystemStatus.Heat);
+                }, 5000)
+            }
+            // If fan is auto and set temp > current temp, turn fan and condenser on
+            if(fanSetting === FanSetting.Auto && setTemp > currentTemp){
+                setStatus(SystemStatus.Wait);
+                setFanStatus(FanStatus.Wait);
+                setTimeout(() => {
+                    setCallForCooling(true);
+                    setFanStatus(FanStatus.On);
+                    setStatus(SystemStatus.Heat);
+                }, 5000)
+            }
+            // If set temp < current temp, set status at temp
+            if(setTemp < currentTemp){
+                if(callForCooling){
+                    setStatus(SystemStatus.Wait);
+                    setFanStatus(FanStatus.Wait);
+                    setTimeout(() => {
+                        setCallForCooling(false);
+                        setFanStatus(FanStatus.Off);
+                        setStatus(SystemStatus.AtTemp);
+                    }, 5000)
+                }
+                else{
+                    setTimeout(() => {
+                        setStatus(SystemStatus.AtTemp);
+                    }, 1000)
+                }
             }
         }
 
