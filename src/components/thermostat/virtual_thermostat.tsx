@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useEffect, useState } from 'react';
 
 import Navigation from '../../views/navigation/navigation';
 import Home from '../../views/home/home';
@@ -28,6 +28,76 @@ const Virtual_Thermostat = () => {
     // General states
     const [callForCooling, setCallForCooling] = useState<boolean>(false);
     const [status, setStatus] = useState<SystemStatus>(SystemStatus.Off);
+
+    // Recheck status
+    const checkStatus = () => {
+        if (mode === Mode.Cool && currentTemp <= setTemp && status === SystemStatus.Cool) {
+            handleCoolingOff();
+        }
+
+        if (mode === Mode.Heat && currentTemp >= setTemp && status === SystemStatus.Heat) {
+            handleHeatingOff();
+        }
+    };
+
+    const handleCoolingOff = () => {
+        if (fanSetting === FanSetting.Auto) {
+            setStatus(SystemStatus.Wait);
+            setFanStatus(FanStatus.Wait);
+        } else {
+            setStatus(SystemStatus.Wait);
+        }
+
+        setTimeout(() => {
+            setCallForCooling(false);
+            setStatus(SystemStatus.AtTemp);
+            if (fanSetting === FanSetting.Auto) {
+                setFanStatus(FanStatus.Off);
+            }
+        }, 5000);
+    };
+
+    const handleHeatingOff = () => {
+        if (fanSetting === FanSetting.Auto) {
+            setStatus(SystemStatus.Wait);
+            setFanStatus(FanStatus.Wait);
+        } else {
+            setStatus(SystemStatus.Wait);
+        }
+
+        setTimeout(() => {
+            setCallForCooling(false);
+            setStatus(SystemStatus.AtTemp);
+            if (fanSetting === FanSetting.Auto) {
+                setFanStatus(FanStatus.Off);
+            }
+        }, 5000);
+    };
+
+    // Artificially change the current temp to simulate real change
+    useEffect(() => {
+        let tempChange: NodeJS.Timeout;
+
+        // If cool mode and current temp is greater than set temp, change the current temp - 1
+        if (mode === Mode.Cool && currentTemp > setTemp) {
+            tempChange = setInterval(() => {
+                setCurrentTemp(prevTemp => prevTemp - 1);
+                clearInterval(tempChange);
+            }, 10000);
+        }
+
+        // If heat mode and current temp is less than set temp, change the current temp + 1
+        if (mode === Mode.Heat && currentTemp < setTemp) {
+            tempChange = setInterval(() => {
+                setCurrentTemp(prevTemp => prevTemp + 1);
+                clearInterval(tempChange);
+            }, 10000);
+        }
+
+        checkStatus();
+
+        return () => clearInterval(tempChange);
+    }, [setTemp, currentTemp, mode]);
 
     return (
         <>
