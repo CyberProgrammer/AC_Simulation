@@ -1,0 +1,71 @@
+#menu-body{
+
+}
+
+.menu-container{
+    display: flex;
+    width: 100%;
+    margin: auto;
+    justify-content: space-between;
+}
+
+/* Home content */
+
+/* Main body*/
+.menu-home-body{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    margin-left: 15%;
+}
+
+.menu-home-content{
+    display: flex;
+    width: 100%;
+}
+
+.menu-options{
+    width: 82%;
+    margin-left: 3%;
+    max-height: 75px;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+
+.menu-option-row{
+    max-height: 25px;
+    padding: 1%;
+}
+
+.menu-option-row p{
+    padding: 1%;
+}
+
+.menu-option{
+    max-height: 25px;
+    text-align: center;
+}
+
+#menu-body .selected{
+    color: white;
+    background-color: #111111;
+}
+
+/* Side controls */
+.setting-controls{
+    display: flex;
+    flex-direction: column;
+    width: 12%;
+    margin-left: 2%;
+}
+
+.setting-controls .temp-button{
+    margin-bottom: 10px;
+}
+
+/* Main controls */
+.menu-home-controls{
+    width: 100%;
+    margin-left: 22%;
+    margin-top: 2%;
+}

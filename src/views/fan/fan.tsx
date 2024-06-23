@@ -65,9 +65,9 @@ const Fan = ({callForCooling, status, fanSetting, setFanSetting, setMenu, fanSta
                 <HelpContainer />
                 <div className={"fan-settings"}>
                     <div className={"fan-options"}>
-                        <p className={`fan-option ${selectedSetting === 0 ? 'selected' : ''}`}>On</p>
-                        <p className={`fan-option ${selectedSetting === 1 ? 'selected' : ''}`}>Auto</p>
-                        <p className={`fan-option ${selectedSetting === 2 ? 'selected' : ''}`}>Circ</p>
+                        <p className={`fan-option dotted-text ${selectedSetting === 0 ? 'selected' : ''}`}>On</p>
+                        <p className={`fan-option dotted-text ${selectedSetting === 1 ? 'selected' : ''}`}>Auto</p>
+                        <p className={`fan-option dotted-text ${selectedSetting === 2 ? 'selected' : ''}`}>Circ</p>
                     </div>
                     <div className={"menu-controls"}>
                         <ControlButton

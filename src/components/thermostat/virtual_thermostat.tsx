@@ -8,6 +8,7 @@ import LEDDisplay from '../../shared/led/LEDDisplay';
 
 
 import {Mode, FanStatus, FanSetting, SystemStatus} from '../../types/enums'
+import Menu from '../../views/menu/menu';
 const Virtual_Thermostat = () => {
     const [menu, setMenu] = useState<number>(0);
 
@@ -75,7 +76,11 @@ const Virtual_Thermostat = () => {
                             setStatus={setStatus}
                         />
                     )}
-                    {menu === 3 && <h1>Menu</h1>}
+                    {menu === 3 && (
+                        <Menu
+
+                        />
+                    )}
                 </div>
             </div>
             <div className={"led-displays"}>

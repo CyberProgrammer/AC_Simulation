@@ -102,8 +102,8 @@ const Home:React.FC<HomeProps> = (
     return(
         <>
             <div className={"thermostat-textbox"}>
-                <h3>System: {SystemStatus[status]}</h3>
-                <h3>Outdoor: 80&#176;/55%</h3>
+                <p className={"h3 dotted-text"}>System: {SystemStatus[status] === "AtTemp" ? "At Temp" : SystemStatus[status]}</p>
+                <p className={"h3 dotted-text"}>Outdoor: 80&#176;/55%</p>
             </div>
             <div className={"thermostat-info"}>
                 <div className={"info-left"}>

@@ -35,3 +35,16 @@ button:hover{
 .digital-text{
     font-family: digitalFont, serif;
 }
+
+@font-face {
+    font-family: ledFont;
+    src: url("./assets/fonts/LCDDot.ttf") format("truetype");
+}
+
+.dotted-text{
+    font-family: ledFont, sans-serif;
+}
+
+.h3{
+    font-size: 1.25em;
+}

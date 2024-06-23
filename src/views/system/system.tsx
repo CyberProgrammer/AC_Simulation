@@ -154,10 +154,10 @@ const System = ({setTemp, currentTemp, fanSetting, setFanStatus, mode, setMode, 
                 <HelpContainer />
                 <div className={"system-settings"}>
                     <div className={"system-options"}>
-                        <p className={`system-option ${selectedSetting === 0 ? 'selected' : ''}`}>Heat</p>
-                        <p className={`system-option ${selectedSetting === 1 ? 'selected' : ''}`}>Cool</p>
-                        <p className={`system-option ${selectedSetting === 2 ? 'selected' : ''}`}>Off</p>
-                        <p className={`system-option ${selectedSetting === 3 ? 'selected' : ''}`}>Auto</p>
+                        <p className={`system-option dotted-text ${selectedSetting === 0 ? 'selected' : ''}`}>Heat</p>
+                        <p className={`system-option dotted-text ${selectedSetting === 1 ? 'selected' : ''}`}>Cool</p>
+                        <p className={`system-option dotted-text ${selectedSetting === 2 ? 'selected' : ''}`}>Off</p>
+                        <p className={`system-option dotted-text ${selectedSetting === 3 ? 'selected' : ''}`}>Auto</p>
                     </div>
                     <div className={"menu-controls"}>
                         <ControlButton
