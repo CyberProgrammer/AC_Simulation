@@ -1,21 +1,19 @@
-import {getCurrentTime} from '../../utils/index';
-import { handleSetTempUp, handleSetTempDown } from '../../utils/index';
+import {getCurrentTime, handleSetTempDown, handleSetTempUp} from '../../utils';
 
 import TriangleUp from '../../assets/icons/triangle-up.svg';
 import TriangleDown from '../../assets/icons/triangle-down.svg';
-import {useEffect, useState } from 'react';
+import React, {useEffect, useState } from 'react';
 
 import {Mode, FanStatus, FanSetting, SystemStatus} from '../../types/enums';
+import ArrowButton from "../../components/buttons/arrow_button.tsx";
 
 interface HomeProps{
     callForCooling: boolean;
     currentTemp: number;
-    setCurrentTemp: (value:number) => void;
     setTemp: number;
     setSetTemp: (value:number) => void;
     setCallForCooling: (value: boolean) => void;
     fanSetting: FanSetting;
-    fanStatus: FanStatus;
     setFanStatus: (val:FanStatus) => void;
     status: SystemStatus;
     setStatus: (val: SystemStatus) => void;
@@ -25,18 +23,24 @@ const Home:React.FC<HomeProps> = (
     {
         callForCooling,
         currentTemp,
-        setCurrentTemp,
         setTemp,
         setSetTemp,
         setCallForCooling,
         fanSetting,
-        fanStatus,
         setFanStatus,
         status,
         setStatus,
         mode,
     }) => {
 
+    // State for time and period
+    const [currentTime, setCurrentTime] = useState(getCurrentTime().time);
+    const [isAM, setIsAM] = useState(getCurrentTime().isAM);
+
+    /*
+    Change status is responsible for keeping the condenser and fan status
+    updated when the set temperature controls are adjusted.
+    */
     const changeStatus = (updateStatus: SystemStatus) => {
         setStatus(SystemStatus.Wait);
         // If the fan is on auto, the fan follows the condenser status.
@@ -83,10 +87,6 @@ const Home:React.FC<HomeProps> = (
         });
     };
 
-    // State for time and period
-    const [currentTime, setCurrentTime] = useState(getCurrentTime().time);
-    const [isAM, setIsAM] = useState(getCurrentTime().isAM);
-
     // Checks for new time on interval
     useEffect(() => {
         const interval = setInterval(() => {
@@ -128,16 +128,12 @@ const Home:React.FC<HomeProps> = (
                                 <p className={"small-text"}>To</p>
                             </div>
                             <div className={"set-controls"}>
-                                <button className={"temp-button"} disabled={status === SystemStatus.Wait} onClick={handleUp}>
-                                    <img src={TriangleUp} alt={"Icon"}/>
-                                </button>
+                                <ArrowButton className={"temp-button"} isDisabled={status === SystemStatus.Wait} clickEvent={handleUp} icon={TriangleUp} />
                                 <div className={"temp-reading"}>
                                     <h2 className={"digital-text"}>{setTemp}</h2>
                                     <h3>&#176;</h3>
                                 </div>
-                                <button className={"temp-button"} disabled={status === SystemStatus.Wait} onClick={handleDown}>
-                                    <img src={TriangleDown} alt={"Icon"}/>
-                                </button>
+                                <ArrowButton className={"temp-button"} isDisabled={status === SystemStatus.Wait} clickEvent={handleDown} icon={TriangleDown} />
                             </div>
                         </>
                     )}

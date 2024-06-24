@@ -9,6 +9,7 @@ import LEDDisplay from '../../shared/led/LEDDisplay';
 
 import {Mode, FanStatus, FanSetting, SystemStatus} from '../../types/enums'
 import Menu from '../../views/menu/menu';
+import {checkStatus} from "../../utils/thermostatUtils.ts";
 const Virtual_Thermostat = () => {
     const [menu, setMenu] = useState<number>(0);
 
@@ -28,51 +29,6 @@ const Virtual_Thermostat = () => {
     // General states
     const [callForCooling, setCallForCooling] = useState<boolean>(false);
     const [status, setStatus] = useState<SystemStatus>(SystemStatus.Off);
-
-    // Recheck status
-    const checkStatus = () => {
-        if (mode === Mode.Cool && currentTemp <= setTemp && status === SystemStatus.Cool) {
-            handleCoolingOff();
-        }
-
-        if (mode === Mode.Heat && currentTemp >= setTemp && status === SystemStatus.Heat) {
-            handleHeatingOff();
-        }
-    };
-
-    const handleCoolingOff = () => {
-        if (fanSetting === FanSetting.Auto) {
-            setStatus(SystemStatus.Wait);
-            setFanStatus(FanStatus.Wait);
-        } else {
-            setStatus(SystemStatus.Wait);
-        }
-
-        setTimeout(() => {
-            setCallForCooling(false);
-            setStatus(SystemStatus.AtTemp);
-            if (fanSetting === FanSetting.Auto) {
-                setFanStatus(FanStatus.Off);
-            }
-        }, 5000);
-    };
-
-    const handleHeatingOff = () => {
-        if (fanSetting === FanSetting.Auto) {
-            setStatus(SystemStatus.Wait);
-            setFanStatus(FanStatus.Wait);
-        } else {
-            setStatus(SystemStatus.Wait);
-        }
-
-        setTimeout(() => {
-            setCallForCooling(false);
-            setStatus(SystemStatus.AtTemp);
-            if (fanSetting === FanSetting.Auto) {
-                setFanStatus(FanStatus.Off);
-            }
-        }, 5000);
-    };
 
     // Artificially change the current temp to simulate real change
     useEffect(() => {
@@ -94,10 +50,10 @@ const Virtual_Thermostat = () => {
             }, 10000);
         }
 
-        checkStatus();
+        checkStatus(mode, currentTemp, setTemp, status, fanSetting, setStatus, setFanStatus, setCallForCooling);
 
         return () => clearInterval(tempChange);
-    }, [setTemp, currentTemp, mode]);
+    }, [setTemp, currentTemp, mode, status, fanSetting]);
 
     return (
         <>
@@ -109,11 +65,9 @@ const Virtual_Thermostat = () => {
                             callForCooling={callForCooling}
                             setCallForCooling={setCallForCooling}
                             currentTemp={currentTemp}
-                            setCurrentTemp={setCurrentTemp}
                             setTemp={setTemp}
                             setSetTemp={setSetTemp}
                             fanSetting={fanSetting}
-                            fanStatus={fanStatus}
                             setFanStatus={setFanStatus}
                             status={status}
                             setStatus={setStatus}
@@ -123,12 +77,9 @@ const Virtual_Thermostat = () => {
                     {menu === 1 && (
                         <Fan
                             callForCooling={callForCooling}
-                            status={status}
                             fanSetting={fanSetting}
                             setFanSetting={setFanSetting}
-                            fanStatus={fanStatus}
                             setFanStatus={setFanStatus}
-                            mode={mode}
                             setMenu={setMenu}
                         />
                     )}

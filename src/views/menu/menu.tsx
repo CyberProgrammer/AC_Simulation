@@ -4,34 +4,28 @@ import TriangleUp from '../../assets/icons/triangle-up.svg';
 import TriangleDown from '../../assets/icons/triangle-down.svg';
 
 import './menu.css';
+import ThermostatButton from "../../components/buttons/thermostat_button.tsx";
+import ArrowButton from "../../components/buttons/arrow_button.tsx";
+import {handleDown, handleSelect, handleUp} from "../../utils/settingsUtils/settingsUtils.ts";
 
 const Menu = () => {
     const options = ["Edit Schedule", "View Schedule", "Equipment Status", "Date/Time", "Clean Screen", "Security Settings"];
 
     const [selected, setSelected] = useState<number>(0);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const handleUp = () => {
-        const nextSelected = selected - 1;
-        if (nextSelected >= 0) {
-            setSelected(nextSelected);
-            if ((nextSelected + 1) % 3 === 0) {
-                scrollContainerRef.current?.scrollBy({ top: -75, behavior: 'smooth' });
-            }
-        }
-    }
 
-    const handleDown = () => {
-        const nextSelected = selected + 1;
-        if (nextSelected < options.length) {
-            setSelected(nextSelected);
-            if ((nextSelected) % 3 === 0) {
-                scrollContainerRef.current?.scrollBy({ top: 75, behavior: 'smooth' });
-            }
+    // Button click logic
+    const handleClick = (id:number) => {
+        switch (id){
+            case 0:
+                handleUp(selected, setSelected, scrollContainerRef);
+                break;
+            case 1:
+                handleDown(selected, options.length, setSelected, scrollContainerRef);
+                break;
+            case 2:
+                handleSelect();
         }
-    }
-
-    const handleSelect = () => {
-        console.log("Handle select...");
     }
 
     return(
@@ -50,26 +44,12 @@ const Menu = () => {
                                 ))}
                             </div>
                             <div className={"setting-controls"}>
-                                <button
-                                    className={"temp-button"}
-                                    disabled={selected === 0}
-                                    onClick={handleUp}
-                                >
-                                    <img src={TriangleUp} alt={"Icon"}/>
-                                </button>
-                                <button
-                                    className="temp-button"
-                                    disabled={selected === options.length - 1}
-                                    onClick={handleDown}
-                                >
-                                    <img src={TriangleDown} alt={"Icon"}/>
-                                </button>
+                                <ArrowButton className={"temp-button"} isDisabled={selected === 0} clickEvent={() => handleClick(0)} icon={TriangleUp} />
+                                <ArrowButton className={"temp-button"} isDisabled={selected === options.length - 1} clickEvent={() => handleClick(1)} icon={TriangleDown} />
                             </div>
                         </div>
                         <div className={"menu-home-controls"}>
-                            <button className={"thermostat-button"} onClick={handleSelect}>
-                                Select
-                            </button>
+                            <ThermostatButton className={"thermostat-button"} clickEvent={() => handleClick(2)} text={"Select"} />
                         </div>
                     </div>
                 </div>

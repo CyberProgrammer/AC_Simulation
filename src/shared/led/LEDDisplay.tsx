@@ -1,4 +1,4 @@
-import {useEffect, useState } from "react";
+import React, {useEffect, useState } from "react";
 import { Mode, FanStatus , SystemStatus} from "../../types/enums";
 
 import RedLed from '../../assets/icons/red_led.svg';
@@ -44,7 +44,7 @@ const LEDDisplay: React.FC<LEDDisplayProps> = ({ label, mode, status, fanStatus,
         }
 
         return () => clearInterval(interval); // Clear interval on component unmount or status change
-    }, [status, isCooling, mode]);
+    }, [status, isCooling, mode, label, fanStatus]);
 
     return (
         <div className={"display"}>

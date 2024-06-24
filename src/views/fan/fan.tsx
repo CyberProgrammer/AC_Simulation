@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './fan.css'
 
-import {Mode, FanStatus, FanSetting, SystemStatus} from '../../types/enums';
+import {Mode, FanStatus, FanSetting} from '../../types/enums';
 
 import TriangleLeft from '../../assets/icons/triangle-left.svg';
 import TriangleRight from '../../assets/icons/triangle-right.svg';
@@ -10,15 +10,12 @@ import ControlButton from '../../components/buttons/control_button';
 
 interface FanProps{
     callForCooling: boolean;
-    status: SystemStatus;
     fanSetting: FanSetting;
     setFanSetting: (value:number) => void;
-    fanStatus: FanStatus;
     setFanStatus: (value:FanStatus) => void;
-    mode: Mode;
     setMenu: (value:Mode) => void;
 }
-const Fan = ({callForCooling, status, fanSetting, setFanSetting, setMenu, fanStatus, setFanStatus, mode}:FanProps) => {
+const Fan = ({callForCooling, fanSetting, setFanSetting, setMenu, setFanStatus}:FanProps) => {
 
     const [selectedSetting, setSelectedSetting] = useState<FanSetting>(fanSetting);
     const handleNextClick = () =>{

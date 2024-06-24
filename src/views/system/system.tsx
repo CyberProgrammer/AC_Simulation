@@ -36,7 +36,7 @@ const System = ({setTemp, currentTemp, fanSetting, setFanStatus, mode, setMode, 
         // If setting to off
         if(selectedSetting === Mode.Off){
             console.log("Setting to off...");
-            // If cooling and fan is anything but auto, only turn off consender, set system status off
+            // If cooling and fan is anything but auto, only turn off condenser, set system status off
             if(callForCooling && fanSetting != FanSetting.Auto){
                 setStatus(SystemStatus.Wait);
                 setTimeout(() => {
