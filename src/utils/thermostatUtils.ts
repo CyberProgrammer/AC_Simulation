@@ -68,4 +68,13 @@ export const checkStatus = (
     if (mode === Mode.Heat && currentTemp >= setTemp && status === SystemStatus.Heat) {
         handleHeatingOff(fanSetting, setStatus, setFanStatus, setCallForCooling);
     }
+
+    // Auto modes
+    if(mode === Mode.Auto && currentTemp >= setTemp && status === SystemStatus.Heat){
+        handleHeatingOff(fanSetting, setStatus, setFanStatus, setCallForCooling);
+    }
+
+    if(mode === Mode.Auto && currentTemp <= setTemp && status === SystemStatus.Cool){
+        handleCoolingOff(fanSetting, setStatus, setFanStatus, setCallForCooling);
+    }
 };

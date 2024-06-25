@@ -12,14 +12,14 @@
 /* Home content */
 
 /* Main body*/
-.menu-home-body{
+.menu-body{
     display: flex;
     flex-direction: column;
     width: 80%;
     margin-left: 15%;
 }
 
-.menu-home-content{
+.menu-content{
     display: flex;
     width: 100%;
 }
@@ -27,6 +27,7 @@
 .menu-options{
     width: 82%;
     margin-left: 3%;
+    min-height: 50px;
     max-height: 75px;
     overflow-y: scroll;
     scrollbar-width: none;
@@ -64,7 +65,7 @@
 }
 
 /* Main controls */
-.menu-home-controls{
+.menu-controls{
     width: 100%;
     margin-left: 22%;
     margin-top: 2%;

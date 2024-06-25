@@ -30,6 +30,16 @@ export const handleDown = (
     }
 }
 
-export const handleSelect = () => {
+export const handleSelect = (
+    selected:number,
+    setMain: React.Dispatch<React.SetStateAction<number>>,
+    setIsNavigationActive: React.Dispatch<React.SetStateAction<boolean>>,
+    ) => {
+
     console.log("Handle select...");
+    console.log("Selected: ", selected);
+
+    if(selected === 0)
+        setIsNavigationActive(false);
+    setMain(selected);
 }

@@ -1,0 +1,22 @@
+.prompt{
+    padding: 2%;
+}
+
+.schedule-controls{
+    display: flex;
+}
+
+.control-left{
+    width: 50%;
+}
+
+.control-right{
+    display: flex;
+}
+
+.control-center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 88%;
+}

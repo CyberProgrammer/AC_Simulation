@@ -1,50 +1,57 @@
-import React, {useEffect, useState } from "react";
-import { Mode, FanStatus , SystemStatus} from "../../types/enums";
+import {useEffect, useState } from "react";
+import {FanStatus , SystemStatus} from "../../types/enums";
 
 import RedLed from '../../assets/icons/red_led.svg';
 import GreenLed from '../../assets/icons/green_led.svg';
 import YellowLed from "../../assets/icons/yellow_led.svg";
 import DarkYellowLed from "../../assets/icons/dark_yellow_led.svg";
+import {useFan} from "../../contexts/fan_context.tsx";
+import {useGeneralStates} from "../../contexts/general_context.tsx";
 
 interface LEDDisplayProps {
     label: string;
-    mode: Mode;
-    fanStatus?: FanStatus
-    status: FanStatus | SystemStatus;
     isCooling?: boolean;
 }
 
-const LEDDisplay: React.FC<LEDDisplayProps> = ({ label, mode, status, fanStatus, isCooling = false }) => {
+const LEDDisplay: React.FC<LEDDisplayProps> = ({ label, isCooling = false }) => {
+    const {mode, status} = useGeneralStates();
+
+    const {fanStatus} = useFan();
     const [currentSrc, setCurrentSrc] = useState<string>(RedLed);
 
     useEffect(() => {
-        if(label === "Fan Status")
-            console.log("Fan Status:" , status);
-        else
-            console.log("Condenser Status:", status);
-
         let interval: NodeJS.Timeout;
 
         if ((label === "Fan Status" && fanStatus === FanStatus.Wait) || (label === "Condenser Status" && status === SystemStatus.Wait)) {
-            console.log("Here")
+            console.log("Here");
             interval = setInterval(() => {
                 setCurrentSrc(prevSrc => (prevSrc === YellowLed ? DarkYellowLed : YellowLed));
             }, 500); // Toggle every half second
         } else {
             // Set the correct static image
-            console.log("Here 2")
-            if (isCooling || (status === FanStatus.On || status === SystemStatus.Cool)) {
-                if(!fanStatus && status != SystemStatus.AtTemp)
+            console.log("Here 2 (", label, ")");
+            console.log("Status:", status);
+
+            if(label === "Fan Status"){
+                if(fanStatus === FanStatus.On){
                     setCurrentSrc(GreenLed);
-                else if(fanStatus && status === FanStatus.On)
+                } else{
+                    setCurrentSrc(RedLed);
+                }
+            } else{
+                if(isCooling && status === SystemStatus.Cool || status === SystemStatus.Heat){
                     setCurrentSrc(GreenLed);
-            } else {
-                setCurrentSrc(RedLed);
+                } else{
+                    setCurrentSrc(RedLed);
+                }
             }
         }
-
-        return () => clearInterval(interval); // Clear interval on component unmount or status change
-    }, [status, isCooling, mode, label, fanStatus]);
+        return () => {
+            if (interval) {
+                clearInterval(interval);
+            }
+        };
+    }, [label, mode, status, fanStatus, isCooling]);
 
     return (
         <div className={"display"}>

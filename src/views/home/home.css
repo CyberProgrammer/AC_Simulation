@@ -1,0 +1,112 @@
+.thermostat-textbox{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    height: 30%;
+}
+
+.info-left{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 25%;
+}
+
+.info-center{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 50%;
+    text-align: center;
+}
+
+.info-right{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 20%;
+}
+
+.thermostat-info{
+    display: flex;
+    flex-direction: row;
+    height: 55%;
+}
+
+.temp-reading{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.info-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 90px;
+    margin-bottom: 5px;
+}
+
+.following-info-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 90px;
+    margin-bottom: 35px;
+}
+
+.set-info{
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    padding: 5px 5px 0 0;
+}
+
+.schedule-info{
+    margin-right: 5px;
+}
+
+.set-controls{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.temp-button{
+    height: 25px;
+    width: 50px;
+    background-color: transparent;
+    border: 1px solid black;
+    border-radius: 2px;
+}
+
+.temp-button img{
+    height: 25px;
+}
+
+.humidity-reading{
+    display: flex;
+    width: 48%;
+    justify-content: space-between;
+    margin: 0 auto 0 auto;
+}
+/* Led Displays */
+.led-displays{
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    margin: auto;
+}
+
+.display img{
+    width: 25px;
+}
+
+.display{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}

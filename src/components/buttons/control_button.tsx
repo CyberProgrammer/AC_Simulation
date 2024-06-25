@@ -11,7 +11,7 @@ interface ControlButtonParams{
 
 const ControlButton = ({buttonClass, imageClass, imageSource, textClass, text, clickEvent}:ControlButtonParams) => {
     return (
-        <button className={buttonClass} onClick={clickEvent}>
+        <button id={"control-button"} className={buttonClass} onClick={clickEvent}>
             {imageSource ?
                 <img className={imageClass} src={imageSource} alt={"Button"}/>
                 :

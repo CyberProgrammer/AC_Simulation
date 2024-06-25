@@ -1,25 +1,23 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import TriangleLeft from '../../assets/icons/triangle-left.svg';
 import TriangleRight from '../../assets/icons/triangle-right.svg';
 import ControlButton from '../../components/buttons/control_button';
 import HelpContainer from '../../shared/help_container';
 
 import './system.css';
-import {Mode, FanSetting, FanStatus, SystemStatus} from '../../types/enums'
+import {FanSetting, FanStatus, Mode, SystemStatus} from '../../types/enums'
+import {useFan} from "../../contexts/fan_context.tsx";
+import {useGeneralStates} from "../../contexts/general_context.tsx";
+import {useCondenser} from "../../contexts/condenser_context.tsx";
 
 interface SystemParams{
-    currentTemp: number;
-    setTemp: number;
-    fanSetting: FanSetting;
-    setFanStatus: (fanStatus: FanStatus) => void;
-    mode: Mode;
-    setMode: (mode: Mode) => void;
     setMenu: (menu: number) => void;
-    callForCooling: boolean;
-    setCallForCooling: (call:boolean) => void;
-    setStatus: (status:SystemStatus) => void;
 }
-const System = ({setTemp, currentTemp, fanSetting, setFanStatus, mode, setMode, setMenu, callForCooling, setCallForCooling, setStatus}:SystemParams) => {
+const System = ({setMenu}:SystemParams) => {
+
+    const {currentTemp, setTemp, mode, setMode, setStatus} = useGeneralStates();
+    const {callForCooling, setCallForCooling} = useCondenser();
+    const {fanSetting, setFanStatus} = useFan();
 
     const [selectedSetting, setSelectedSetting] = useState<Mode>(mode);
     const handleNextClick = () =>{
@@ -140,6 +138,51 @@ const System = ({setTemp, currentTemp, fanSetting, setFanStatus, mode, setMode, 
                     setTimeout(() => {
                         setStatus(SystemStatus.AtTemp);
                     }, 1000)
+                }
+            }
+        }
+
+        // If set to auto
+        if(selectedSetting === Mode.Auto){
+            console.log("Setting to auto...");
+
+            // If current temp > set temp, turn on heat
+            if(currentTemp > setTemp){
+                // If fan is set to on, only turn on condenser
+                if(fanSetting === FanSetting.On){
+                    setStatus(SystemStatus.Wait);
+                    setTimeout(() => {
+                        setStatus(SystemStatus.Cool);
+                        setCallForCooling(true);
+                    }, 5000)
+                } else{
+                    setStatus(SystemStatus.Wait);
+                    setFanStatus(FanStatus.Wait);
+                    setTimeout(() => {
+                        setFanStatus(FanStatus.On);
+                        setStatus(SystemStatus.Cool);
+                        setCallForCooling(true);
+                    }, 5000)
+                }
+            }
+
+            // If current temp < set temp, turn on cool
+            if(currentTemp < setTemp){
+                // If fan is set to on, only turn on condenser
+                if(fanSetting === FanSetting.On){
+                    setStatus(SystemStatus.Wait);
+                    setTimeout(() => {
+                        setStatus(SystemStatus.Heat);
+                        setCallForCooling(true);
+                    }, 5000)
+                } else{
+                    setStatus(SystemStatus.Wait);
+                    setFanStatus(FanStatus.Wait);
+                    setTimeout(() => {
+                        setFanStatus(FanStatus.On);
+                        setStatus(SystemStatus.Heat);
+                        setCallForCooling(true);
+                    }, 5000)
                 }
             }
         }

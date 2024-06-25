@@ -6,32 +6,20 @@ import React, {useEffect, useState } from 'react';
 
 import {Mode, FanStatus, FanSetting, SystemStatus} from '../../types/enums';
 import ArrowButton from "../../components/buttons/arrow_button.tsx";
+import {useFan} from "../../contexts/fan_context.tsx";
+
+import './home.css';
+import {useSchedule} from "../../contexts/schedule_context.tsx";
+import {useGeneralStates} from "../../contexts/general_context.tsx";
+import {useCondenser} from "../../contexts/condenser_context.tsx";
 
 interface HomeProps{
-    callForCooling: boolean;
-    currentTemp: number;
-    setTemp: number;
-    setSetTemp: (value:number) => void;
-    setCallForCooling: (value: boolean) => void;
-    fanSetting: FanSetting;
-    setFanStatus: (val:FanStatus) => void;
-    status: SystemStatus;
-    setStatus: (val: SystemStatus) => void;
-    mode: Mode;
 }
-const Home:React.FC<HomeProps> = (
-    {
-        callForCooling,
-        currentTemp,
-        setTemp,
-        setSetTemp,
-        setCallForCooling,
-        fanSetting,
-        setFanStatus,
-        status,
-        setStatus,
-        mode,
-    }) => {
+const Home:React.FC<HomeProps> = () => {
+    const {mode, setTemp, setSetTemp, currentTemp, status, setStatus} = useGeneralStates();
+    const {callForCooling, setCallForCooling} = useCondenser();
+    const {fanSetting,  setFanStatus} = useFan()
+    const {isScheduleSet} = useSchedule();
 
     // State for time and period
     const [currentTime, setCurrentTime] = useState(getCurrentTime().time);
@@ -123,12 +111,20 @@ const Home:React.FC<HomeProps> = (
                 <div className={"info-right"}>
                     { mode != Mode.Off && (
                         <>
-                            <div className={"set-info"}>
-                                <p className={"small-text"}>Set</p>
-                                <p className={"small-text"}>To</p>
+                            <div className={`${isScheduleSet ? 'following-info-container' : 'info-container'}`}>
+                                <div className={"schedule-info"}>
+                                    { isScheduleSet && (
+                                        <p className={"small-text"}>Following Schedule</p>
+                                    )}
+                                </div>
+                                <div className={"set-info"}>
+                                    <p className={"small-text"}>Set</p>
+                                    <p className={"small-text"}>To</p>
+                                </div>
                             </div>
                             <div className={"set-controls"}>
-                                <ArrowButton className={"temp-button"} isDisabled={status === SystemStatus.Wait} clickEvent={handleUp} icon={TriangleUp} />
+                                <ArrowButton className={"temp-button"} isDisabled={status === SystemStatus.Wait}
+                                             clickEvent={handleUp} icon={TriangleUp}/>
                                 <div className={"temp-reading"}>
                                     <h2 className={"digital-text"}>{setTemp}</h2>
                                     <h3>&#176;</h3>

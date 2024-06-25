@@ -1,0 +1,24 @@
+.thermostat-button-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+}
+
+.thermostat-button{
+    background-color: transparent;
+    border: 1px solid black;
+    border-radius: 3px;
+    min-height: 31px;
+    width: 60px;
+    margin: 0 1% 0 1%;
+    padding: 5px 10px 10px 10px;
+}
+
+.thermostat-button:hover{
+    cursor: pointer;
+}
+
+.thermostat-header .selected{
+    text-decoration: underline;
+}

@@ -7,15 +7,16 @@ import TriangleLeft from '../../assets/icons/triangle-left.svg';
 import TriangleRight from '../../assets/icons/triangle-right.svg';
 import HelpContainer from '../../shared/help_container';
 import ControlButton from '../../components/buttons/control_button';
+import {useFan} from "../../contexts/fan_context.tsx";
+import {useCondenser} from "../../contexts/condenser_context.tsx";
 
 interface FanProps{
-    callForCooling: boolean;
-    fanSetting: FanSetting;
-    setFanSetting: (value:number) => void;
-    setFanStatus: (value:FanStatus) => void;
     setMenu: (value:Mode) => void;
 }
-const Fan = ({callForCooling, fanSetting, setFanSetting, setMenu, setFanStatus}:FanProps) => {
+const Fan = ({setMenu}:FanProps) => {
+
+    const {callForCooling} = useCondenser();
+    const {fanSetting, setFanSetting, setFanStatus} = useFan();
 
     const [selectedSetting, setSelectedSetting] = useState<FanSetting>(fanSetting);
     const handleNextClick = () =>{

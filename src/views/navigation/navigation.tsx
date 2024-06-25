@@ -8,8 +8,9 @@ interface NavigationProps{
     menu: number;
     status: SystemStatus;
     setMenu: (val:number) => void;
+    isNavigationActive: boolean;
 }
-const Navigation:React.FC<NavigationProps> = ({menu, setMenu}) => {
+const Navigation:React.FC<NavigationProps> = ({menu, setMenu, isNavigationActive}) => {
 
     const handleMenuClick = (val:number) => {
         setMenu(val);
@@ -18,10 +19,30 @@ const Navigation:React.FC<NavigationProps> = ({menu, setMenu}) => {
     return(
         <div className={"thermostat-header"}>
             <div className={"thermostat-button-container"}>
-                <ThermostatButton className={`thermostat-button ${menu === 0 ? 'selected' : ''}`} clickEvent={() => handleMenuClick(0)} text={"Home"} />
-                <ThermostatButton className={`thermostat-button ${menu === 1 ? 'selected' : ''}`} clickEvent={() => handleMenuClick(1)} text={"Fan"} />
-                <ThermostatButton className={`thermostat-button ${menu === 2 ? 'selected' : ''}`} clickEvent={() => handleMenuClick(2)} text={"System"} />
-                <ThermostatButton className={`thermostat-button ${menu === 3 ? 'selected' : ''}`} clickEvent={() => handleMenuClick(3)} text={"Menu"} />
+                <ThermostatButton
+                    className={`thermostat-button ${menu === 0 ? 'selected' : ''}`}
+                    clickEvent={() => handleMenuClick(0)}
+                    isNavigationActive={isNavigationActive}
+                    text={"Home"}
+                />
+                <ThermostatButton
+                    className={`thermostat-button ${menu === 1 ? 'selected' : ''}`}
+                    clickEvent={() => handleMenuClick(1)}
+                    isNavigationActive={isNavigationActive}
+                    text={"Fan"}
+                />
+                <ThermostatButton
+                    className={`thermostat-button ${menu === 2 ? 'selected' : ''}`}
+                    clickEvent={() => handleMenuClick(2)}
+                    isNavigationActive={isNavigationActive}
+                    text={"System"}
+                />
+                <ThermostatButton
+                    className={`thermostat-button ${menu === 3 ? 'selected' : ''}`}
+                    clickEvent={() => handleMenuClick(3)}
+                    isNavigationActive={isNavigationActive}
+                    text={"Menu"}
+                />
             </div>
         </div>
     )

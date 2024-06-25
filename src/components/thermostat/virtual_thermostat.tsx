@@ -1,4 +1,4 @@
-import {useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 
 import Navigation from '../../views/navigation/navigation';
 import Home from '../../views/home/home';
@@ -6,107 +6,135 @@ import Fan from '../../views/fan/fan';
 import System from '../../views/system/system';
 import LEDDisplay from '../../shared/led/LEDDisplay';
 
-
-import {Mode, FanStatus, FanSetting, SystemStatus} from '../../types/enums'
+import {FanSetting, FanStatus, Mode, SystemStatus} from '../../types/enums'
 import Menu from '../../views/menu/menu';
 import {checkStatus} from "../../utils/thermostatUtils.ts";
+import {useFan} from "../../contexts/fan_context.tsx";
+import {useCondenser} from "../../contexts/condenser_context.tsx";
+import {useGeneralStates} from "../../contexts/general_context.tsx";
 const Virtual_Thermostat = () => {
+    const {mode, currentTemp, setTemp, setCurrentTemp, status, setStatus} = useGeneralStates();
+    const {fanSetting, setFanStatus} = useFan();
+    const {callForCooling, setCallForCooling} = useCondenser();
     const [menu, setMenu] = useState<number>(0);
 
-    // Home states
-    const [currentTemp, setCurrentTemp] = useState<number>(72);
-    const [setTemp, setSetTemp] = useState<number>(73);
+    // Disable navigation state
+    const [isNavigationActive, setIsNavigationActive] = useState<boolean>(true);
 
-    // Fan states
-    const [fanSetting, setFanSetting] = useState<FanSetting>(FanSetting.Auto);
-
-    // Fan status
-    const [fanStatus, setFanStatus] = useState<FanStatus>(FanStatus.Off);
-
-    // Mode states
-    const [mode, setMode] = useState<Mode>(Mode.Off);
-
-    // General states
-    const [callForCooling, setCallForCooling] = useState<boolean>(false);
-    const [status, setStatus] = useState<SystemStatus>(SystemStatus.Off);
+    const randomInt = (min: number, max: number): number => {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
 
     // Artificially change the current temp to simulate real change
     useEffect(() => {
         let tempChange: NodeJS.Timeout;
 
-        // If cool mode and current temp is greater than set temp, change the current temp - 1
-        if (mode === Mode.Cool && currentTemp > setTemp) {
-            tempChange = setInterval(() => {
-                setCurrentTemp(prevTemp => prevTemp - 1);
-                clearInterval(tempChange);
-            }, 10000);
-        }
+        const adjustTemperature = () => {
+            if (mode === Mode.Cool && currentTemp > setTemp) {
+                tempChange = setInterval(() => {
+                    setCurrentTemp((prevTemp: number) => prevTemp - 1);
+                }, 10000);
+            } else if (mode === Mode.Heat && currentTemp < setTemp) {
+                tempChange = setInterval(() => {
+                    setCurrentTemp((prevTemp: number) => prevTemp + 1);
+                }, 10000);
+            } else if (mode === Mode.Auto) {
+                if (currentTemp < setTemp && status === SystemStatus.Heat) {
+                    tempChange = setInterval(() => {
+                        setCurrentTemp((prevTemp: number) => prevTemp + 1);
+                    }, 10000);
+                } else if (currentTemp > setTemp && status === SystemStatus.Cool) {
+                    tempChange = setInterval(() => {
+                        setCurrentTemp((prevTemp: number) => prevTemp - 1);
+                    }, 10000);
+                } else{
+                    tempChange = setInterval(() => {
+                        setCurrentTemp((prevTemp: number) => prevTemp - 2);
+                    }, 10000);
+                }
+            }
+        };
 
-        // If heat mode and current temp is less than set temp, change the current temp + 1
-        if (mode === Mode.Heat && currentTemp < setTemp) {
-            tempChange = setInterval(() => {
-                setCurrentTemp(prevTemp => prevTemp + 1);
-                clearInterval(tempChange);
-            }, 10000);
-        }
+        adjustTemperature();
 
         checkStatus(mode, currentTemp, setTemp, status, fanSetting, setStatus, setFanStatus, setCallForCooling);
 
         return () => clearInterval(tempChange);
-    }, [setTemp, currentTemp, mode, status, fanSetting]);
+    }, [mode, currentTemp, setTemp, status]);
+
+    // For auto mode only, constantly check current temp to determine when heating or cooling is required
+    useEffect(() => {
+        let checkTime: NodeJS.Timeout;
+
+        if (mode === Mode.Auto) {
+            checkTime = setInterval(() => {
+                if (currentTemp < setTemp && status === SystemStatus.AtTemp) {
+                    if (fanSetting === FanSetting.On) {
+                        setStatus(SystemStatus.Wait);
+                        setTimeout(() => {
+                            setStatus(SystemStatus.Heat);
+                            setCallForCooling(true);
+                        }, 5000);
+                    } else {
+                        setStatus(SystemStatus.Wait);
+                        setFanStatus(FanStatus.Wait);
+                        setTimeout(() => {
+                            setFanStatus(FanStatus.On);
+                            setStatus(SystemStatus.Heat);
+                            setCallForCooling(true);
+                        }, 5000);
+                    }
+                }
+
+                if (currentTemp > setTemp && status === SystemStatus.AtTemp) {
+                    if (fanSetting === FanSetting.On) {
+                        setStatus(SystemStatus.Wait);
+                        setTimeout(() => {
+                            setStatus(SystemStatus.Cool);
+                            setCallForCooling(true);
+                        }, 5000);
+                    } else {
+                        setStatus(SystemStatus.Wait);
+                        setFanStatus(FanStatus.Wait);
+                        setTimeout(() => {
+                            setFanStatus(FanStatus.On);
+                            setStatus(SystemStatus.Cool);
+                            setCallForCooling(true);
+                        }, 5000);
+                    }
+                }
+            }, 5000);
+        }
+
+        return () => clearInterval(checkTime);
+    }, [mode, currentTemp, setTemp, status, fanSetting, setFanStatus, setCallForCooling]);
 
     return (
         <>
             <div className={"thermostat-body"}>
                 <div className={"thermostat-content"}>
-                    <Navigation menu={menu} status={status} setMenu={setMenu}/>
+                    <Navigation menu={menu} status={status} setMenu={setMenu} isNavigationActive={isNavigationActive}/>
                     {menu === 0 && (
-                        <Home
-                            callForCooling={callForCooling}
-                            setCallForCooling={setCallForCooling}
-                            currentTemp={currentTemp}
-                            setTemp={setTemp}
-                            setSetTemp={setSetTemp}
-                            fanSetting={fanSetting}
-                            setFanStatus={setFanStatus}
-                            status={status}
-                            setStatus={setStatus}
-                            mode={mode}
-                        />
+                        <Home/>
                     )}
                     {menu === 1 && (
                         <Fan
-                            callForCooling={callForCooling}
-                            fanSetting={fanSetting}
-                            setFanSetting={setFanSetting}
-                            setFanStatus={setFanStatus}
                             setMenu={setMenu}
                         />
                     )}
                     {menu === 2 && (
-                        <System
-                            currentTemp={currentTemp}
-                            setTemp={setTemp}
-                            fanSetting={fanSetting}
-                            setFanStatus={setFanStatus}
-                            mode={mode}
-                            setMode={setMode}
-                            setMenu={setMenu}
-                            callForCooling={callForCooling}
-                            setCallForCooling={setCallForCooling}
-                            setStatus={setStatus}
-                        />
+                        <System setMenu={setMenu} />
                     )}
                     {menu === 3 && (
                         <Menu
-
+                            setIsNavigationActive={setIsNavigationActive}
                         />
                     )}
                 </div>
             </div>
             <div className={"led-displays"}>
-                <LEDDisplay label="Condenser Status" mode={mode} status={status} isCooling={callForCooling}/>
-                <LEDDisplay label="Fan Status" mode={mode} status={fanStatus} fanStatus={fanStatus}/>
+                <LEDDisplay label="Condenser Status" isCooling={callForCooling} />
+                <LEDDisplay label="Fan Status" />
             </div>
         </>
 
