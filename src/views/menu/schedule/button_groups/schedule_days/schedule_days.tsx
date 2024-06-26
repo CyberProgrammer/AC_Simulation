@@ -12,7 +12,7 @@ const ScheduleDaysControls = () => {
         );
     };
 
-    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
     return (
         <div id="schedule-days-row">

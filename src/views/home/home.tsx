@@ -19,11 +19,15 @@ const Home:React.FC<HomeProps> = () => {
     const {mode, setTemp, setSetTemp, currentTemp, status, setStatus} = useGeneralStates();
     const {callForCooling, setCallForCooling} = useCondenser();
     const {fanSetting,  setFanStatus} = useFan()
-    const {isScheduleSet} = useSchedule();
+    const {isFollowingSchedule, isScheduleSet, checkSchedule} = useSchedule();
 
     // State for time and period
     const [currentTime, setCurrentTime] = useState(getCurrentTime().time);
     const [isAM, setIsAM] = useState(getCurrentTime().isAM);
+
+    useEffect(() => {
+        checkSchedule({setSetTemp})
+    }, [currentTime]);
 
     /*
     Change status is responsible for keeping the condenser and fan status
@@ -82,7 +86,7 @@ const Home:React.FC<HomeProps> = () => {
             console.log("Checking time...");
             setCurrentTime(time);
             setIsAM(isAM);
-        }, 10000); // Update every 10 seconds
+        }, 20000); // Update every 20 seconds
 
         return () => clearInterval(interval);
     }, []);
@@ -111,9 +115,9 @@ const Home:React.FC<HomeProps> = () => {
                 <div className={"info-right"}>
                     { mode != Mode.Off && (
                         <>
-                            <div className={`${isScheduleSet ? 'following-info-container' : 'info-container'}`}>
+                            <div className={`${isScheduleSet && isFollowingSchedule ? 'following-info-container' : 'info-container'}`}>
                                 <div className={"schedule-info"}>
-                                    { isScheduleSet && (
+                                    { isScheduleSet && isFollowingSchedule && (
                                         <p className={"small-text"}>Following Schedule</p>
                                     )}
                                 </div>

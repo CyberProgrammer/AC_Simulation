@@ -15,6 +15,7 @@ import { handleCoolMode } from '../../utils/system_handlers/handleCoolMode';
 import { handleHeatMode } from '../../utils/system_handlers/handleHeatMode';
 import { handleAutoMode } from '../../utils/system_handlers/handleAutoMode';
 import SystemOption from "../../components/option/system_option.tsx";
+import {useSchedule} from "../../contexts/schedule_context.tsx";
 
 interface SystemParams{
     setMenu: (menu: number) => void;
@@ -24,17 +25,21 @@ const System = ({setMenu}:SystemParams) => {
     const {currentTemp, setTemp, mode, setMode, setStatus} = useGeneralStates();
     const {callForCooling, setCallForCooling} = useCondenser();
     const {fanSetting, setFanStatus} = useFan();
+    const {isScheduleSet, isFollowingSchedule} = useSchedule();
     const [selectedSetting, setSelectedSetting] = useState<Mode>(mode);
     const handleNextClick = () =>{
-        if(selectedSetting < Mode.Auto)
+        if(selectedSetting < Mode.Auto && !isFollowingSchedule)
             setSelectedSetting(selectedSetting+1);
     }
     const handlePrevClick = () =>{
-        if(selectedSetting != Mode.Heat)
+        if(selectedSetting != Mode.Heat && !isFollowingSchedule)
             setSelectedSetting(selectedSetting-1);
     }
     const handleDoneClick = () => {
         console.log("Done click mode:", selectedSetting);
+        if(isFollowingSchedule || isScheduleSet){
+            return;
+        }
 
         switch (selectedSetting) {
             case Mode.Off:

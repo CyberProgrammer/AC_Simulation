@@ -7,6 +7,16 @@ import ArrowButton from "../../../../../components/buttons/arrow_button.tsx";
 import TriangleUp from "../../../../../assets/icons/triangle-up.svg";
 import TriangleDown from "../../../../../assets/icons/triangle-down.svg";
 import {useSchedule} from "../../../../../contexts/schedule_context.tsx";
+import {useGeneralStates} from "../../../../../contexts/general_context.tsx";
+import {Mode} from "../../../../../types/enums.ts";
+import {handleAutoMode} from "../../../../../utils/system_handlers/handleAutoMode.ts";
+import {useFan} from "../../../../../contexts/fan_context.tsx";
+import {useCondenser} from "../../../../../contexts/condenser_context.tsx";
+import {formatTime} from "../../../../../utils/schedule_handlers/formatTIme.ts";
+import {handleTimeDown} from "../../../../../utils/schedule_handlers/handleTimeDown.ts";
+import {handleTimeUp} from "../../../../../utils/schedule_handlers/handleTimeUp.ts";
+import {handleTempUp} from "../../../../../utils/schedule_handlers/handleTempUp.ts";
+import {handleTempDown} from "../../../../../utils/schedule_handlers/handleTempDown.ts";
 
 interface CreateScheduleParams{
     setView: React.Dispatch<React.SetStateAction<number>>;
@@ -22,38 +32,15 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
         setSleepTime,
         sleepTemp ,
         setSleepTemp,
-        setScheduleSet
+        setScheduleSet,
     } = useSchedule()
 
     const [isWakeSet, setIsWakeSet] = useState<boolean>(false);
 
-    const handleTimeUp = () => {
-        if(!isWakeSet)
-            setWakeTime(new Date(wakeTime.getTime() + 900000)); // Increment by 15 minutes
-        else
-            setSleepTime(new Date(sleepTime.getTime() + 900000));
-    }
-
-    const handleTimeDown = () => {
-        if(!isWakeSet)
-            setWakeTime(new Date(wakeTime.getTime() - 900000)); // Decrement by 15 minutes
-        else
-            setSleepTime(new Date(sleepTime.getTime() - 900000)); // Decrement by 15 minutes
-    }
-
-    const handleTempUp = () => {
-        if(!isWakeSet)
-            setWakeTemp(wakeTemp+1);
-        else
-            setSleepTemp(sleepTemp+1);
-    }
-
-    const handleTempDown = () => {
-        if(!isWakeSet)
-            setWakeTemp(wakeTemp-1);
-        else
-            setSleepTemp(sleepTemp-1);
-    }
+    const {checkSchedule, scheduleDays} = useSchedule();
+    const {setCallForCooling} = useCondenser();
+    const {fanSetting, setFanStatus} = useFan();
+    const {setMode, currentTemp, setTemp, setStatus, setSetTemp} = useGeneralStates();
     const handleButtonClick = (id:number) => {
         switch (id){
             case 1:
@@ -65,21 +52,24 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
                 setIsNavigationActive(true);
                 setView(-1);
                 break;
-            case 3:
-                // Create schedule
+            case 3: // Create schedule
+                // Set and follow schedule
                 setScheduleSet(true);
+
+                if(scheduleDays.includes(new Date().getDay())){
+                    // Switch to auto mode and handle transition
+                    setMode(Mode.Auto);
+                    handleAutoMode({currentTemp, setTemp, fanSetting, setStatus, setCallForCooling, setFanStatus,});
+
+                    // Switch the set temp to follow the schedule
+                    checkSchedule({setSetTemp});
+                }
+
+                // Restore navigation and switch back to home
                 setIsNavigationActive(true);
                 setView(-1);
                 break;
         }
-    }
-    const formatTime = (date: Date) => {
-        const hours = date.getHours();
-        const minutes = date.getMinutes();
-        const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
-        const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-        const amPm = hours >= 12 ? 'pm' : 'am';
-        return `${formattedHours}:${formattedMinutes} ${amPm}`;
     }
 
     return (
@@ -114,18 +104,32 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
             <div className={"schedule-time-controls"}>
                 <div className={"schedule-time-left"}>
                     <div className={"schedule-control"}>
-                        <ArrowButton className={"temp-button"} isDisabled={false} clickEvent={handleTimeUp} icon={TriangleUp} />
+                        <ArrowButton className={"temp-button"}
+                                     isDisabled={false}
+                                     clickEvent={() => handleTimeUp({ isWakeSet, wakeTime, setWakeTime, sleepTime, setSleepTime })}
+                                     icon={TriangleUp}
+                        />
                         <h4 className={"time digital-text"}>{formatTime(!isWakeSet ? wakeTime : sleepTime)}</h4>
-                        <ArrowButton className={"temp-button"} isDisabled={false} clickEvent={handleTimeDown} icon={TriangleDown} />
+                        <ArrowButton className={"temp-button"}
+                                     isDisabled={false}
+                                     clickEvent={() => handleTimeDown({ isWakeSet, wakeTime, setWakeTime, sleepTime, setSleepTime })}
+                                     icon={TriangleDown}
+                        />
                     </div>
                 </div>
                 <div className={"schedule-time-right"}>
                     <div className={"schedule-control"}>
-                        <ArrowButton className={"temp-button"} isDisabled={false} clickEvent={handleTempUp}
-                                     icon={TriangleUp}/>
+                        <ArrowButton className={"temp-button"}
+                                     isDisabled={false}
+                                     clickEvent={() => handleTempUp({isWakeSet, wakeTemp, setWakeTemp, sleepTemp, setSleepTemp})}
+                                     icon={TriangleUp}
+                        />
                         <h2 className={"temp digital-text"}>{!isWakeSet ? wakeTemp : sleepTemp}</h2>
-                        <ArrowButton className={"temp-button"} isDisabled={false} clickEvent={handleTempDown}
-                                     icon={TriangleDown}/>
+                        <ArrowButton className={"temp-button"}
+                                     isDisabled={false}
+                                     clickEvent={() => handleTempDown({isWakeSet, wakeTemp, setWakeTemp, sleepTemp, setSleepTemp})}
+                                     icon={TriangleDown}
+                        />
                     </div>
                 </div>
             </div>

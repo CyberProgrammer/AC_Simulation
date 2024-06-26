@@ -14,15 +14,21 @@ interface ScheduleContextProps {
     isScheduleSet: boolean;
     setScheduleSet:  React.Dispatch<React.SetStateAction<boolean>>;
     removeSchedule: () => void;
+    isFollowingSchedule: boolean;
+    setIsFollowingSchedule: React.Dispatch<React.SetStateAction<boolean>>;
+    checkSchedule: ({ setSetTemp }: CheckScheduleParams) => void;
 }
 
 interface ScheduleProviderProps {
     children: ReactNode;
 }
 
+interface CheckScheduleParams{
+    setSetTemp: React.Dispatch<React.SetStateAction<number>>;
+}
+
 // Create the context
 const ScheduleContext = createContext<ScheduleContextProps | undefined>(undefined);
-
 export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({ children }) => {
     const initializeSchedule = () => {
         const initialWakeTime = new Date();
@@ -34,12 +40,34 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({ children }) 
         initialSleepTime.setHours(18, 0, 0, 0);
         setSleepTime(initialSleepTime);
         setSleepTemp(80);
+
+        setScheduleDays([]);
     }
 
     const removeSchedule = () => {
         initializeSchedule();
         setScheduleSet(false);
+        setIsFollowingSchedule(false);
     }
+    const checkSchedule = ({ setSetTemp }: CheckScheduleParams) => {
+        const currentTime = new Date();
+
+        if(!scheduleDays.includes(currentTime.getDay())){
+            setIsFollowingSchedule(false);
+            return;
+        }
+
+        setIsFollowingSchedule(true);
+        if(currentTime >= wakeTime && currentTime < sleepTime){
+            console.log("Wake schedule...");
+            console.log("Wake time:" , wakeTime);
+            setSetTemp(wakeTemp);
+        } else if(currentTime >= sleepTime){
+            console.log("Sleep schedule...");
+            console.log("Wake time:" , sleepTime);
+            setSetTemp(sleepTemp);
+        }
+    };
 
     // Wake time
     const [wakeTime, setWakeTime] = useState<Date>(new Date());
@@ -61,6 +89,9 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({ children }) 
     // Boolean to check if schedule is set
     const [isScheduleSet, setScheduleSet] = useState<boolean>(false);
 
+    // Boolean to check if following schedule
+    const [isFollowingSchedule, setIsFollowingSchedule] = useState<boolean>(false);
+
     return (
         <ScheduleContext.Provider value={{
             scheduleDays,
@@ -75,7 +106,10 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({ children }) 
             setSleepTemp,
             isScheduleSet,
             setScheduleSet,
-            removeSchedule
+            removeSchedule,
+            isFollowingSchedule,
+            setIsFollowingSchedule,
+            checkSchedule
         }}>
             {children}
         </ScheduleContext.Provider>

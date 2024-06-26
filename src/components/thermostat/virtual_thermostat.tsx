@@ -17,14 +17,11 @@ const Virtual_Thermostat = () => {
     const {mode, currentTemp, setTemp, setCurrentTemp, status, setStatus} = useGeneralStates();
     const {fanSetting, setFanStatus} = useFan();
     const {callForCooling, setCallForCooling} = useCondenser();
+
     const [menu, setMenu] = useState<number>(0);
 
     // Disable navigation state
     const [isNavigationActive, setIsNavigationActive] = useState<boolean>(true);
-
-    const randomInt = (min: number, max: number): number => {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    };
 
     // Artificially change the current temp to simulate real change
     useEffect(() => {
@@ -48,7 +45,7 @@ const Virtual_Thermostat = () => {
                     tempChange = setInterval(() => {
                         setCurrentTemp((prevTemp: number) => prevTemp - 1);
                     }, 10000);
-                } else{
+                } else {
                     tempChange = setInterval(() => {
                         setCurrentTemp((prevTemp: number) => prevTemp - 2);
                     }, 10000);
