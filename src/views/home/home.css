@@ -23,10 +23,11 @@
 
 .info-right{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 20%;
+    width: 25%;
+    margin-bottom: 35px;
 }
 
 .thermostat-info{
@@ -46,15 +47,8 @@
     flex-direction: column;
     justify-content: center;
     height: 90px;
+    text-align: center;
     margin-bottom: 5px;
-}
-
-.following-info-container{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 90px;
-    margin-bottom: 35px;
 }
 
 .set-info{
@@ -65,14 +59,17 @@
 }
 
 .schedule-info{
+    min-width: 50px;
     margin-right: 5px;
 }
 
 .set-controls{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
+    width: 100px;
+    margin-right: 24px;
 }
 
 .temp-button{
@@ -93,6 +90,22 @@
     justify-content: space-between;
     margin: 0 auto 0 auto;
 }
+
+/* Override / Resume Schedule */
+.update-schedule-status{
+    display: flex;
+    margin: 2% 0 0 2%;
+}
+
+.schedule-status{
+    width: 80px !important;
+    height: 35px !important;
+}
+
+.hidden-text{
+    color: transparent;
+}
+
 /* Led Displays */
 .led-displays{
     display: flex;

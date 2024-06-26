@@ -37,7 +37,7 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
 
     const [isWakeSet, setIsWakeSet] = useState<boolean>(false);
 
-    const {checkSchedule, scheduleDays} = useSchedule();
+    const {checkSchedule, scheduleDays, setIsFollowingSchedule} = useSchedule();
     const {setCallForCooling} = useCondenser();
     const {fanSetting, setFanStatus} = useFan();
     const {setMode, currentTemp, setTemp, setStatus, setSetTemp} = useGeneralStates();
@@ -60,6 +60,8 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
                     // Switch to auto mode and handle transition
                     setMode(Mode.Auto);
                     handleAutoMode({currentTemp, setTemp, fanSetting, setStatus, setCallForCooling, setFanStatus,});
+
+                    setIsFollowingSchedule(true);
 
                     // Switch the set temp to follow the schedule
                     checkSchedule({setSetTemp});

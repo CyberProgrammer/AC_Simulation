@@ -12,14 +12,15 @@ import './home.css';
 import {useSchedule} from "../../contexts/schedule_context.tsx";
 import {useGeneralStates} from "../../contexts/general_context.tsx";
 import {useCondenser} from "../../contexts/condenser_context.tsx";
+import ControlButton from "../../components/buttons/control_button.tsx";
 
 interface HomeProps{
 }
 const Home:React.FC<HomeProps> = () => {
-    const {mode, setTemp, setSetTemp, currentTemp, status, setStatus} = useGeneralStates();
+    const {mode, setMode, setTemp, setSetTemp, currentTemp, status, setStatus} = useGeneralStates();
     const {callForCooling, setCallForCooling} = useCondenser();
     const {fanSetting,  setFanStatus} = useFan()
-    const {isFollowingSchedule, isScheduleSet, checkSchedule} = useSchedule();
+    const {isFollowingSchedule, setIsFollowingSchedule, isScheduleSet, checkSchedule} = useSchedule();
 
     // State for time and period
     const [currentTime, setCurrentTime] = useState(getCurrentTime().time);
@@ -91,11 +92,27 @@ const Home:React.FC<HomeProps> = () => {
         return () => clearInterval(interval);
     }, []);
 
+    const handleScheduleStatusChange = () => {
+        console.log("Handeling status...");
+
+        // Set the is following schedule to the opposite
+        !isFollowingSchedule ? setMode(Mode.Auto) : null;
+        !isFollowingSchedule ? checkSchedule({setSetTemp}) : null;
+        isFollowingSchedule ? setIsFollowingSchedule(false) : setIsFollowingSchedule(true);
+
+    }
+
     return(
         <>
             <div className={"thermostat-textbox"}>
                 <p className={"h3 dotted-text"}>System: {SystemStatus[status] === "AtTemp" ? "At Temp" : SystemStatus[status]}</p>
                 <p className={"h3 dotted-text"}>Outdoor: 80&#176;/55%</p>
+                { isScheduleSet && (
+                    <div className={"update-schedule-status"}>
+                        <ControlButton buttonClass={"schedule-status"} clickEvent={handleScheduleStatusChange}
+                                       textClass={""} text={isFollowingSchedule ? "Override Schedule" : "Resume Schedule"}/>
+                    </div>
+                )}
             </div>
             <div className={"thermostat-info"}>
                 <div className={"info-left"}>
@@ -115,25 +132,28 @@ const Home:React.FC<HomeProps> = () => {
                 <div className={"info-right"}>
                     { mode != Mode.Off && (
                         <>
-                            <div className={`${isScheduleSet && isFollowingSchedule ? 'following-info-container' : 'info-container'}`}>
+                            <div className={'info-container'}>
                                 <div className={"schedule-info"}>
-                                    { isScheduleSet && isFollowingSchedule && (
-                                        <p className={"small-text"}>Following Schedule</p>
-                                    )}
+                                    <p className={`small-text ${!isFollowingSchedule ? "hidden-text" : ""}`}>
+                                        Following Schedule
+                                    </p>
                                 </div>
+                            </div>
+                            <div className={"set-controls"}>
                                 <div className={"set-info"}>
                                     <p className={"small-text"}>Set</p>
                                     <p className={"small-text"}>To</p>
                                 </div>
-                            </div>
-                            <div className={"set-controls"}>
-                                <ArrowButton className={"temp-button"} isDisabled={status === SystemStatus.Wait}
-                                             clickEvent={handleUp} icon={TriangleUp}/>
-                                <div className={"temp-reading"}>
-                                    <h2 className={"digital-text"}>{setTemp}</h2>
-                                    <h3>&#176;</h3>
+                                <div className={"controls"}>
+                                    <ArrowButton className={"temp-button"} isDisabled={status === SystemStatus.Wait || isFollowingSchedule}
+                                                 clickEvent={handleUp} icon={TriangleUp}/>
+                                    <div className={"temp-reading"}>
+                                        <h2 className={"digital-text"}>{setTemp}</h2>
+                                        <h3>&#176;</h3>
+                                    </div>
+                                    <ArrowButton className={"temp-button"} isDisabled={status === SystemStatus.Wait || isFollowingSchedule}
+                                                 clickEvent={handleDown} icon={TriangleDown}/>
                                 </div>
-                                <ArrowButton className={"temp-button"} isDisabled={status === SystemStatus.Wait} clickEvent={handleDown} icon={TriangleDown} />
                             </div>
                         </>
                     )}

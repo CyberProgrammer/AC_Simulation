@@ -57,12 +57,11 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({ children }) 
             return;
         }
 
-        setIsFollowingSchedule(true);
-        if(currentTime >= wakeTime && currentTime < sleepTime){
+        if(currentTime >= wakeTime && currentTime < sleepTime && isFollowingSchedule){
             console.log("Wake schedule...");
             console.log("Wake time:" , wakeTime);
             setSetTemp(wakeTemp);
-        } else if(currentTime >= sleepTime){
+        } else if(currentTime >= sleepTime && isFollowingSchedule){
             console.log("Sleep schedule...");
             console.log("Wake time:" , sleepTime);
             setSetTemp(sleepTemp);

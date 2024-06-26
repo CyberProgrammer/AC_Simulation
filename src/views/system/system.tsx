@@ -25,7 +25,7 @@ const System = ({setMenu}:SystemParams) => {
     const {currentTemp, setTemp, mode, setMode, setStatus} = useGeneralStates();
     const {callForCooling, setCallForCooling} = useCondenser();
     const {fanSetting, setFanStatus} = useFan();
-    const {isScheduleSet, isFollowingSchedule} = useSchedule();
+    const {isFollowingSchedule} = useSchedule();
     const [selectedSetting, setSelectedSetting] = useState<Mode>(mode);
     const handleNextClick = () =>{
         if(selectedSetting < Mode.Auto && !isFollowingSchedule)
@@ -37,7 +37,14 @@ const System = ({setMenu}:SystemParams) => {
     }
     const handleDoneClick = () => {
         console.log("Done click mode:", selectedSetting);
-        if(isFollowingSchedule || isScheduleSet){
+        if(isFollowingSchedule){
+            return;
+        }
+
+        // If the selection is the current set mode, avoid transitioning to the same mode
+        if(selectedSetting === mode){
+            setMode(selectedSetting);
+            setMenu(0);
             return;
         }
 
