@@ -97,10 +97,19 @@
 .led-displays{
     display: flex;
     flex-direction: column;
-    width: 40%;
     margin: auto;
+    max-width: 550px;
+    width: 550px;
 }
 
+.led-display-container{
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    border-radius: 5px;
+    padding: 4% 25.5% 4% 25.5%;
+    background-color: #D5D6D8;
+}
 .display img{
     width: 25px;
 }

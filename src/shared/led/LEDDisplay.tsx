@@ -23,15 +23,11 @@ const LEDDisplay: React.FC<LEDDisplayProps> = ({ label, isCooling = false }) => 
         let interval: NodeJS.Timeout;
 
         if ((label === "Fan Status" && fanStatus === FanStatus.Wait) || (label === "Condenser Status" && status === SystemStatus.Wait)) {
-            console.log("Here");
             interval = setInterval(() => {
                 setCurrentSrc(prevSrc => (prevSrc === YellowLed ? DarkYellowLed : YellowLed));
             }, 500); // Toggle every half second
         } else {
             // Set the correct static image
-            console.log("Here 2 (", label, ")");
-            console.log("Status:", status);
-
             if(label === "Fan Status"){
                 if(fanStatus === FanStatus.On){
                     setCurrentSrc(GreenLed);

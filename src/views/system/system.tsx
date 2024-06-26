@@ -5,10 +5,16 @@ import ControlButton from '../../components/buttons/control_button';
 import HelpContainer from '../../shared/help_container';
 
 import './system.css';
-import {FanSetting, FanStatus, Mode, SystemStatus} from '../../types/enums'
+import {Mode} from '../../types/enums'
 import {useFan} from "../../contexts/fan_context.tsx";
 import {useGeneralStates} from "../../contexts/general_context.tsx";
 import {useCondenser} from "../../contexts/condenser_context.tsx";
+
+import { handleOffMode } from '../../utils/system_handlers/handleOffMode.ts';
+import { handleCoolMode } from '../../utils/system_handlers/handleCoolMode';
+import { handleHeatMode } from '../../utils/system_handlers/handleHeatMode';
+import { handleAutoMode } from '../../utils/system_handlers/handleAutoMode';
+import SystemOption from "../../components/option/system_option.tsx";
 
 interface SystemParams{
     setMenu: (menu: number) => void;
@@ -18,7 +24,6 @@ const System = ({setMenu}:SystemParams) => {
     const {currentTemp, setTemp, mode, setMode, setStatus} = useGeneralStates();
     const {callForCooling, setCallForCooling} = useCondenser();
     const {fanSetting, setFanStatus} = useFan();
-
     const [selectedSetting, setSelectedSetting] = useState<Mode>(mode);
     const handleNextClick = () =>{
         if(selectedSetting < Mode.Auto)
@@ -28,168 +33,27 @@ const System = ({setMenu}:SystemParams) => {
         if(selectedSetting != Mode.Heat)
             setSelectedSetting(selectedSetting-1);
     }
-
     const handleDoneClick = () => {
-        console.log("Done click mode:" , selectedSetting as Mode)
-        // If setting to off
-        if(selectedSetting === Mode.Off){
-            console.log("Setting to off...");
-            // If cooling and fan is anything but auto, only turn off condenser, set system status off
-            if(callForCooling && fanSetting != FanSetting.Auto){
-                setStatus(SystemStatus.Wait);
-                setTimeout(() => {
-                    setStatus(SystemStatus.Off);
-                    setCallForCooling(false);
-                }, 5000)
-            } // If cooling and fan is auto, turn off consender and fan, set system status off
-            else if(callForCooling && fanSetting === FanSetting.Auto){
-                setStatus(SystemStatus.Wait);
-                setFanStatus(FanStatus.Wait);
-                setTimeout(() => {
-                    setStatus(SystemStatus.Off);
-                    setCallForCooling(false);
-                    setFanStatus(FanStatus.Off);
-                }, 5000)
-            } // Else just turn system status to off
-            else {
-                setTimeout(() => {
-                    setStatus(SystemStatus.Off);
-                }, 1000)
-            }
+        console.log("Done click mode:", selectedSetting);
+
+        switch (selectedSetting) {
+            case Mode.Off:
+                handleOffMode({callForCooling, fanSetting, setStatus, setCallForCooling, setFanStatus,});
+                break;
+            case Mode.Cool:
+                handleCoolMode({setTemp, currentTemp, fanSetting, callForCooling, setStatus, setCallForCooling, setFanStatus,});
+                break;
+            case Mode.Heat:
+                handleHeatMode({setTemp, currentTemp, fanSetting, callForCooling, setStatus, setCallForCooling, setFanStatus,});
+                break;
+            case Mode.Auto:
+                handleAutoMode({currentTemp, setTemp, fanSetting, setStatus, setCallForCooling, setFanStatus,});
+                break;
         }
 
-        // If setting to cool
-        if(selectedSetting === Mode.Cool){
-            console.log("Setting to cool...");
-            // If the fan is already on and set temp < current temp, turn the condenser on
-            if(fanSetting === FanSetting.On && setTemp < currentTemp){
-                console.log("Cool 1")
-                setStatus(SystemStatus.Wait);
-                setTimeout(() => {
-                    setCallForCooling(true);
-                    setStatus(SystemStatus.Cool);
-                }, 5000)
-            }
-            // If the fan is on auto and set temp < current temp, turn the condenser and fan on
-            if(fanSetting === FanSetting.Auto && setTemp < currentTemp){
-                console.log("Cool 2")
-                setStatus(SystemStatus.Wait);
-                setFanStatus(FanStatus.Wait);
-                setTimeout(() => {
-                    setCallForCooling(true);
-                    setFanStatus(FanStatus.On);
-                    setStatus(SystemStatus.Cool);
-                }, 5000)
-            }
-            // If set temp > current temp, only set status to at temp
-            if(setTemp > currentTemp){
-                console.log("Cool 3")
-                if(callForCooling){
-                    setStatus(SystemStatus.Wait);
-                    setFanStatus(FanStatus.Wait);
-                    setTimeout(() => {
-                        setCallForCooling(false);
-                        setFanStatus(FanStatus.Off)
-                        setStatus(SystemStatus.AtTemp);
-                    }, 5000)
-                }
-                else{
-                    setTimeout(() => {
-                        setStatus(SystemStatus.AtTemp);
-                    }, 1000)
-                }
-            }
-        }
-
-        // If setting to heat
-        if(selectedSetting === Mode.Heat){
-            console.log("Setting to heat...");
-
-            // If fan is on and set temp > current temp, turn the condenser on
-            if(fanSetting === FanSetting.On && setTemp > currentTemp){
-                setStatus(SystemStatus.Wait);
-                setTimeout(() => {
-                    setCallForCooling(true);
-                    setStatus(SystemStatus.Heat);
-                }, 5000)
-            }
-            // If fan is auto and set temp > current temp, turn fan and condenser on
-            if(fanSetting === FanSetting.Auto && setTemp > currentTemp){
-                setStatus(SystemStatus.Wait);
-                setFanStatus(FanStatus.Wait);
-                setTimeout(() => {
-                    setCallForCooling(true);
-                    setFanStatus(FanStatus.On);
-                    setStatus(SystemStatus.Heat);
-                }, 5000)
-            }
-            // If set temp < current temp, set status at temp
-            if(setTemp < currentTemp){
-                if(callForCooling){
-                    setStatus(SystemStatus.Wait);
-                    setFanStatus(FanStatus.Wait);
-                    setTimeout(() => {
-                        setCallForCooling(false);
-                        setFanStatus(FanStatus.Off);
-                        setStatus(SystemStatus.AtTemp);
-                    }, 5000)
-                }
-                else{
-                    setTimeout(() => {
-                        setStatus(SystemStatus.AtTemp);
-                    }, 1000)
-                }
-            }
-        }
-
-        // If set to auto
-        if(selectedSetting === Mode.Auto){
-            console.log("Setting to auto...");
-
-            // If current temp > set temp, turn on heat
-            if(currentTemp > setTemp){
-                // If fan is set to on, only turn on condenser
-                if(fanSetting === FanSetting.On){
-                    setStatus(SystemStatus.Wait);
-                    setTimeout(() => {
-                        setStatus(SystemStatus.Cool);
-                        setCallForCooling(true);
-                    }, 5000)
-                } else{
-                    setStatus(SystemStatus.Wait);
-                    setFanStatus(FanStatus.Wait);
-                    setTimeout(() => {
-                        setFanStatus(FanStatus.On);
-                        setStatus(SystemStatus.Cool);
-                        setCallForCooling(true);
-                    }, 5000)
-                }
-            }
-
-            // If current temp < set temp, turn on cool
-            if(currentTemp < setTemp){
-                // If fan is set to on, only turn on condenser
-                if(fanSetting === FanSetting.On){
-                    setStatus(SystemStatus.Wait);
-                    setTimeout(() => {
-                        setStatus(SystemStatus.Heat);
-                        setCallForCooling(true);
-                    }, 5000)
-                } else{
-                    setStatus(SystemStatus.Wait);
-                    setFanStatus(FanStatus.Wait);
-                    setTimeout(() => {
-                        setFanStatus(FanStatus.On);
-                        setStatus(SystemStatus.Heat);
-                        setCallForCooling(true);
-                    }, 5000)
-                }
-            }
-        }
-
-        setMode(selectedSetting as Mode);
+        setMode(selectedSetting);
         setMenu(0);
-    }
+    };
 
     return(
         <>
@@ -197,10 +61,10 @@ const System = ({setMenu}:SystemParams) => {
                 <HelpContainer />
                 <div className={"system-settings"}>
                     <div className={"system-options"}>
-                        <p className={`system-option dotted-text ${selectedSetting === 0 ? 'selected' : ''}`}>Heat</p>
-                        <p className={`system-option dotted-text ${selectedSetting === 1 ? 'selected' : ''}`}>Cool</p>
-                        <p className={`system-option dotted-text ${selectedSetting === 2 ? 'selected' : ''}`}>Off</p>
-                        <p className={`system-option dotted-text ${selectedSetting === 3 ? 'selected' : ''}`}>Auto</p>
+                        <SystemOption className={"system-option dotted-text"} selectedSetting={selectedSetting} selectedVal={0} text={"Heat"} />
+                        <SystemOption className={"system-option dotted-text"} selectedSetting={selectedSetting} selectedVal={1} text={"Cool"} />
+                        <SystemOption className={"system-option dotted-text"} selectedSetting={selectedSetting} selectedVal={2} text={"Off"} />
+                        <SystemOption className={"system-option dotted-text"} selectedSetting={selectedSetting} selectedVal={3} text={"Auto"} />
                     </div>
                     <div className={"menu-controls"}>
                         <ControlButton

@@ -6,6 +6,7 @@
 html, body{
     margin: 0;
     padding: 0;
+    background-color: #2C302E;
 }
 
 h1{
@@ -47,4 +48,8 @@ button:hover{
 
 .h3{
     font-size: 1.25em;
+}
+
+button{
+    color: #111111;
 }

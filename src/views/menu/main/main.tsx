@@ -3,7 +3,7 @@ import TriangleUp from "../../../assets/icons/triangle-up.svg";
 import TriangleDown from "../../../assets/icons/triangle-down.svg";
 import ThermostatButton from "../../../components/buttons/thermostat_button.tsx";
 import React, {useRef, useState} from "react";
-import {handleDown, handleSelect, handleUp} from "../../../utils/settingsUtils/settingsUtils.ts";
+import {handleDown, handleSelect, handleUp} from "../../../utils/settings/settingsUtils.ts";
 import {useSchedule} from "../../../contexts/schedule_context.tsx";
 
 interface MainParams{

@@ -11,15 +11,13 @@
     display: flex;
     justify-content: center;
     width: 15%;
-    background-color: yellow;
 }
 
 /* Right schedule time */
 .schedule-time-right{
     display: flex;
     justify-content: center;
-    width: 15%;
-    background-color: yellow;
+    width: 14%;
 }
 .schedule-control{
     display: flex;

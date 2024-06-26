@@ -12,6 +12,7 @@ import {checkStatus} from "../../utils/thermostatUtils.ts";
 import {useFan} from "../../contexts/fan_context.tsx";
 import {useCondenser} from "../../contexts/condenser_context.tsx";
 import {useGeneralStates} from "../../contexts/general_context.tsx";
+
 const Virtual_Thermostat = () => {
     const {mode, currentTemp, setTemp, setCurrentTemp, status, setStatus} = useGeneralStates();
     const {fanSetting, setFanStatus} = useFan();
@@ -111,30 +112,36 @@ const Virtual_Thermostat = () => {
 
     return (
         <>
-            <div className={"thermostat-body"}>
-                <div className={"thermostat-content"}>
-                    <Navigation menu={menu} status={status} setMenu={setMenu} isNavigationActive={isNavigationActive}/>
-                    {menu === 0 && (
-                        <Home/>
-                    )}
-                    {menu === 1 && (
-                        <Fan
-                            setMenu={setMenu}
-                        />
-                    )}
-                    {menu === 2 && (
-                        <System setMenu={setMenu} />
-                    )}
-                    {menu === 3 && (
-                        <Menu
-                            setIsNavigationActive={setIsNavigationActive}
-                        />
-                    )}
+            <div id={"main-container"}>
+                <div className={"thermostat-body"}>
+                    <div className={"thermostat-content"}>
+                        <Navigation menu={menu} status={status} setMenu={setMenu}
+                                    isNavigationActive={isNavigationActive}/>
+                        {menu === 0 && (
+                            <Home/>
+                        )}
+                        {menu === 1 && (
+                            <Fan
+                                setMenu={setMenu}
+                            />
+                        )}
+                        {menu === 2 && (
+                            <System setMenu={setMenu}/>
+                        )}
+                        {menu === 3 && (
+                            <Menu
+                                setIsNavigationActive={setIsNavigationActive}
+                            />
+                        )}
+                    </div>
                 </div>
-            </div>
-            <div className={"led-displays"}>
-                <LEDDisplay label="Condenser Status" isCooling={callForCooling} />
-                <LEDDisplay label="Fan Status" />
+                <div className={"led-displays"}>
+                    <div className={"led-display-container"}>
+                        <h3 className={"digital-text heading"}>Led Status Indicators</h3>
+                        <LEDDisplay label="Condenser Status" isCooling={callForCooling}/>
+                        <LEDDisplay label="Fan Status"/>
+                    </div>
+                </div>
             </div>
         </>
 
