@@ -1,10 +1,15 @@
-import ArrowButton from "../../../components/buttons/arrow_button.tsx";
-import TriangleUp from "../../../assets/icons/triangle-up.svg";
-import TriangleDown from "../../../assets/icons/triangle-down.svg";
-import ThermostatButton from "../../../components/buttons/thermostat_button.tsx";
 import React, {useRef, useState} from "react";
-import {handleDown, handleSelect, handleUp} from "../../../utils/settings/settingsUtils.ts";
-import {useSchedule} from "../../../contexts/schedule_context.tsx";
+
+import TriangleUp from "@assets/icons/triangle-up.svg";
+import TriangleDown from "@assets/icons/triangle-down.svg";
+
+import {useSchedule} from "@contexts/schedule_context.tsx";
+
+import ArrowButton from "@components/buttons/arrow_button.tsx";
+import ThermostatButton from "@components/buttons/thermostat_button.tsx";
+
+import {handleDown, handleSelect, handleUp} from "@utils/settings/settingsUtils.ts";
+
 
 interface MainParams{
     setView: React.Dispatch<React.SetStateAction<number>>;

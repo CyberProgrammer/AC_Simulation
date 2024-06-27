@@ -1,5 +1,5 @@
 import { updateStatus } from './updateStatus';
-import { FanSetting, FanStatus, SystemStatus } from "../../types/enums.ts";
+import { FanSetting, FanStatus, SystemStatus } from "@customTypes/enums";
 import React from "react";
 
 interface HandleHeatModeParams {

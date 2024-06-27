@@ -1,12 +1,14 @@
 import {useEffect, useState } from "react";
-import {FanStatus , SystemStatus} from "../../types/enums";
+import {FanStatus , SystemStatus} from "@customTypes/enums";
 
-import RedLed from '../../assets/icons/red_led.svg';
-import GreenLed from '../../assets/icons/green_led.svg';
-import YellowLed from "../../assets/icons/yellow_led.svg";
-import DarkYellowLed from "../../assets/icons/dark_yellow_led.svg";
-import {useFan} from "../../contexts/fan_context.tsx";
-import {useGeneralStates} from "../../contexts/general_context.tsx";
+/* Assets */
+import RedLed from '@assets/icons/red_led.svg';
+import GreenLed from '@assets/icons/green_led.svg';
+import YellowLed from "@assets/icons/yellow_led.svg";
+import DarkYellowLed from "@assets/icons/dark_yellow_led.svg";
+/* Contexts */
+import {useFan} from "@contexts/fan_context.tsx";
+import {useGeneralStates} from "@contexts/general_context.tsx";
 
 interface LEDDisplayProps {
     label: string;

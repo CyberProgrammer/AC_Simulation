@@ -1,4 +1,4 @@
-import {Mode,SystemStatus} from '../types/enums';
+import {Mode,SystemStatus} from '@customTypes/enums';
 
 interface setTempParams{
     mode: Mode;

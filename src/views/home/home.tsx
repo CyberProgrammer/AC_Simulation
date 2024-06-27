@@ -6,13 +6,17 @@ import React, {useEffect, useState } from 'react';
 
 import {Mode, FanStatus, FanSetting, SystemStatus} from '../../types/enums';
 import ArrowButton from "../../components/buttons/arrow_button.tsx";
-import {useFan} from "../../contexts/fan_context.tsx";
+
 
 import './home.css';
-import {useSchedule} from "../../contexts/schedule_context.tsx";
-import {useGeneralStates} from "../../contexts/general_context.tsx";
-import {useCondenser} from "../../contexts/condenser_context.tsx";
-import ControlButton from "../../components/buttons/control_button.tsx";
+
+/* Contexts */
+import {useSchedule} from "@contexts/schedule_context.tsx";
+import {useGeneralStates} from "@contexts/general_context.tsx";
+import {useCondenser} from "@contexts/condenser_context.tsx";
+import {useFan} from "@contexts/fan_context.tsx";
+
+import ControlButton from "@components/buttons/control_button.tsx";
 
 interface HomeProps{
 }

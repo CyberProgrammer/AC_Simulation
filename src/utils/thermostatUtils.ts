@@ -1,4 +1,4 @@
-import {Mode, SystemStatus, FanStatus, FanSetting} from '../types/enums';
+import {Mode, SystemStatus, FanStatus, FanSetting} from '@customTypes/enums';
 
 // Recheck status
 /*

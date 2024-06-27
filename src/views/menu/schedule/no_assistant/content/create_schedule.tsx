@@ -1,22 +1,25 @@
-import ThermostatButton from "../../../../../components/buttons/thermostat_button.tsx";
-import ScheduleDaysControls from "../../button_groups/schedule_days/schedule_days.tsx";
 import React, {useState} from "react";
-
 import '../../edit/styles/create_schedule.css'
-import ArrowButton from "../../../../../components/buttons/arrow_button.tsx";
-import TriangleUp from "../../../../../assets/icons/triangle-up.svg";
-import TriangleDown from "../../../../../assets/icons/triangle-down.svg";
-import {useSchedule} from "../../../../../contexts/schedule_context.tsx";
-import {useGeneralStates} from "../../../../../contexts/general_context.tsx";
-import {Mode} from "../../../../../types/enums.ts";
-import {handleAutoMode} from "../../../../../utils/system_handlers/handleAutoMode.ts";
-import {useFan} from "../../../../../contexts/fan_context.tsx";
-import {useCondenser} from "../../../../../contexts/condenser_context.tsx";
-import {formatTime} from "../../../../../utils/schedule_handlers/formatTIme.ts";
-import {handleTimeDown} from "../../../../../utils/schedule_handlers/handleTimeDown.ts";
-import {handleTimeUp} from "../../../../../utils/schedule_handlers/handleTimeUp.ts";
-import {handleTempUp} from "../../../../../utils/schedule_handlers/handleTempUp.ts";
-import {handleTempDown} from "../../../../../utils/schedule_handlers/handleTempDown.ts";
+/* Assets */
+import TriangleUp from "@assets/icons/triangle-up.svg";
+import TriangleDown from "@assets/icons/triangle-down.svg";
+/* Components */
+import ThermostatButton from "@components/buttons/thermostat_button.tsx";
+import ArrowButton from "@components/buttons/arrow_button.tsx";
+import ScheduleDaysControls from "../../button_groups/schedule_days/schedule_days.tsx";
+import {Mode} from "@customTypes/enums.ts";
+/* Contexts */
+import {useSchedule} from "@contexts/schedule_context.tsx";
+import {useGeneralStates} from "@contexts/general_context.tsx";
+import {useFan} from "@contexts/fan_context.tsx";
+import {useCondenser} from "@contexts/condenser_context.tsx";
+/* Utils */
+import {handleAutoMode} from "@utils/system_handlers/handleAutoMode.ts";
+import {formatTime} from "@utils/schedule_handlers/formatTIme.ts";
+import {handleTimeDown} from "@utils/schedule_handlers/handleTimeDown.ts";
+import {handleTimeUp} from "@utils/schedule_handlers/handleTimeUp.ts";
+import {handleTempUp} from "@utils/schedule_handlers/handleTempUp.ts";
+import {handleTempDown} from "@utils/schedule_handlers/handleTempDown.ts";
 
 interface CreateScheduleParams{
     setView: React.Dispatch<React.SetStateAction<number>>;
@@ -33,11 +36,13 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
         sleepTemp ,
         setSleepTemp,
         setScheduleSet,
+        scheduleDays,
+        setIsFollowingSchedule,
+        checkSchedule
     } = useSchedule()
 
     const [isWakeSet, setIsWakeSet] = useState<boolean>(false);
-
-    const {checkSchedule, scheduleDays, setIsFollowingSchedule} = useSchedule();
+    
     const {setCallForCooling} = useCondenser();
     const {fanSetting, setFanStatus} = useFan();
     const {setMode, currentTemp, setTemp, setStatus, setSetTemp} = useGeneralStates();

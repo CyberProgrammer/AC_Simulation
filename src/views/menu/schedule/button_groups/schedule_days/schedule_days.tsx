@@ -1,7 +1,7 @@
 import './schedule_days.css'
 
-import checkIcon from '../../../../../assets/icons/check_mark.svg';
-import {useSchedule} from "../../../../../contexts/schedule_context.tsx";
+import checkIcon from '@assets/icons/check_mark.svg';
+import {useSchedule} from "@contexts/schedule_context.tsx";
 const ScheduleDaysControls = () => {
     const {scheduleDays, setScheduleDays} = useSchedule();
     const handleDayClick = (dayID: number) => {

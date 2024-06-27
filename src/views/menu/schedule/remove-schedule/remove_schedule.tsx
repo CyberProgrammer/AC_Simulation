@@ -1,6 +1,6 @@
-import ThermostatButton from "../../../../components/buttons/thermostat_button.tsx";
 import React from "react";
-import {useSchedule} from "../../../../contexts/schedule_context.tsx";
+import ThermostatButton from "@components/buttons/thermostat_button.tsx";
+import {useSchedule} from "@contexts/schedule_context.tsx";
 
 interface RemoveScheduleParams{
     setView: React.Dispatch<React.SetStateAction<number>>;

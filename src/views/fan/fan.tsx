@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import './fan.css'
 
-import {Mode, FanStatus, FanSetting} from '../../types/enums';
+import {Mode, FanStatus, FanSetting} from '@customTypes/enums';
 
-import TriangleLeft from '../../assets/icons/triangle-left.svg';
-import TriangleRight from '../../assets/icons/triangle-right.svg';
-import HelpContainer from '../../shared/help_container';
-import ControlButton from '../../components/buttons/control_button';
-import {useFan} from "../../contexts/fan_context.tsx";
-import {useCondenser} from "../../contexts/condenser_context.tsx";
+import TriangleLeft from '@assets/icons/triangle-left.svg';
+import TriangleRight from '@assets/icons/triangle-right.svg';
+import HelpContainer from '@shared/help_container';
+import ControlButton from '@components/buttons/control_button';
+
+/* Contexts */
+import {useFan} from "@contexts/fan_context.tsx";
+import {useCondenser} from "@contexts/condenser_context.tsx";
 
 interface FanProps{
     setMenu: (value:Mode) => void;

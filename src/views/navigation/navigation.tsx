@@ -1,7 +1,7 @@
 import './navigation.css'
 
-import {SystemStatus} from "../../types/enums";
-import ThermostatButton from "../../components/buttons/thermostat_button.tsx";
+import {SystemStatus} from "@customTypes/enums";
+import ThermostatButton from "@components/buttons/thermostat_button.tsx";
 import React from "react";
 
 interface NavigationProps{

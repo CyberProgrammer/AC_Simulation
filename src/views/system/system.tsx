@@ -1,21 +1,29 @@
 import {useState} from 'react';
-import TriangleLeft from '../../assets/icons/triangle-left.svg';
-import TriangleRight from '../../assets/icons/triangle-right.svg';
-import ControlButton from '../../components/buttons/control_button';
-import HelpContainer from '../../shared/help_container';
-
 import './system.css';
-import {Mode} from '../../types/enums'
-import {useFan} from "../../contexts/fan_context.tsx";
-import {useGeneralStates} from "../../contexts/general_context.tsx";
-import {useCondenser} from "../../contexts/condenser_context.tsx";
+import {Mode} from '@customTypes/enums'
+/* Assets */
+import TriangleLeft from '@assets/icons/triangle-left.svg';
+import TriangleRight from '@assets/icons/triangle-right.svg';
+/* Components */
+import ControlButton from '@components/buttons/control_button';
+import SystemOption from "@components/option/system_option.tsx";
+import HelpContainer from '@shared/help_container';
 
-import { handleOffMode } from '../../utils/system_handlers/handleOffMode.ts';
-import { handleCoolMode } from '../../utils/system_handlers/handleCoolMode';
-import { handleHeatMode } from '../../utils/system_handlers/handleHeatMode';
-import { handleAutoMode } from '../../utils/system_handlers/handleAutoMode';
-import SystemOption from "../../components/option/system_option.tsx";
-import {useSchedule} from "../../contexts/schedule_context.tsx";
+
+/* Contexts */
+import {useFan} from "@contexts/fan_context.tsx";
+import {useGeneralStates} from "@contexts/general_context.tsx";
+import {useCondenser} from "@contexts/condenser_context.tsx";
+import {useSchedule} from "@contexts/schedule_context.tsx";
+
+/* Utils */
+import { handleOffMode } from '@utils/system_handlers/handleOffMode.ts';
+import { handleCoolMode } from '@utils/system_handlers/handleCoolMode.ts';
+import { handleHeatMode } from '@utils/system_handlers/handleHeatMode.ts';
+import { handleAutoMode } from '@utils/system_handlers/handleAutoMode.ts';
+
+
+
 
 interface SystemParams{
     setMenu: (menu: number) => void;

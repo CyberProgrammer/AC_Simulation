@@ -1,5 +1,4 @@
-import ThermostatButton from "../../../../components/buttons/thermostat_button.tsx";
-import React from "react";
+import ThermostatButton from "@components/buttons/thermostat_button.tsx";
 
 interface ControlsParams{
     handlePromptClick: (view:number) => void;
