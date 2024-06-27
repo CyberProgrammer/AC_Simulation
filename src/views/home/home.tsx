@@ -1,12 +1,11 @@
 import {getCurrentTime, handleSetTempDown, handleSetTempUp} from '../../utils';
 
-import TriangleUp from '../../assets/icons/triangle-up.svg';
-import TriangleDown from '../../assets/icons/triangle-down.svg';
+import TriangleUp from '@assets/icons/triangle-up.svg';
+import TriangleDown from '@assets/icons/triangle-down.svg';
 import React, {useEffect, useState } from 'react';
 
-import {Mode, FanStatus, FanSetting, SystemStatus} from '../../types/enums';
-import ArrowButton from "../../components/buttons/arrow_button.tsx";
-
+import {Mode, SystemStatus} from '@customTypes/enums';
+import ArrowButton from "@components/buttons/arrow_button.tsx";
 
 import './home.css';
 
@@ -17,6 +16,7 @@ import {useCondenser} from "@contexts/condenser_context.tsx";
 import {useFan} from "@contexts/fan_context.tsx";
 
 import ControlButton from "@components/buttons/control_button.tsx";
+import {handleScheduleChange} from "./utils/handleScheduleChange.ts";
 
 interface HomeProps{
 }
@@ -38,51 +38,6 @@ const Home:React.FC<HomeProps> = () => {
     Change status is responsible for keeping the condenser and fan status
     updated when the set temperature controls are adjusted.
     */
-    const changeStatus = (updateStatus: SystemStatus) => {
-        setStatus(SystemStatus.Wait);
-        // If the fan is on auto, the fan follows the condenser status.
-        // When the compressor is on, the fan is on. When the compressor is off, the fan is off.
-        // Each time a change in status occurs and the fan is on auto, the fan status is yellow.
-        if ((updateStatus === SystemStatus.Cool || updateStatus === SystemStatus.AtTemp || updateStatus === SystemStatus.Heat) && fanSetting === FanSetting.Auto) {
-            setFanStatus(FanStatus.Wait);
-        }
-
-        setTimeout(() => {
-            if (updateStatus === SystemStatus.Cool || updateStatus === SystemStatus.Heat) {
-                setFanStatus(FanStatus.On);
-            } else if (updateStatus === SystemStatus.AtTemp && fanSetting === FanSetting.Auto) {
-                setFanStatus(FanStatus.Off);
-            }
-
-            setStatus(updateStatus);
-        }, 5000);
-    };
-
-    // Set temp up
-    const handleUp = () => {
-        handleSetTempUp({
-            mode,
-            setTemp,
-            setSetTemp,
-            currentTemp,
-            callForCooling,
-            setCallForCooling,
-            changeStatus
-        });
-    };
-
-    // Set temp down
-    const handleDown = () => {
-        handleSetTempDown({
-            mode,
-            setTemp,
-            setSetTemp,
-            currentTemp,
-            callForCooling,
-            setCallForCooling,
-            changeStatus
-        });
-    };
 
     // Checks for new time on interval
     useEffect(() => {
@@ -96,16 +51,6 @@ const Home:React.FC<HomeProps> = () => {
         return () => clearInterval(interval);
     }, []);
 
-    const handleScheduleStatusChange = () => {
-        console.log("Handeling status...");
-
-        // Set the is following schedule to the opposite
-        !isFollowingSchedule ? setMode(Mode.Auto) : null;
-        !isFollowingSchedule ? checkSchedule({setSetTemp}) : null;
-        isFollowingSchedule ? setIsFollowingSchedule(false) : setIsFollowingSchedule(true);
-
-    }
-
     return(
         <>
             <div className={"thermostat-textbox"}>
@@ -113,8 +58,12 @@ const Home:React.FC<HomeProps> = () => {
                 <p className={"h3 dotted-text"}>Outdoor: 80&#176;/55%</p>
                 { isScheduleSet && (
                     <div className={"update-schedule-status"}>
-                        <ControlButton buttonClass={"schedule-status"} clickEvent={handleScheduleStatusChange}
-                                       textClass={""} text={isFollowingSchedule ? "Override Schedule" : "Resume Schedule"}/>
+                        <ControlButton
+                            buttonClass={"schedule-status"}
+                            clickEvent={() => handleScheduleChange({isFollowingSchedule, setMode, checkSchedule, setSetTemp, setIsFollowingSchedule})}
+                            textClass={""}
+                            text={isFollowingSchedule ? "Override Schedule" : "Resume Schedule"}
+                        />
                     </div>
                 )}
             </div>
@@ -149,14 +98,43 @@ const Home:React.FC<HomeProps> = () => {
                                     <p className={"small-text"}>To</p>
                                 </div>
                                 <div className={"controls"}>
-                                    <ArrowButton className={"temp-button"} isDisabled={status === SystemStatus.Wait || isFollowingSchedule}
-                                                 clickEvent={handleUp} icon={TriangleUp}/>
+                                    <ArrowButton
+                                        className={"temp-button"}
+                                        isDisabled={status === SystemStatus.Wait || isFollowingSchedule}
+                                        clickEvent={() =>
+                                            handleSetTempUp({mode,
+                                                setTemp,
+                                                setSetTemp,
+                                                currentTemp,
+                                                callForCooling,
+                                                setCallForCooling,
+                                                fanSetting,
+                                                setStatus,
+                                                setFanStatus
+                                                })}
+                                        icon={TriangleUp}
+                                    />
                                     <div className={"temp-reading"}>
                                         <h2 className={"digital-text"}>{setTemp}</h2>
                                         <h3>&#176;</h3>
                                     </div>
-                                    <ArrowButton className={"temp-button"} isDisabled={status === SystemStatus.Wait || isFollowingSchedule}
-                                                 clickEvent={handleDown} icon={TriangleDown}/>
+                                    <ArrowButton
+                                        className={"temp-button"}
+                                        isDisabled={status === SystemStatus.Wait || isFollowingSchedule}
+                                        clickEvent={() =>
+                                            handleSetTempDown({
+                                                mode,
+                                                setTemp,
+                                                setSetTemp,
+                                                currentTemp,
+                                                callForCooling,
+                                                setCallForCooling,
+                                                fanSetting,
+                                                setStatus,
+                                                setFanStatus
+                                            })}
+                                        icon={TriangleDown}
+                                    />
                                 </div>
                             </div>
                         </>

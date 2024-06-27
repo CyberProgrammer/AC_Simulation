@@ -9,7 +9,6 @@ import ControlButton from '@components/buttons/control_button';
 import SystemOption from "@components/option/system_option.tsx";
 import HelpContainer from '@shared/help_container';
 
-
 /* Contexts */
 import {useFan} from "@contexts/fan_context.tsx";
 import {useGeneralStates} from "@contexts/general_context.tsx";
@@ -21,9 +20,7 @@ import { handleOffMode } from '@utils/system_handlers/handleOffMode.ts';
 import { handleCoolMode } from '@utils/system_handlers/handleCoolMode.ts';
 import { handleHeatMode } from '@utils/system_handlers/handleHeatMode.ts';
 import { handleAutoMode } from '@utils/system_handlers/handleAutoMode.ts';
-
-
-
+import {handleNextClick} from "./utils/handleNextClick.ts";
 
 interface SystemParams{
     setMenu: (menu: number) => void;
@@ -35,10 +32,6 @@ const System = ({setMenu}:SystemParams) => {
     const {fanSetting, setFanStatus} = useFan();
     const {isFollowingSchedule} = useSchedule();
     const [selectedSetting, setSelectedSetting] = useState<Mode>(mode);
-    const handleNextClick = () =>{
-        if(selectedSetting < Mode.Auto && !isFollowingSchedule)
-            setSelectedSetting(selectedSetting+1);
-    }
     const handlePrevClick = () =>{
         if(selectedSetting != Mode.Heat && !isFollowingSchedule)
             setSelectedSetting(selectedSetting-1);
@@ -103,7 +96,7 @@ const System = ({setMenu}:SystemParams) => {
                             buttonClass={"right-control"}
                             imageClass={"control-img"}
                             imageSource={TriangleRight}
-                            clickEvent={handleNextClick}
+                            clickEvent={() => handleNextClick(selectedSetting, isFollowingSchedule, setSelectedSetting)}
                         />
                     </div>
                 </div>
