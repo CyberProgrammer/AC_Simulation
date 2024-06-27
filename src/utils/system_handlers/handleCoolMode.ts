@@ -56,7 +56,6 @@ export const handleCoolMode = (
                 fanStatus: FanStatus.Off,
             });
         } else {
-            console.log("Here")
             updateStatus({
                 setStatus,
                 setCallForCooling,

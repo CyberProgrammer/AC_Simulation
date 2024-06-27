@@ -16,11 +16,9 @@ import {useCondenser} from "@contexts/condenser_context.tsx";
 import {useSchedule} from "@contexts/schedule_context.tsx";
 
 /* Utils */
-import { handleOffMode } from '@utils/system_handlers/handleOffMode.ts';
-import { handleCoolMode } from '@utils/system_handlers/handleCoolMode.ts';
-import { handleHeatMode } from '@utils/system_handlers/handleHeatMode.ts';
-import { handleAutoMode } from '@utils/system_handlers/handleAutoMode.ts';
 import {handleNextClick} from "./utils/handleNextClick.ts";
+import {handlePrevClick} from "./utils/handlePrevClick.ts";
+import {handleDoneClick} from "./utils/handleDoneClick.ts";
 
 interface SystemParams{
     setMenu: (menu: number) => void;
@@ -32,41 +30,6 @@ const System = ({setMenu}:SystemParams) => {
     const {fanSetting, setFanStatus} = useFan();
     const {isFollowingSchedule} = useSchedule();
     const [selectedSetting, setSelectedSetting] = useState<Mode>(mode);
-    const handlePrevClick = () =>{
-        if(selectedSetting != Mode.Heat && !isFollowingSchedule)
-            setSelectedSetting(selectedSetting-1);
-    }
-    const handleDoneClick = () => {
-        console.log("Done click mode:", selectedSetting);
-        if(isFollowingSchedule){
-            return;
-        }
-
-        // If the selection is the current set mode, avoid transitioning to the same mode
-        if(selectedSetting === mode){
-            setMode(selectedSetting);
-            setMenu(0);
-            return;
-        }
-
-        switch (selectedSetting) {
-            case Mode.Off:
-                handleOffMode({callForCooling, fanSetting, setStatus, setCallForCooling, setFanStatus,});
-                break;
-            case Mode.Cool:
-                handleCoolMode({setTemp, currentTemp, fanSetting, callForCooling, setStatus, setCallForCooling, setFanStatus,});
-                break;
-            case Mode.Heat:
-                handleHeatMode({setTemp, currentTemp, fanSetting, callForCooling, setStatus, setCallForCooling, setFanStatus,});
-                break;
-            case Mode.Auto:
-                handleAutoMode({currentTemp, setTemp, fanSetting, setStatus, setCallForCooling, setFanStatus,});
-                break;
-        }
-
-        setMode(selectedSetting);
-        setMenu(0);
-    };
 
     return(
         <>
@@ -84,13 +47,26 @@ const System = ({setMenu}:SystemParams) => {
                             buttonClass={"left-control"}
                             imageClass={"control-img"}
                             imageSource={TriangleLeft}
-                            clickEvent={handlePrevClick}
+                            clickEvent={() => handlePrevClick(selectedSetting, isFollowingSchedule, setSelectedSetting)}
                         />
                         <ControlButton
                             buttonClass={"done-control"}
                             textClass={"fan-control"}
                             text={"Done"}
-                            clickEvent={handleDoneClick}
+                            clickEvent={() => handleDoneClick(
+                                selectedSetting,
+                                isFollowingSchedule,
+                                mode,
+                                setMode,
+                                setMenu,
+                                callForCooling,
+                                fanSetting,
+                                setStatus,
+                                setCallForCooling,
+                                setFanStatus,
+                                setTemp,
+                                currentTemp
+                            )}
                         />
                         <ControlButton
                             buttonClass={"right-control"}
