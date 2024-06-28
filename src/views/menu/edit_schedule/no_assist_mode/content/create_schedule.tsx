@@ -1,12 +1,12 @@
 import React, {useState} from "react";
-import '../../edit/styles/create_schedule.css'
+import '../../styles/create_schedule.css'
 /* Assets */
 import TriangleUp from "@assets/icons/triangle-up.svg";
 import TriangleDown from "@assets/icons/triangle-down.svg";
 /* Components */
 import ThermostatButton from "@components/buttons/thermostat_button.tsx";
 import ArrowButton from "@components/buttons/arrow_button.tsx";
-import ScheduleDaysControls from "../../button_groups/schedule_days/schedule_days.tsx";
+import ScheduleDaysControls from "@components/prompts/controls/schedule_days.tsx";
 import {Mode} from "@customTypes/enums.ts";
 /* Contexts */
 import {useSchedule} from "@contexts/schedule_context.tsx";

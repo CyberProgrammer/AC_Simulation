@@ -3,8 +3,8 @@ import './menu.css';
 
 import Main from "./main/main.tsx";
 import React, {useState} from "react";
-import EditSchedule from "./schedule/edit/edit_schedule.tsx";
-import RemoveSchedule from "./schedule/remove-schedule/remove_schedule.tsx";
+import EditSchedule from "./edit_schedule/edit_schedule.tsx";
+import RemoveSchedule from "./remove_schedule/remove_schedule.tsx";
 
 interface MenuParams{
     setIsNavigationActive: React.Dispatch<React.SetStateAction<boolean>>

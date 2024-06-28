@@ -1,10 +1,10 @@
 import ThermostatButton from "@components/buttons/thermostat_button.tsx";
 
-interface ControlsParams{
+interface PromptControlsParams{
     handlePromptClick: (view:number) => void;
 }
 
-const YesNoControls = ({handlePromptClick}: ControlsParams) => {
+const PromptControlYN = ({handlePromptClick}: PromptControlsParams) => {
 
     return (
         <div className={"schedule-controls"}>
@@ -33,5 +33,4 @@ const YesNoControls = ({handlePromptClick}: ControlsParams) => {
         </div>
     )
 }
-
-export default YesNoControls;
+export default PromptControlYN;

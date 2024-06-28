@@ -1,15 +1,14 @@
-import '../../menu.css'
+import '../menu.css'
 import './styles/edit_schedule.css'
 import React, {useState} from "react";
-import AssistantPrompt from "../assistant/assistant_prompt.tsx";
-import NoAssistant from "../no_assistant/no_assistant.tsx";
+import Prompt_Yes_No from "@components/prompts/prompt_yes_no.tsx";
+import NoAssistant from "./no_assist_mode/no_assistant.tsx";
 
 interface EditScheduleParams{
     setView: React.Dispatch<React.SetStateAction<number>>;
     setIsNavigationActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const EditSchedule = ({setView, setIsNavigationActive}: EditScheduleParams) => {
-    const options = ["Use Scheduling Assistant?", "Select the days to schedule"];
 
     const [hasPrompted, setHasPrompted] = useState<boolean>(false);
     const [useScheduleAssist, setUseScheduleAssist] = useState<boolean>(false);
@@ -33,7 +32,7 @@ const EditSchedule = ({setView, setIsNavigationActive}: EditScheduleParams) => {
 
     return(
         <>
-            {!hasPrompted ? <AssistantPrompt handlePromptClick={handlePromptClick} /> : null }
+            {!hasPrompted ? <Prompt_Yes_No handlePromptClick={handlePromptClick} /> : null }
             {hasPrompted && !useScheduleAssist ?
                 <NoAssistant setView={setView} setIsNavigationActive={setIsNavigationActive}/> : null}
         </>

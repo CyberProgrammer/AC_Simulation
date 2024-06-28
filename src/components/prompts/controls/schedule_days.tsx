@@ -1,4 +1,4 @@
-import './schedule_days.css'
+import '@components/styles/schedule_days.css'
 
 import checkIcon from '@assets/icons/check_mark.svg';
 import {useSchedule} from "@contexts/schedule_context.tsx";

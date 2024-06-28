@@ -1,9 +1,9 @@
-import YesNoControls from "../button_groups/yesNoControls.tsx";
+import PromptControlYN from "./controls/prompt_controls.tsx";
 
 interface AssistantPromptParams{
     handlePromptClick: (id:number) => void;
 }
-const AssistantPrompt = ({handlePromptClick}:AssistantPromptParams) => {
+const Prompt_Yes_No = ({handlePromptClick}:AssistantPromptParams) => {
 
     return (
         <div className={"menu-container"}>
@@ -17,10 +17,10 @@ const AssistantPrompt = ({handlePromptClick}:AssistantPromptParams) => {
                         </div>
                     </div>
                 </div>
-                <YesNoControls handlePromptClick={handlePromptClick}/>
+                <PromptControlYN handlePromptClick={handlePromptClick}/>
             </div>
         </div>
     )
 }
 
-export default AssistantPrompt;
+export default Prompt_Yes_No;

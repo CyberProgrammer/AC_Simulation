@@ -1,5 +1,5 @@
 import ThermostatButton from "@components/buttons/thermostat_button.tsx";
-import ScheduleDaysControl from "../../button_groups/schedule_days/schedule_days.tsx";
+import ScheduleDaysControl from "@components/prompts/controls/schedule_days.tsx";
 import React from "react";
 
 interface SetScheduleDaysParams{

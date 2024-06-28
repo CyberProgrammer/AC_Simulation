@@ -12,6 +12,7 @@ const NoAssistant = ({setView, setIsNavigationActive}:NoAssistantParams) => {
 
     return (
         <>
+            { /* First set the days that the schedule should follow */ }
             { currentView === 0 ?
                 <SetScheduleDays
                     setView={setView}
@@ -19,6 +20,7 @@ const NoAssistant = ({setView, setIsNavigationActive}:NoAssistantParams) => {
                     setCurrentView={setCurrentView}
                 /> : null}
 
+            { /* Then set the time and temp for wake and sleep */ }
             { currentView === 1 ?
                 <CreateSchedule
                     setView={setView}

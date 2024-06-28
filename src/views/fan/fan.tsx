@@ -24,7 +24,6 @@ const Fan = ({setMenu}:FanProps) => {
 
     const [selectedSetting, setSelectedSetting] = useState<FanSetting>(fanSetting);
 
-
     return(
         <>
             <div id={"fan-body"}>
