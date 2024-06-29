@@ -1,3 +1,4 @@
+import '../styles/arrow_button.css'
 
 interface ArrowButtonParams{
     className: string;

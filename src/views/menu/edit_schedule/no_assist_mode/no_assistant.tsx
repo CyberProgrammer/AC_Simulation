@@ -7,6 +7,7 @@ interface NoAssistantParams{
     setView: React.Dispatch<React.SetStateAction<number>>;
     setIsNavigationActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
 const NoAssistant = ({setView, setIsNavigationActive}:NoAssistantParams) => {
     const [currentView, setCurrentView] = useState<number>(0);
 
@@ -28,7 +29,6 @@ const NoAssistant = ({setView, setIsNavigationActive}:NoAssistantParams) => {
                 />
                 : null}
         </>
-
     )
 }
 

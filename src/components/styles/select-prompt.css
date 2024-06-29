@@ -1,0 +1,32 @@
+#prompt-selectable{
+    display: flex;
+    justify-content: center;
+}
+
+#prompt-selectable .menu-options{
+    max-height: 70px !important;
+}
+
+#prompt-selectable .menu-option{
+    font-size: 1em;
+    padding: 2% 2% 0 2%;
+}
+
+.select-menu-options{
+    width: 100%;
+    min-height: 60px;
+    max-height: 75px;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+
+.time-control{
+    display: flex;
+    flex-direction: column;
+    float: right;
+    transform: translateY(-10px);
+}
+
+.time-control .arrow-button{
+    margin: 2% 0 3% 0;
+}

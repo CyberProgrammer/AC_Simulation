@@ -21,9 +21,9 @@ const Main = ({setView, setIsNavigationActive}: MainParams) => {
     let options;
     // If schedule is set include the option to remove schedule
     if(isScheduleSet)
-        options = ["Edit Schedule", "Remove Schedule", "Equipment Status", "Date/Time", "Clean Screen", "Security Settings"];
+        options = ["Edit Schedule", "Remove Schedule", "Equipment Status", "Time/Date", "Clean Screen", "Security Settings"];
     else
-        options = ["Edit Schedule", "Equipment Status", "Date/Time", "Clean Screen", "Security Settings"];
+        options = ["Edit Schedule", "Equipment Status", "Time/Date", "Clean Screen", "Security Settings"];
 
     const [selected, setSelected] = useState<number>(0);
     const scrollContainerRef = useRef<HTMLDivElement>(null);

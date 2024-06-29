@@ -1,0 +1,40 @@
+.menu-body{
+    width: 70%;
+}
+
+.menu-content{
+    display: flex;
+    justify-content: center;
+}
+
+.prompt-controls{
+    display: flex;
+    width: 100%;
+    margin-top: 2%;
+}
+
+.prompt-controls-left{
+    display: flex;
+    justify-content: start;
+    width: 25%;
+}
+
+.prompt-controls-center{
+    display: flex;
+    justify-content: center;
+    width: 50%;
+}
+
+.prompt-controls-center #control-button{
+    margin: 0 2% 0 2%;
+}
+
+.prompt-controls-right{
+    display: flex;
+    justify-content: end;
+    width: 25%;
+}
+
+.right-control{
+    margin-left: 0 !important;
+}
