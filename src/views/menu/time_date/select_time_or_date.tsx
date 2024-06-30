@@ -3,6 +3,10 @@ import SelectPrompt from "@components/prompts/select_prompt.tsx";
 import React, {useState} from "react";
 import SetTimePrompt from "@components/prompts/set_time_prompt.tsx";
 import SetDatePrompt from "@components/prompts/set_date_prompt.tsx";
+import {useGeneralStates} from "@contexts/general_context.tsx";
+import {formatTime} from "@utils/set_current_time.ts";
+import {useDatetimeStates} from "@contexts/datetime_context.tsx";
+import {Months} from "@customTypes/enums.ts";
 
 interface SelectTimeOrDate {
     setView: React.Dispatch<React.SetStateAction<number>>;
@@ -37,21 +41,15 @@ const SelectTimeOrDate:React.FC<SelectTimeOrDate> = ({setView}) => {
     }
 
     /* Setting time */
+    const {manuallySetTime, manuallySetDate} = useDatetimeStates();
     const [timeSelect, setTimeSelect] = useState<number>(0);
-    const [hour, setHour] = useState(0);
-    const [minute, setMinute] = useState(0);
+
+    const [tempHour, setTempHour] = useState(0);
+    const [tempMinute, setTempMinute] = useState(0);
+
     const handleDoneClickTime = () => {
-        console.log("Done Click");
-
-        const setHour = hour <= 12 ?
-            hour < 10 ?`0${hour}` : `${hour}`
-            :
-            hour-12 < 10 ? `0${hour-12}` : `${hour-12}`;
-
-        const setMinute = minute < 10 ? `0${minute}` : `${minute}`;
-        const setPeriod = hour < 12 ? "AM" : "PM";
-
-        console.log(`Set time: ${setHour}:${setMinute} ${setPeriod}`)
+        console.log("Done Click Time");
+        manuallySetTime(tempHour, tempMinute);
         setView(-1);
     }
     const handleLeftClickTime = () => {
@@ -65,11 +63,9 @@ const SelectTimeOrDate:React.FC<SelectTimeOrDate> = ({setView}) => {
     }
 
     /* Setting date */
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const [dateSelect, setDateSelect] = useState<number>(0);
-    const [month, setMonth] = useState(0);
-    const [day, setDay] = useState(1);
-
+    const [tempMonth, setTempMonth] = useState(Months.Jan);
+    const [tempDay, setTempDay] = useState(1);
     const handleLeftClickDate = () => {
         console.log("Left Click");
         if(dateSelect != 0) setDateSelect(dateSelect-1);
@@ -81,13 +77,9 @@ const SelectTimeOrDate:React.FC<SelectTimeOrDate> = ({setView}) => {
     }
 
     const handleDoneClickDate = () => {
-        let dayPostfix;
-        if(day === 1) dayPostfix = "st";
-        else if(day === 2) dayPostfix = "nd";
-        else if(day === 3) dayPostfix = "rd";
-        else dayPostfix = "th";
-
-        console.log(`Set date: ${months[month]} ${day}${dayPostfix}`)
+        console.log("Done Click Date");
+        manuallySetDate(tempMonth, tempDay);
+        setView(-1);
     }
 
     return (
@@ -111,10 +103,10 @@ const SelectTimeOrDate:React.FC<SelectTimeOrDate> = ({setView}) => {
                 <SetTimePrompt
                     prompt={"Please Set time"}
                     selected={timeSelect}
-                    hour={hour}
-                    setHour={setHour}
-                    minute={minute}
-                    setMinute={setMinute}
+                    hour={tempHour}
+                    setHour={setTempHour}
+                    minute={tempMinute}
+                    setMinute={setTempMinute}
                     children={
                         <ArrowsLeftRight
                             handleLeftClick={handleLeftClickTime}
@@ -129,10 +121,10 @@ const SelectTimeOrDate:React.FC<SelectTimeOrDate> = ({setView}) => {
                 <SetDatePrompt
                     prompt={"Please Set Date"}
                     selected={dateSelect}
-                    month={month}
-                    setMonth={setMonth}
-                    day={day}
-                    setDay={setDay}
+                    month={tempMonth}
+                    setMonth={setTempMonth}
+                    day={tempDay}
+                    setDay={setTempDay}
                     children={
                         <ArrowsLeftRight
                             handleLeftClick={handleLeftClickDate}

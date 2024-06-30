@@ -3,6 +3,10 @@
     justify-content: center;
 }
 
+.date-option{
+    margin: 2px 15px 2px 10px;
+}
+
 #prompt-selectable .menu-options{
     max-height: 70px !important;
 }

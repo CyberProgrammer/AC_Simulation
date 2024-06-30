@@ -2,7 +2,7 @@ import {getCurrentTime, handleSetTempDown, handleSetTempUp} from '../../utils';
 
 import TriangleUp from '@assets/icons/triangle-up.svg';
 import TriangleDown from '@assets/icons/triangle-down.svg';
-import React, {useEffect, useState } from 'react';
+import {useEffect, useState } from 'react';
 
 import {Mode, SystemStatus} from '@customTypes/enums';
 import ArrowButton from "@components/buttons/arrow_button.tsx";
@@ -17,15 +17,14 @@ import {useFan} from "@contexts/fan_context.tsx";
 
 import ControlButton from "@components/buttons/control_button.tsx";
 import {handleScheduleChange} from "./utils/handleScheduleChange.ts";
-
-interface HomeProps{
-}
-const Home:React.FC<HomeProps> = () => {
+import {useDatetimeStates} from "@contexts/datetime_context.tsx";
+import {formatTime} from "@utils/set_current_time.ts";
+const Home = () => {
     const {mode, setMode, setTemp, setSetTemp, currentTemp, status, setStatus} = useGeneralStates();
     const {callForCooling, setCallForCooling} = useCondenser();
-    const {fanSetting,  setFanStatus} = useFan()
+    const {fanSetting,  setFanStatus} = useFan();
     const {isFollowingSchedule, setIsFollowingSchedule, isScheduleSet, checkSchedule} = useSchedule();
-
+    const {formattedManualTime, manuallySetTime, manualPeriod, isManualTime, manualHour, manualMinute, setManualMinute, setManualHour} = useDatetimeStates();
     // State for time and period
     const [currentTime, setCurrentTime] = useState(getCurrentTime().time);
     const [isAM, setIsAM] = useState(getCurrentTime().isAM);
@@ -40,16 +39,44 @@ const Home:React.FC<HomeProps> = () => {
     */
 
     // Checks for new time on interval
+    let refreshTime = 20000;
+    if(isManualTime) refreshTime = 60000;
     useEffect(() => {
+
         const interval = setInterval(() => {
-            const { time, isAM } = getCurrentTime();
-            console.log("Checking time...");
-            setCurrentTime(time);
-            setIsAM(isAM);
-        }, 20000); // Update every 20 seconds
+            if (!isManualTime) {
+                const { time, isAM } = getCurrentTime();
+                console.log("Checking time...");
+                setCurrentTime(time);
+                setIsAM(isAM);
+            } else {
+                console.log("Checking manual time...");
+                incrementManualTime();
+                console.log("Period: ", manualPeriod);
+                console.log("Hour: ", manualHour);
+                setIsAM(manualPeriod === "am");
+            }
+        }, refreshTime); // Update every 60 seconds
 
         return () => clearInterval(interval);
-    }, []);
+    }, [isManualTime, manualHour, manualMinute]);
+
+    const incrementManualTime = () => {
+        let newMinute = manualMinute + 1;
+        let newHour = manualHour;
+        if(newMinute === 60){
+            newMinute = 0;
+            newHour = newHour + 1;
+            if (newHour === 24) {
+                newHour = 0;
+            }
+            setManualHour(newHour)
+        }
+        setManualMinute(newMinute);
+        manuallySetTime(newHour, newMinute);
+    };
+
+
 
     return(
         <>
@@ -69,8 +96,8 @@ const Home:React.FC<HomeProps> = () => {
             </div>
             <div className={"thermostat-info"}>
                 <div className={"info-left"}>
-                    <h3 className={"digital-text"}>{currentTime}</h3>
-                    <p>{isAM ? "am" : "pm"}</p>
+                    <h3 className={"digital-text"}>{isManualTime ? formattedManualTime : currentTime}</h3>
+                    <p>{isManualTime ? manualPeriod : isAM ? "am" : "pm"}</p>
                 </div>
                 <div className={"info-center"}>
                     <div className={"temp-reading"}>

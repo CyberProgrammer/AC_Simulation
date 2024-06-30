@@ -3,6 +3,7 @@ import '../styles/select-prompt.css'
 import ArrowButton from "@components/buttons/arrow_button.tsx";
 import TriangleUp from "@assets/icons/triangle-up.svg";
 import TriangleDown from "@assets/icons/triangle-down.svg";
+import {Months} from "@customTypes/enums.ts";
 
 interface SetDatePromptParams {
     prompt: string;
@@ -15,7 +16,6 @@ interface SetDatePromptParams {
 }
 
 const SetDatePrompt:React.FC<SetDatePromptParams> = ({prompt, selected, month, setMonth, day, setDay, children}) => {
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     function leapYear(year:number)
     {
@@ -27,7 +27,7 @@ const SetDatePrompt:React.FC<SetDatePromptParams> = ({prompt, selected, month, s
     const handleDateUp = () => {
         console.log("Date up");
         if(selected === 0)
-            month === months.length-1 ? setMonth(0) : setMonth(month+1);
+            month === Months.Dec ? setMonth(0) : setMonth(month+1);
         else
             day === maxDays[month] ? setDay(1) : setDay(day+1);
     }
@@ -35,7 +35,7 @@ const SetDatePrompt:React.FC<SetDatePromptParams> = ({prompt, selected, month, s
     const handleDateDown = () => {
         console.log("Date down");
         if(selected === 0)
-            month === 0 ? setMonth(months.length - 1) : setMonth(month-1);
+            month === 0 ? setMonth(Months.Dec) : setMonth(month-1);
         else
             day === 1 ? setDay(maxDays[month]) : setDay(day-1);
     }
@@ -50,10 +50,10 @@ const SetDatePrompt:React.FC<SetDatePromptParams> = ({prompt, selected, month, s
                                 {prompt}
                             </p>
                             <div id={"prompt-selectable"}>
-                                <h3 className={selected === 0 ? "selected":""}>
-                                    {months[month]}
+                                <h3 className={selected === 0 ? "date-option selected":""}>
+                                    {Months[month]}
                                 </h3>
-                                <h3 className={selected === 1 ? "selected":""}>
+                                <h3 className={selected === 1 ? "date-option selected":""}>
                                     {day < 10 ? `0${day}` : `${day}`}
                                 </h3>
                             </div>
