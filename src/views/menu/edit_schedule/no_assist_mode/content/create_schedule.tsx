@@ -20,6 +20,8 @@ import {handleTimeDown} from "@utils/schedule_handlers/handleTimeDown.ts";
 import {handleTimeUp} from "@utils/schedule_handlers/handleTimeUp.ts";
 import {handleTempUp} from "@utils/schedule_handlers/handleTempUp.ts";
 import {handleTempDown} from "@utils/schedule_handlers/handleTempDown.ts";
+import {useDatetimeStates} from "@contexts/datetime_context.tsx";
+import TextPrompt from "./components/text_prompt.tsx";
 
 interface CreateScheduleParams{
     setView: React.Dispatch<React.SetStateAction<number>>;
@@ -42,7 +44,8 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
     } = useSchedule()
 
     const [isWakeSet, setIsWakeSet] = useState<boolean>(false);
-    
+
+    const {isManualTime, manualCalendarDay, isManualDate} = useDatetimeStates();
     const {setCallForCooling} = useCondenser();
     const {fanSetting, setFanStatus} = useFan();
     const {setMode, currentTemp, setTemp, setStatus, setSetTemp} = useGeneralStates();
@@ -61,15 +64,15 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
                 // Set and follow schedule
                 setScheduleSet(true);
 
-                if(scheduleDays.includes(new Date().getDay())){
+                if(scheduleDays.includes(isManualDate ? manualCalendarDay : new Date().getDay())){
                     // Switch to auto mode and handle transition
                     setMode(Mode.Auto);
                     handleAutoMode({currentTemp, setTemp, fanSetting, setStatus, setCallForCooling, setFanStatus,});
 
                     setIsFollowingSchedule(true);
-
+                    console.log("Create schedule is manual time? : ", isManualTime)
                     // Switch the set temp to follow the schedule
-                    checkSchedule({setSetTemp});
+                    checkSchedule(!isManualTime && !isManualDate ? {setSetTemp} : {setSetTemp, isManualTime, isManualDate, manualCalendarDay});
                 }
 
                 // Restore navigation and switch back to home
@@ -82,15 +85,7 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
     return (
         <div className={"menu-container"}>
             <div className={"menu-body"}>
-                <div className={"menu-content"}>
-                    <div className={"menu-options"}>
-                        <div className={"menu-option"}>
-                            <p className={"dotted-text prompt"}>
-                                { !isWakeSet ? "Set Wake time & temperature" : "Set Sleep time & temperature"}
-                            </p>
-                        </div>
-                    </div>
-                </div>
+                <TextPrompt text={"Set Wake time & temperature"} text_two={"Set Sleep time & temperature"} condition={isWakeSet} />
                 <div className={"schedule-controls"}>
                     <div className={"control-center"}>
                         <ThermostatButton

@@ -18,19 +18,19 @@ import {useFan} from "@contexts/fan_context.tsx";
 import ControlButton from "@components/buttons/control_button.tsx";
 import {handleScheduleChange} from "./utils/handleScheduleChange.ts";
 import {useDatetimeStates} from "@contexts/datetime_context.tsx";
-import {formatTime} from "@utils/set_current_time.ts";
 const Home = () => {
     const {mode, setMode, setTemp, setSetTemp, currentTemp, status, setStatus} = useGeneralStates();
     const {callForCooling, setCallForCooling} = useCondenser();
     const {fanSetting,  setFanStatus} = useFan();
     const {isFollowingSchedule, setIsFollowingSchedule, isScheduleSet, checkSchedule} = useSchedule();
-    const {formattedManualTime, manuallySetTime, manualPeriod, isManualTime, manualHour, manualMinute, setManualMinute, setManualHour} = useDatetimeStates();
+    const {formattedManualTime, fullDateTime, manuallySetTime, manualPeriod, isManualTime, isManualDate, manualCalendarDay, manualHour, manualMinute, setManualMinute, setManualHour} = useDatetimeStates();
     // State for time and period
     const [currentTime, setCurrentTime] = useState(getCurrentTime().time);
     const [isAM, setIsAM] = useState(getCurrentTime().isAM);
 
     useEffect(() => {
-        checkSchedule({setSetTemp})
+        // Args depend on is manual time is set or not
+        checkSchedule(!isManualTime && !isManualDate ? {setSetTemp} : {setSetTemp, isManualTime, isManualDate, manualCalendarDay, fullDateTime})
     }, [currentTime]);
 
     /*
@@ -55,6 +55,7 @@ const Home = () => {
                 console.log("Period: ", manualPeriod);
                 console.log("Hour: ", manualHour);
                 setIsAM(manualPeriod === "am");
+                checkSchedule(!isManualTime && !isManualDate ? {setSetTemp} : {setSetTemp, isManualTime, isManualDate, manualCalendarDay, fullDateTime})
             }
         }, refreshTime); // Update every 60 seconds
 
@@ -83,7 +84,7 @@ const Home = () => {
             <div className={"thermostat-textbox"}>
                 <p className={"h3 dotted-text"}>System: {SystemStatus[status] === "AtTemp" ? "At Temp" : SystemStatus[status]}</p>
                 <p className={"h3 dotted-text"}>Outdoor: 80&#176;/55%</p>
-                { isScheduleSet && (
+                { isScheduleSet && isFollowingSchedule && (
                     <div className={"update-schedule-status"}>
                         <ControlButton
                             buttonClass={"schedule-status"}

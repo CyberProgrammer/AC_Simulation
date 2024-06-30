@@ -3,8 +3,6 @@ import SelectPrompt from "@components/prompts/select_prompt.tsx";
 import React, {useState} from "react";
 import SetTimePrompt from "@components/prompts/set_time_prompt.tsx";
 import SetDatePrompt from "@components/prompts/set_date_prompt.tsx";
-import {useGeneralStates} from "@contexts/general_context.tsx";
-import {formatTime} from "@utils/set_current_time.ts";
 import {useDatetimeStates} from "@contexts/datetime_context.tsx";
 import {Months} from "@customTypes/enums.ts";
 
@@ -19,23 +17,18 @@ const SelectTimeOrDate:React.FC<SelectTimeOrDate> = ({setView}) => {
 
     /* Navigating */
     const handleLeftClick = () => {
-        console.log("Left Click");
         if(selected != 0) setSelected(selected-1);
     }
 
     const handleRightClick = () => {
-        console.log("Right Click");
         if(selected != options.length-1) setSelected(selected+1);
     }
 
     const handleSelectClick = () => {
-        console.log("Select Click");
-        console.log(selected);
         setPrompted(true);
     }
 
     const handleCancelClick = () => {
-        console.log("Cancel Click");
         console.log(selected);
         setView(-1);
     }
@@ -48,17 +41,14 @@ const SelectTimeOrDate:React.FC<SelectTimeOrDate> = ({setView}) => {
     const [tempMinute, setTempMinute] = useState(0);
 
     const handleDoneClickTime = () => {
-        console.log("Done Click Time");
         manuallySetTime(tempHour, tempMinute);
         setView(-1);
     }
     const handleLeftClickTime = () => {
-        console.log("Left Click");
         if(timeSelect != 0) setTimeSelect(timeSelect-1);
     }
 
     const handleRightClickTime = () => {
-        console.log("Right Click");
         if(timeSelect != 1) setTimeSelect(timeSelect+1);
     }
 
@@ -67,17 +57,14 @@ const SelectTimeOrDate:React.FC<SelectTimeOrDate> = ({setView}) => {
     const [tempMonth, setTempMonth] = useState(Months.Jan);
     const [tempDay, setTempDay] = useState(1);
     const handleLeftClickDate = () => {
-        console.log("Left Click");
         if(dateSelect != 0) setDateSelect(dateSelect-1);
     }
 
     const handleRightClickDate = () => {
-        console.log("Right Click");
         if(dateSelect != 1) setDateSelect(dateSelect+1);
     }
 
     const handleDoneClickDate = () => {
-        console.log("Done Click Date");
         manuallySetDate(tempMonth, tempDay);
         setView(-1);
     }

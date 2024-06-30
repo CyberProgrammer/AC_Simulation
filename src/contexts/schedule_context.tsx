@@ -1,4 +1,8 @@
 import React, {createContext, ReactNode, useContext, useEffect, useState} from "react";
+import {DayOfWeek} from "@customTypes/enums.ts";
+import {isValidScheduleDay} from "@contexts/utils/schedule/checkValidScheduleDay.ts";
+import {handleManualTime} from "@contexts/utils/schedule/handleManualTime.ts";
+import {handleAutomaticTime} from "@contexts/utils/schedule/handleAutomaticTime.ts";
 
 interface ScheduleContextProps {
     scheduleDays: number[];
@@ -16,7 +20,7 @@ interface ScheduleContextProps {
     removeSchedule: () => void;
     isFollowingSchedule: boolean;
     setIsFollowingSchedule: React.Dispatch<React.SetStateAction<boolean>>;
-    checkSchedule: ({ setSetTemp }: CheckScheduleParams) => void;
+    checkSchedule: ({ setSetTemp, isManualTime, isManualDate, manualCalendarDay, fullDateTime}: CheckScheduleParams) => void;
 }
 
 interface ScheduleProviderProps {
@@ -25,6 +29,10 @@ interface ScheduleProviderProps {
 
 interface CheckScheduleParams{
     setSetTemp: React.Dispatch<React.SetStateAction<number>>;
+    isManualTime?: boolean;
+    isManualDate?: boolean;
+    manualCalendarDay?: DayOfWeek;
+    fullDateTime?: Date;
 }
 
 // Create the context
@@ -49,22 +57,24 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({ children }) 
         setScheduleSet(false);
         setIsFollowingSchedule(false);
     }
-    const checkSchedule = ({ setSetTemp }: CheckScheduleParams) => {
+    const checkSchedule = ({ setSetTemp , isManualTime, isManualDate, manualCalendarDay, fullDateTime}: CheckScheduleParams) => {
         const currentTime = new Date();
 
-        if(!scheduleDays.includes(currentTime.getDay())){
+        if (!isValidScheduleDay(scheduleDays, currentTime.getDay(), manualCalendarDay, isManualDate)) {
             setIsFollowingSchedule(false);
             return;
         }
 
-        if(currentTime >= wakeTime && currentTime < sleepTime && isFollowingSchedule){
-            console.log("Wake schedule...");
-            console.log("Wake time:" , wakeTime);
-            setSetTemp(wakeTemp);
-        } else if(currentTime >= sleepTime && isFollowingSchedule){
-            console.log("Sleep schedule...");
-            console.log("Wake time:" , sleepTime);
-            setSetTemp(sleepTemp);
+        if (!isFollowingSchedule) {
+            return;
+        }
+
+        if (isManualTime && fullDateTime) {
+            console.log("Manual time...");
+            handleManualTime(wakeTime, sleepTime, wakeTemp, sleepTemp, fullDateTime, setSetTemp);
+        } else {
+            console.log("Not manual time...");
+            handleAutomaticTime(wakeTime, sleepTime, wakeTemp, sleepTemp, currentTime, setSetTemp);
         }
     };
 

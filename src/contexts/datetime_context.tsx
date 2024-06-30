@@ -1,23 +1,30 @@
-import React, {createContext, ReactNode, useContext, useState} from "react";
-import {Months} from "@customTypes/enums.ts";
-import {formatTime} from "@utils/set_current_time.ts";
+import React, { createContext, ReactNode, useContext, useState } from "react";
+import { DayOfWeek, Months } from "@customTypes/enums.ts";
+import { formatTime } from "@utils/set_current_time.ts";
+import {getDayPostfix} from "@contexts/utils/datetime/getDayPostFix.ts";
+import {getFullDateTime} from "@contexts/utils/datetime/getFullDateTime.ts";
 
-interface DatetimeContextProps{
+interface DatetimeContextProps {
     manualMonth: Months;
-    setManualMonth: (month:Months) => void;
+    setManualMonth: (month: Months) => void;
     manualDay: number;
-    setManualDay: (day:number) => void;
+    setManualDay: (day: number) => void;
     manualHour: number;
-    setManualHour: (hour:number) => void;
+    setManualHour: (hour: number) => void;
     manualMinute: number;
-    setManualMinute: (minute:number) => void;
+    setManualMinute: (minute: number) => void;
     isManualTime: boolean;
-    setIsManualTime: (manualTime:boolean) => void;
+    setIsManualTime: (manualTime: boolean) => void;
     manuallySetTime: (hourInput: number, minuteInput: number) => void;
     manualPeriod: string;
     formattedManualTime: string;
     manuallySetDate: (monthInput: Months, dayInput: number) => void;
     formattedDate: string;
+    manualCalendarDay: DayOfWeek;
+    setManualCalendarDay: (day: DayOfWeek) => void;
+    isManualDate: boolean;
+    setIsManualDate: (manualDate: boolean) => void;
+    fullDateTime: Date;
 }
 
 interface DatetimeProviderProps{
@@ -28,7 +35,9 @@ const DatetimeContext = createContext<DatetimeContextProps | undefined>(undefine
 
 export const DatetimeProvider: React.FC<DatetimeProviderProps> = ({children}) => {
     const [isManualTime, setIsManualTime] = useState<boolean>(false);
-    const [manualDate, setManualDate] = useState<boolean>(false)
+    const [isManualDate, setIsManualDate] = useState<boolean>(false)
+    const [manualCalendarDay, setManualCalendarDay] = useState<DayOfWeek>(DayOfWeek.Sunday);
+    const [fullDateTime, setFullDateTime] = useState<Date>(new Date());
 
     // Manual Time / Date state
     const [manualHour, setManualHour] = useState(0);
@@ -38,13 +47,22 @@ export const DatetimeProvider: React.FC<DatetimeProviderProps> = ({children}) =>
     const manuallySetTime = (hourInput:number, minuteInput:number) => {
         const returned = formatTime(hourInput, minuteInput);
         setFormattedManualTime(returned.time)
-        console.log("Set hour:", hourInput);
-        console.log("Set minute:", minuteInput);
-
-        if(!isManualTime) setIsManualTime(true);
+        setIsManualTime(true);
         setManualHour(hourInput);
         setManualMinute(minuteInput);
         setManualPeriod(returned.period);
+
+        // Use current date to fill in missing date data if manual date is not being used
+        const currentDate = new Date();
+
+        // Set the full date time
+        if (isManualDate) {
+            console.log("Manual date, setting manual time");
+            setFullDateTime(getFullDateTime(currentDate.getFullYear(), manualMonth, manualDay, hourInput, minuteInput));
+        } else {
+            console.log("No manual date, setting manual time");
+            setFullDateTime(getFullDateTime(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), hourInput, minuteInput));
+        }
     }
 
     // Manual Date state
@@ -52,16 +70,23 @@ export const DatetimeProvider: React.FC<DatetimeProviderProps> = ({children}) =>
     const [manualDay, setManualDay] = useState(1);
     const [formattedDate, setFormattedDate] = useState<string>("");
     const manuallySetDate = (monthInput:Months, dayInput:number) => {
-        if(!manualDate) setManualDate(true);
+        const currentYear = new Date().getFullYear();
+        const setDate = new Date(currentYear, monthInput, dayInput);
+        setIsManualDate(true);
         setManualMonth(monthInput);
         setManualDay(dayInput);
+        setManualCalendarDay(setDate.getDay());
+        setFormattedDate(Months[monthInput] + " " + dayInput + getDayPostfix(dayInput));
 
-        let dayPostfix;
-        if(dayInput === 1) dayPostfix = "st";
-        else if(dayInput === 2) dayPostfix = "nd";
-        else if(dayInput === 3) dayPostfix = "rd";
-        else dayPostfix = "th";
-        setFormattedDate(Months[monthInput] + " " + dayInput + dayPostfix);
+        // Use current date to fill in missing date data if manual time is not being used
+        const currentDate = new Date();
+
+        // Set the full date time
+        if(isManualTime){
+            setFullDateTime(getFullDateTime(currentDate.getFullYear(), monthInput, dayInput, manualHour, manualMinute))
+        } else{
+            setFullDateTime(getFullDateTime(currentDate.getFullYear(), monthInput, dayInput, currentDate.getHours(), currentDate.getMinutes()))
+        }
     }
 
     return(
@@ -80,7 +105,12 @@ export const DatetimeProvider: React.FC<DatetimeProviderProps> = ({children}) =>
             manualPeriod,
             formattedManualTime,
             manuallySetDate,
-            formattedDate
+            formattedDate,
+            manualCalendarDay,
+            setManualCalendarDay,
+            isManualDate,
+            setIsManualDate,
+            fullDateTime
         }}>
             {children}
         </DatetimeContext.Provider>
