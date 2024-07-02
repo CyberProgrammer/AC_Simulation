@@ -45,7 +45,7 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
 
     const [isWakeSet, setIsWakeSet] = useState<boolean>(false);
 
-    const {isManualTime, manualCalendarDay, isManualDate} = useDatetimeStates();
+    const {isManualTime, manualCalendarDay, isManualDate, manualMonth, manualDay} = useDatetimeStates();
     const {setCallForCooling} = useCondenser();
     const {fanSetting, setFanStatus} = useFan();
     const {setMode, currentTemp, setTemp, setStatus, setSetTemp} = useGeneralStates();
@@ -72,7 +72,9 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
                     setIsFollowingSchedule(true);
                     console.log("Create schedule is manual time? : ", isManualTime)
                     // Switch the set temp to follow the schedule
-                    checkSchedule(!isManualTime && !isManualDate ? {setSetTemp} : {setSetTemp, isManualTime, isManualDate, manualCalendarDay});
+                    checkSchedule(!isManualTime && !isManualDate
+                        ? {setSetTemp} :
+                        {setSetTemp, isManualTime, isManualDate, manualMonth, manualDay, manualCalendarDay});
                 }
 
                 // Restore navigation and switch back to home
@@ -108,13 +110,33 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
                     <div className={"schedule-control"}>
                         <ArrowButton className={"temp-button"}
                                      isDisabled={false}
-                                     clickEvent={() => handleTimeUp({ isWakeSet, wakeTime, setWakeTime, sleepTime, setSleepTime })}
+                                     clickEvent={() =>
+                                         handleTimeUp({
+                                             isWakeSet,
+                                             wakeTime,
+                                             setWakeTime,
+                                             sleepTime,
+                                             setSleepTime,
+                                             isManualDate,
+                                             manualMonth,
+                                             manualDay
+                                         })}
                                      icon={TriangleUp}
                         />
                         <h4 className={"time digital-text"}>{formatTime(!isWakeSet ? wakeTime : sleepTime)}</h4>
                         <ArrowButton className={"temp-button"}
                                      isDisabled={false}
-                                     clickEvent={() => handleTimeDown({ isWakeSet, wakeTime, setWakeTime, sleepTime, setSleepTime })}
+                                     clickEvent={() =>
+                                         handleTimeDown({
+                                             isWakeSet,
+                                             wakeTime,
+                                             setWakeTime,
+                                             sleepTime,
+                                             setSleepTime,
+                                             isManualDate,
+                                             manualMonth,
+                                             manualDay
+                                         })}
                                      icon={TriangleDown}
                         />
                     </div>

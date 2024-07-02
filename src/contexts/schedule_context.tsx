@@ -20,7 +20,7 @@ interface ScheduleContextProps {
     removeSchedule: () => void;
     isFollowingSchedule: boolean;
     setIsFollowingSchedule: React.Dispatch<React.SetStateAction<boolean>>;
-    checkSchedule: ({ setSetTemp, isManualTime, isManualDate, manualCalendarDay, fullDateTime}: CheckScheduleParams) => void;
+    checkSchedule: ({ setSetTemp, isManualTime, isManualDate, manualMonth, manualDay, manualCalendarDay, fullDateTime}: CheckScheduleParams) => void;
 }
 
 interface ScheduleProviderProps {
@@ -31,6 +31,8 @@ interface CheckScheduleParams{
     setSetTemp: React.Dispatch<React.SetStateAction<number>>;
     isManualTime?: boolean;
     isManualDate?: boolean;
+    manualMonth?: number;
+    manualDay?: number;
     manualCalendarDay?: DayOfWeek;
     fullDateTime?: Date;
 }
@@ -57,7 +59,7 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({ children }) 
         setScheduleSet(false);
         setIsFollowingSchedule(false);
     }
-    const checkSchedule = ({ setSetTemp , isManualTime, isManualDate, manualCalendarDay, fullDateTime}: CheckScheduleParams) => {
+    const checkSchedule = ({ setSetTemp , isManualTime, isManualDate, manualMonth, manualDay, manualCalendarDay, fullDateTime}: CheckScheduleParams) => {
         const currentTime = new Date();
 
         if (!isValidScheduleDay(scheduleDays, currentTime.getDay(), manualCalendarDay, isManualDate)) {
@@ -71,7 +73,7 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({ children }) 
 
         if (isManualTime && fullDateTime) {
             console.log("Manual time...");
-            handleManualTime(wakeTime, sleepTime, wakeTemp, sleepTemp, fullDateTime, setSetTemp);
+            handleManualTime(wakeTime, sleepTime, wakeTemp, sleepTemp, fullDateTime, setSetTemp, isManualDate, manualMonth, manualDay);
         } else {
             console.log("Not manual time...");
             handleAutomaticTime(wakeTime, sleepTime, wakeTemp, sleepTemp, currentTime, setSetTemp);

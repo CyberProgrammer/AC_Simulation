@@ -1,13 +1,10 @@
-import {getCurrentTime, handleSetTempDown, handleSetTempUp} from '../../utils';
+// noinspection t
 
-import TriangleUp from '@assets/icons/triangle-up.svg';
-import TriangleDown from '@assets/icons/triangle-down.svg';
 import {useEffect, useState } from 'react';
-
-import {Mode, SystemStatus} from '@customTypes/enums';
-import ArrowButton from "@components/buttons/arrow_button.tsx";
-
 import './home.css';
+
+import {getCurrentTime} from '../../utils';
+import {Mode} from '@customTypes/enums';
 
 /* Contexts */
 import {useSchedule} from "@contexts/schedule_context.tsx";
@@ -18,72 +15,80 @@ import {useFan} from "@contexts/fan_context.tsx";
 import ControlButton from "@components/buttons/control_button.tsx";
 import {handleScheduleChange} from "./utils/handleScheduleChange.ts";
 import {useDatetimeStates} from "@contexts/datetime_context.tsx";
+import {checkAutomaticTime} from "./utils/checkAutomaticTime.ts";
+import {checkManualTime} from "./utils/checkManualTime.ts";
+import SystemStatusText from "./components/system_status_text.tsx";
+import OutdoorInfo from "./components/outdoor_info.tsx";
+import TimeInfo from "./components/time_info.tsx";
+import TempInfo from "./components/temp_info.tsx";
+import HumidityInfo from "./components/humidity_info.tsx";
+import SetControls from "./components/set_controls.tsx";
+import FollowingScheduleInfo from "./components/following_schedule_info.tsx";
 const Home = () => {
-    const {mode, setMode, setTemp, setSetTemp, currentTemp, status, setStatus} = useGeneralStates();
+    const {
+        mode,
+        setMode, setTemp,
+        setSetTemp,
+        currentTemp,
+        status,
+        setStatus
+    } = useGeneralStates();
     const {callForCooling, setCallForCooling} = useCondenser();
-    const {fanSetting,  setFanStatus} = useFan();
+    const {fanSetting, setFanStatus} = useFan();
     const {isFollowingSchedule, setIsFollowingSchedule, isScheduleSet, checkSchedule} = useSchedule();
-    const {formattedManualTime, fullDateTime, manuallySetTime, manualPeriod, isManualTime, isManualDate, manualCalendarDay, manualHour, manualMinute, setManualMinute, setManualHour} = useDatetimeStates();
+    const {
+        formattedManualTime,
+        fullDateTime,
+        manuallySetTime,
+        manualPeriod,
+        isManualTime,
+        isManualDate,
+        manualMonth,
+        manualDay,
+        manualCalendarDay,
+        manualHour,
+        manualMinute,
+        setManualMinute,
+        setManualHour
+    } = useDatetimeStates();
+
     // State for time and period
     const [currentTime, setCurrentTime] = useState(getCurrentTime().time);
     const [isAM, setIsAM] = useState(getCurrentTime().isAM);
-
     useEffect(() => {
         // Args depend on is manual time is set or not
-        checkSchedule(!isManualTime && !isManualDate ? {setSetTemp} : {setSetTemp, isManualTime, isManualDate, manualCalendarDay, fullDateTime})
+        checkSchedule(!isManualTime && !isManualDate
+            ? {setSetTemp} :
+            {setSetTemp, isManualTime, isManualDate, manualMonth, manualDay, manualCalendarDay, fullDateTime})
     }, [currentTime]);
-
-    /*
-    Change status is responsible for keeping the condenser and fan status
-    updated when the set temperature controls are adjusted.
-    */
 
     // Checks for new time on interval
     let refreshTime = 20000;
     if(isManualTime) refreshTime = 60000;
     useEffect(() => {
-
         const interval = setInterval(() => {
             if (!isManualTime) {
-                const { time, isAM } = getCurrentTime();
-                console.log("Checking time...");
-                setCurrentTime(time);
-                setIsAM(isAM);
+                checkAutomaticTime(setCurrentTime, setIsAM);
             } else {
-                console.log("Checking manual time...");
-                incrementManualTime();
-                console.log("Period: ", manualPeriod);
-                console.log("Hour: ", manualHour);
-                setIsAM(manualPeriod === "am");
-                checkSchedule(!isManualTime && !isManualDate ? {setSetTemp} : {setSetTemp, isManualTime, isManualDate, manualCalendarDay, fullDateTime})
+                checkManualTime(manualMinute,
+                    manualHour,
+                    setManualHour,
+                    setManualMinute,
+                    manuallySetTime,
+                    manualPeriod,
+                    setIsAM);
+                checkSchedule(!isManualTime && !isManualDate ? { setSetTemp } : { setSetTemp, isManualTime, isManualDate, manualMonth, manualDay, manualCalendarDay, fullDateTime });
             }
         }, refreshTime); // Update every 60 seconds
 
         return () => clearInterval(interval);
-    }, [isManualTime, manualHour, manualMinute]);
-
-    const incrementManualTime = () => {
-        let newMinute = manualMinute + 1;
-        let newHour = manualHour;
-        if(newMinute === 60){
-            newMinute = 0;
-            newHour = newHour + 1;
-            if (newHour === 24) {
-                newHour = 0;
-            }
-            setManualHour(newHour)
-        }
-        setManualMinute(newMinute);
-        manuallySetTime(newHour, newMinute);
-    };
-
-
+    }, [isManualTime, manualHour, manualMinute, refreshTime]);
 
     return(
         <>
             <div className={"thermostat-textbox"}>
-                <p className={"h3 dotted-text"}>System: {SystemStatus[status] === "AtTemp" ? "At Temp" : SystemStatus[status]}</p>
-                <p className={"h3 dotted-text"}>Outdoor: 80&#176;/55%</p>
+                <SystemStatusText status={status} />
+                <OutdoorInfo outdoorTemp={80} outdoorHumidity={55} />
                 { isScheduleSet && isFollowingSchedule && (
                     <div className={"update-schedule-status"}>
                         <ControlButton
@@ -96,75 +101,28 @@ const Home = () => {
                 )}
             </div>
             <div className={"thermostat-info"}>
-                <div className={"info-left"}>
-                    <h3 className={"digital-text"}>{isManualTime ? formattedManualTime : currentTime}</h3>
-                    <p>{isManualTime ? manualPeriod : isAM ? "am" : "pm"}</p>
-                </div>
+                <TimeInfo isManualTime={isManualTime} formattedManualTime={formattedManualTime} currentTime={currentTime} manualPeriod={manualPeriod} isAM={isAM} />
                 <div className={"info-center"}>
-                    <div className={"temp-reading"}>
-                        <h1 className={"digital-text"}>{currentTemp}</h1>
-                        <h2>&#176;</h2>
-                    </div>
-                    <div className={"humidity-reading"}>
-                        <p className={"digital-text"}>45%</p>
-                        <p>Humidity</p>
-                    </div>
+                    <TempInfo currentTemp={currentTemp} />
+                    <HumidityInfo humidityPercentage={45} />
                 </div>
                 <div className={"info-right"}>
                     { mode != Mode.Off && (
                         <>
-                            <div className={'info-container'}>
-                                <div className={"schedule-info"}>
-                                    <p className={`small-text ${!isFollowingSchedule ? "hidden-text" : ""}`}>
-                                        Following Schedule
-                                    </p>
-                                </div>
-                            </div>
-                            <div className={"set-controls"}>
-                                <div className={"set-info"}>
-                                    <p className={"small-text"}>Set</p>
-                                    <p className={"small-text"}>To</p>
-                                </div>
-                                <div className={"controls"}>
-                                    <ArrowButton
-                                        className={"temp-button"}
-                                        isDisabled={status === SystemStatus.Wait || isFollowingSchedule}
-                                        clickEvent={() =>
-                                            handleSetTempUp({mode,
-                                                setTemp,
-                                                setSetTemp,
-                                                currentTemp,
-                                                callForCooling,
-                                                setCallForCooling,
-                                                fanSetting,
-                                                setStatus,
-                                                setFanStatus
-                                                })}
-                                        icon={TriangleUp}
-                                    />
-                                    <div className={"temp-reading"}>
-                                        <h2 className={"digital-text"}>{setTemp}</h2>
-                                        <h3>&#176;</h3>
-                                    </div>
-                                    <ArrowButton
-                                        className={"temp-button"}
-                                        isDisabled={status === SystemStatus.Wait || isFollowingSchedule}
-                                        clickEvent={() =>
-                                            handleSetTempDown({
-                                                mode,
-                                                setTemp,
-                                                setSetTemp,
-                                                currentTemp,
-                                                callForCooling,
-                                                setCallForCooling,
-                                                fanSetting,
-                                                setStatus,
-                                                setFanStatus
-                                            })}
-                                        icon={TriangleDown}
-                                    />
-                                </div>
-                            </div>
+                            <FollowingScheduleInfo isFollowingSchedule={isFollowingSchedule} />
+                            <SetControls
+                                mode={mode}
+                                status={status}
+                                isFollowingSchedule={isFollowingSchedule}
+                                setTemp={setTemp}
+                                setSetTemp={setSetTemp}
+                                currentTemp={currentTemp}
+                                callForCooling={callForCooling}
+                                setCallForCooling={setCallForCooling}
+                                fanSetting={fanSetting}
+                                setStatus={setStatus}
+                                setFanStatus={setFanStatus}
+                            />
                         </>
                     )}
                 </div>
