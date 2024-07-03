@@ -1,5 +1,5 @@
 import ArrowButton from "@components/buttons/arrow_button.tsx";
-import {FanSetting, FanStatus, SystemStatus} from "@customTypes/enums.ts";
+import {SystemStatus} from "@customTypes/enums.ts";
 import TriangleUp from '@assets/icons/triangle-up.svg';
 import TriangleDown from '@assets/icons/triangle-down.svg';
 import {handleSetTempDown, handleSetTempUp} from '../../../utils'
@@ -12,25 +12,22 @@ interface SetControlsParams{
     currentTemp: number;
     callForCooling: boolean;
     setCallForCooling: (setCallForCooling: boolean) => void;
-    fanSetting: FanSetting;
-    setFanStatus: (status: FanStatus) => void;
 }
 const SetControls = ({
         isFollowingSchedule,
         setTemp,
         currentTemp,
         callForCooling,
-        setCallForCooling,
-        fanSetting,
-        setFanStatus}:SetControlsParams) => {
+        setCallForCooling
+}:SetControlsParams) => {
 
     const dispatch = useDispatch();
 
     const mode = useSelector((state:RootState) => state.general.mode);
     const status = useSelector((state:RootState) => state.general.status);
-    // FOR REDUX I NEED TO USE HANDLE SET TEMP DOWN AND UP TO RETURN WHAT TO DO
-    
-    // THE system status is not updating now but i can set a new temp
+
+    const fanSetting = useSelector((state: RootState) => state.fan.fanSetting);
+
     return (
         <div className={"set-controls"}>
             <div className={"set-info"}>
@@ -49,7 +46,6 @@ const SetControls = ({
                         callForCooling,
                         setCallForCooling,
                         fanSetting,
-                        setFanStatus,
                         dispatch,
                     })}
                     icon={TriangleUp}
@@ -68,7 +64,6 @@ const SetControls = ({
                         callForCooling,
                         setCallForCooling,
                         fanSetting,
-                        setFanStatus,
                         dispatch
                     })}
                     icon={TriangleDown}

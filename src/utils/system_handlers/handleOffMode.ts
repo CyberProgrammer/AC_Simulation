@@ -1,23 +1,22 @@
 import { updateStatus } from './updateStatus';
 import { FanSetting, FanStatus, SystemStatus } from "@customTypes/enums";
 import React from "react";
+import {Dispatch} from "redux";
 
 interface HandleOffModeParams {
+    dispatch: Dispatch;
     callForCooling: boolean;
     fanSetting: FanSetting;
-    setStatus: (val: SystemStatus) => void;
     setCallForCooling: React.Dispatch<React.SetStateAction<boolean>>;
-    setFanStatus: (status: FanStatus) => void;
 }
 
-export const handleOffMode = ({ callForCooling, fanSetting, setStatus, setCallForCooling, setFanStatus }: HandleOffModeParams) => {
+export const handleOffMode = ({ dispatch, callForCooling, fanSetting, setCallForCooling}: HandleOffModeParams) => {
     console.log("Setting to off...");
     if (callForCooling) {
         if (fanSetting === FanSetting.Auto) {
             updateStatus({
-                setStatus,
+                dispatch,
                 setCallForCooling,
-                setFanStatus,
                 waitTime: 5000,
                 finalStatus: SystemStatus.Off,
                 coolingStatus: false,
@@ -25,9 +24,8 @@ export const handleOffMode = ({ callForCooling, fanSetting, setStatus, setCallFo
             });
         } else {
             updateStatus({
-                setStatus,
+                dispatch,
                 setCallForCooling,
-                setFanStatus,
                 waitTime: 5000,
                 finalStatus: SystemStatus.Off,
                 coolingStatus: false
@@ -35,9 +33,8 @@ export const handleOffMode = ({ callForCooling, fanSetting, setStatus, setCallFo
         }
     } else {
         updateStatus({
-            setStatus,
+            dispatch,
             setCallForCooling,
-            setFanStatus,
             waitTime: 1000,
             finalStatus: SystemStatus.Off
         });

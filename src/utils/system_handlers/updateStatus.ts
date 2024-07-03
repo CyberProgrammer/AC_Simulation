@@ -4,27 +4,27 @@ import {FanStatus, SystemStatus} from "@customTypes/enums";
 import React from "react";
 import {Dispatch} from "redux";
 import {setStatus} from "../../state/slices/generalSlice.ts";
+import {setFanStatus} from "../../state/slices/fanSlice.ts";
 
 interface UpdateStatusParams {
     dispatch: Dispatch;
     setCallForCooling: React.Dispatch<React.SetStateAction<boolean>>;
-    setFanStatus: (status: FanStatus) => void;
     waitTime: number;
     finalStatus: SystemStatus;
     coolingStatus?: boolean;
     fanStatus?: FanStatus | null;
 }
 export const updateStatus = (
-    {dispatch, setCallForCooling, setFanStatus, waitTime, finalStatus, coolingStatus = false, fanStatus = null }: UpdateStatusParams
+    {dispatch, setCallForCooling, waitTime, finalStatus, coolingStatus = false, fanStatus = null }: UpdateStatusParams
 ) => {
     // If coolingStatus then that means a transition in state is happening
     if(coolingStatus) dispatch(setStatus(SystemStatus.Wait));
 
     // If fan status then that means a transition in state is happening
-    if (fanStatus !== null) setFanStatus(FanStatus.Wait);
+    if (fanStatus !== null) dispatch(setFanStatus(FanStatus.Wait));
     setTimeout(() => {
         dispatch(setStatus(finalStatus));
         setCallForCooling(coolingStatus);
-        if (fanStatus !== null) setFanStatus(fanStatus);
+        if (fanStatus !== null) dispatch(setFanStatus(fanStatus));
     }, waitTime);
 };

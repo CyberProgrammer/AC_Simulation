@@ -7,7 +7,6 @@ import GreenLed from '@assets/icons/green_led.svg';
 import YellowLed from "@assets/icons/yellow_led.svg";
 import DarkYellowLed from "@assets/icons/dark_yellow_led.svg";
 /* Contexts */
-import {useFan} from "@contexts/fan_context.tsx";
 import {useSelector} from "react-redux";
 
 import {RootState} from "../../state/store.ts";
@@ -21,7 +20,8 @@ const LEDDisplay: React.FC<LEDDisplayProps> = ({ label, isCooling = false }) => 
     const mode = useSelector((state: RootState) => state.general.mode);
     const status = useSelector((state: RootState) => state.general.status);
 
-    const {fanStatus} = useFan();
+    const fanStatus = useSelector((state: RootState)=> state.fan.fanStatus);
+
     const [currentSrc, setCurrentSrc] = useState<string>(RedLed);
 
     useEffect(() => {

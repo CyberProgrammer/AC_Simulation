@@ -1,43 +1,40 @@
 import { updateStatus } from './updateStatus';
 import { FanSetting, FanStatus, SystemStatus } from "@customTypes/enums";
 import React from "react";
+import {Dispatch} from "redux";
 
 interface HandleCoolModeParams {
+    dispatch: Dispatch;
     setTemp: number;
     currentTemp: number;
     fanSetting: FanSetting;
     callForCooling: boolean;
-    setStatus: (val: SystemStatus) => void;
     setCallForCooling: React.Dispatch<React.SetStateAction<boolean>>;
-    setFanStatus: (status: FanStatus) => void;
 }
 export const handleCoolMode = (
     {
+        dispatch,
         setTemp,
         currentTemp,
         fanSetting,
         callForCooling,
-        setStatus,
         setCallForCooling,
-        setFanStatus,
     }: HandleCoolModeParams) => {
 
     console.log("Setting to cool...");
     if (setTemp < currentTemp) {
         if (fanSetting === FanSetting.On) {
             updateStatus({
-                setStatus,
+                dispatch,
                 setCallForCooling,
-                setFanStatus,
                 waitTime: 5000,
                 finalStatus: SystemStatus.Cool,
                 coolingStatus: true,
             });
         } else if (fanSetting === FanSetting.Auto) {
             updateStatus({
-                setStatus,
+                dispatch,
                 setCallForCooling,
-                setFanStatus,
                 waitTime: 5000,
                 finalStatus: SystemStatus.Cool,
                 coolingStatus: true,
@@ -47,9 +44,8 @@ export const handleCoolMode = (
     } else if (setTemp > currentTemp) {
         if (callForCooling) {
             updateStatus({
-                setStatus,
+                dispatch,
                 setCallForCooling,
-                setFanStatus,
                 waitTime: 5000,
                 finalStatus: SystemStatus.AtTemp,
                 coolingStatus: false,
@@ -57,9 +53,8 @@ export const handleCoolMode = (
             });
         } else {
             updateStatus({
-                setStatus,
+                dispatch,
                 setCallForCooling,
-                setFanStatus,
                 waitTime: 1000,
                 finalStatus: SystemStatus.AtTemp,
             });

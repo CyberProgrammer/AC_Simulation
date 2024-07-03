@@ -9,7 +9,6 @@ import {Mode} from '@customTypes/enums';
 /* Contexts */
 import {useSchedule} from "@contexts/schedule_context.tsx";
 import {useCondenser} from "@contexts/condenser_context.tsx";
-import {useFan} from "@contexts/fan_context.tsx";
 
 import ControlButton from "@components/buttons/control_button.tsx";
 import {handleScheduleChange} from "./utils/handleScheduleChange.ts";
@@ -34,9 +33,10 @@ const Home = () => {
     const mode = useSelector((state:RootState) => state.general.mode);
     const status = useSelector((state:RootState) => state.general.status);
     const setTemp = useSelector((state:RootState) => state.general.setTemp);
+
+
     //
     const {callForCooling, setCallForCooling} = useCondenser();
-    const {fanSetting, setFanStatus} = useFan();
     const {isFollowingSchedule, setIsFollowingSchedule, isScheduleSet, checkSchedule} = useSchedule();
     const {
         formattedManualTime,
@@ -118,8 +118,6 @@ const Home = () => {
                                 currentTemp={currentTemp}
                                 callForCooling={callForCooling}
                                 setCallForCooling={setCallForCooling}
-                                fanSetting={fanSetting}
-                                setFanStatus={setFanStatus}
                             />
                         </>
                     )}

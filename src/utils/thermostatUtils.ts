@@ -1,6 +1,7 @@
 import {Mode, SystemStatus, FanStatus, FanSetting} from '@customTypes/enums';
 import {Dispatch} from "redux";
 import {setStatus} from "../state/slices/generalSlice.ts";
+import {setFanStatus} from "../state/slices/fanSlice.ts";
 
 // Recheck status
 /*
@@ -13,12 +14,11 @@ import {setStatus} from "../state/slices/generalSlice.ts";
 const handleCoolingOff = (
     dispatch: Dispatch,
     fanSetting: FanSetting,
-    setFanStatus: (status: FanStatus) => void,
     setCallForCooling: (cooling: boolean) => void
 ) => {
     if (fanSetting === FanSetting.Auto) {
         dispatch(setStatus(SystemStatus.Wait));
-        setFanStatus(FanStatus.Wait);
+        dispatch(setFanStatus(FanStatus.Wait));
     } else {
         dispatch(setStatus(SystemStatus.Wait));
     }
@@ -26,7 +26,7 @@ const handleCoolingOff = (
         setCallForCooling(false);
         dispatch(setStatus(SystemStatus.AtTemp));
         if (fanSetting === FanSetting.Auto) {
-            setFanStatus(FanStatus.Off);
+            dispatch(setFanStatus(FanStatus.Off));
         }
     }, 5000);
 };
@@ -34,21 +34,20 @@ const handleCoolingOff = (
 const handleHeatingOff = (
     dispatch: Dispatch,
     fanSetting: FanSetting,
-    setFanStatus: (status: FanStatus) => void,
     setCallForCooling: (cooling: boolean) => void
 ) => {
     if (fanSetting === FanSetting.Auto) {
         dispatch(setStatus(SystemStatus.Wait));
-        setFanStatus(FanStatus.Wait);
+        dispatch(setFanStatus(FanStatus.Wait));
     } else {
-        setStatus(SystemStatus.Wait);
+        dispatch(setStatus(SystemStatus.Wait));
     }
 
     setTimeout(() => {
         setCallForCooling(false);
         dispatch(setStatus(SystemStatus.AtTemp));
         if (fanSetting === FanSetting.Auto) {
-            setFanStatus(FanStatus.Off);
+            dispatch(setFanStatus(FanStatus.Off));
         }
     }, 5000);
 };
@@ -60,23 +59,22 @@ export const checkStatus = (
     setTemp: number,
     status: SystemStatus,
     fanSetting: FanSetting,
-    setFanStatus: (status: FanStatus) => void,
     setCallForCooling: (cooling: boolean) => void
 ) => {
     if (mode === Mode.Cool && currentTemp <= setTemp && status === SystemStatus.Cool) {
-        handleCoolingOff(dispatch, fanSetting, setFanStatus, setCallForCooling);
+        handleCoolingOff(dispatch, fanSetting, setCallForCooling);
     }
 
     if (mode === Mode.Heat && currentTemp >= setTemp && status === SystemStatus.Heat) {
-        handleHeatingOff(dispatch, fanSetting, setFanStatus, setCallForCooling);
+        handleHeatingOff(dispatch, fanSetting, setCallForCooling);
     }
 
     // Auto modes
     if(mode === Mode.Auto && currentTemp >= setTemp && status === SystemStatus.Heat){
-        handleHeatingOff(dispatch, fanSetting, setFanStatus, setCallForCooling);
+        handleHeatingOff(dispatch, fanSetting, setCallForCooling);
     }
 
     if(mode === Mode.Auto && currentTemp <= setTemp && status === SystemStatus.Cool){
-        handleCoolingOff(dispatch, fanSetting, setFanStatus, setCallForCooling);
+        handleCoolingOff(dispatch, fanSetting, setCallForCooling);
     }
 };

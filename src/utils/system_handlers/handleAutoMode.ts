@@ -9,7 +9,6 @@ interface HandleAutoModeParams {
     setTemp: number;
     fanSetting: FanSetting;
     setCallForCooling: React.Dispatch<React.SetStateAction<boolean>>;
-    setFanStatus: (status: FanStatus) => void;
 }
 
 export const handleAutoMode = (
@@ -19,7 +18,6 @@ export const handleAutoMode = (
         setTemp,
         fanSetting,
         setCallForCooling,
-        setFanStatus,
     }: HandleAutoModeParams) => {
 
     console.log("Setting to auto...");
@@ -28,7 +26,6 @@ export const handleAutoMode = (
             updateStatus({
                 dispatch,
                 setCallForCooling,
-                setFanStatus,
                 waitTime: 5000,
                 finalStatus: SystemStatus.Cool,
                 coolingStatus: true,
@@ -37,7 +34,6 @@ export const handleAutoMode = (
             updateStatus({
                 dispatch,
                 setCallForCooling,
-                setFanStatus,
                 waitTime: 5000,
                 finalStatus: SystemStatus.Cool,
                 coolingStatus: true,
@@ -49,7 +45,6 @@ export const handleAutoMode = (
             updateStatus({
                 dispatch,
                 setCallForCooling,
-                setFanStatus,
                 waitTime: 5000,
                 finalStatus: SystemStatus.Heat,
                 coolingStatus: true,
@@ -58,7 +53,6 @@ export const handleAutoMode = (
             updateStatus({
                 dispatch,
                 setCallForCooling,
-                setFanStatus,
                 waitTime: 5000,
                 finalStatus: SystemStatus.Heat,
                 coolingStatus: true,

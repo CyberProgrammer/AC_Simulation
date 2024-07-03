@@ -4,7 +4,6 @@ import './App.css'
 
 /* Contexts */
 import {ScheduleProvider} from "@contexts/schedule_context.tsx";
-import {FanProvider} from "@contexts/fan_context.tsx";
 import {CondenserProvider} from "@contexts/condenser_context.tsx";
 import {DatetimeProvider} from "@contexts/datetime_context.tsx";
 
@@ -15,11 +14,9 @@ function App() {
             <div id={"app"}>
                     <DatetimeProvider>
                         <CondenserProvider>
-                            <FanProvider>
-                                <ScheduleProvider>
-                                    <VirtualThermostat/>
-                                </ScheduleProvider>
-                            </FanProvider>
+                            <ScheduleProvider>
+                                <VirtualThermostat/>
+                            </ScheduleProvider>
                         </CondenserProvider>
                     </DatetimeProvider>
             </div>

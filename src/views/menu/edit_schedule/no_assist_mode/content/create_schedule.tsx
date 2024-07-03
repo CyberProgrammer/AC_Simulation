@@ -10,7 +10,6 @@ import ScheduleDaysControls from "@components/prompts/controls/schedule_days.tsx
 import {Mode} from "@customTypes/enums.ts";
 /* Contexts */
 import {useSchedule} from "@contexts/schedule_context.tsx";
-import {useFan} from "@contexts/fan_context.tsx";
 import {useCondenser} from "@contexts/condenser_context.tsx";
 /* Utils */
 import {handleAutoMode} from "@utils/system_handlers/handleAutoMode.ts";
@@ -49,11 +48,12 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
     const currentTemp = useSelector((state: RootState) => state.general.currentTemp);
     const setTemp = useSelector((state: RootState) => state.general.setTemp);
 
+    const fanSetting = useSelector((state: RootState) => state.fan.fanSetting);
+
     const [isWakeSet, setIsWakeSet] = useState<boolean>(false);
 
     const {isManualTime, manualCalendarDay, isManualDate, manualMonth, manualDay} = useDatetimeStates();
     const {setCallForCooling} = useCondenser();
-    const {fanSetting, setFanStatus} = useFan();
     const handleButtonClick = (id:number) => {
         switch (id){
             case 1:
@@ -72,7 +72,7 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
                 if(scheduleDays.includes(isManualDate ? manualCalendarDay : new Date().getDay())){
                     // Switch to auto mode and handle transition
                     dispatch(setMode(Mode.Auto));
-                    handleAutoMode({dispatch, currentTemp, setTemp, fanSetting, setCallForCooling, setFanStatus,});
+                    handleAutoMode({dispatch, currentTemp, setTemp, fanSetting, setCallForCooling});
 
                     setIsFollowingSchedule(true);
                     console.log("Create schedule is manual time? : ", isManualTime)

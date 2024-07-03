@@ -1,20 +1,21 @@
 import {FanSetting, FanStatus, Mode} from "@customTypes/enums.ts";
+import {Dispatch} from "redux";
+import {setFanSetting, setFanStatus} from "../../../state/slices/fanSlice.ts";
 
 
 interface DoneClickParams{
+    dispatch: Dispatch;
     selectedSetting: FanSetting;
     setMenu: (value:Mode) => void;
     callForCooling: boolean;
     fanSetting: FanSetting;
-    setFanSetting: (fanSetting: FanSetting) => void;
-    setFanStatus: (fanStatus:FanStatus) => void;
 }
-export const handleDoneClick = ({selectedSetting, setMenu, callForCooling, fanSetting, setFanSetting, setFanStatus}: DoneClickParams) => {
+export const handleDoneClick = ({dispatch, selectedSetting, setMenu, callForCooling, fanSetting}: DoneClickParams) => {
     const handleStatusChange = (newStatus: FanStatus, delay:number) => {
-        if(!callForCooling) setFanStatus(FanStatus.Wait);
+        if(!callForCooling) dispatch(setFanStatus(FanStatus.Wait));
 
         setTimeout(() => {
-            setFanStatus(newStatus);
+            dispatch(setFanStatus(newStatus));
         }, delay);
     }
 
@@ -28,6 +29,6 @@ export const handleDoneClick = ({selectedSetting, setMenu, callForCooling, fanSe
         );
     }
 
-    setFanSetting(selectedSetting);
+    dispatch(setFanSetting(selectedSetting));
     setMenu(0);
 }

@@ -10,7 +10,6 @@ import SystemOption from "@components/option/system_option.tsx";
 import HelpContainer from '@shared/help_container';
 
 /* Contexts */
-import {useFan} from "@contexts/fan_context.tsx";
 import {useCondenser} from "@contexts/condenser_context.tsx";
 import {useSchedule} from "@contexts/schedule_context.tsx";
 
@@ -18,21 +17,21 @@ import {useSchedule} from "@contexts/schedule_context.tsx";
 import {handleNextClick} from "./utils/handleNextClick.ts";
 import {handlePrevClick} from "./utils/handlePrevClick.ts";
 import {handleDoneClick} from "./utils/handleDoneClick.ts";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../state/store.ts";
-import {setMode, setStatus} from "../../state/slices/generalSlice.ts";
 
 interface SystemParams{
     setMenu: (menu: number) => void;
 }
 const System = ({setMenu}:SystemParams) => {
-
+    const dispatch = useDispatch();
     const currentTemp = useSelector((state: RootState) => state.general.currentTemp);
     const setTemp = useSelector((state: RootState) => state.general.setTemp);
     const mode = useSelector((state: RootState) => state.general.mode);
 
+    const fanSetting = useSelector((state: RootState) => state.fan.fanSetting);
+
     const {callForCooling, setCallForCooling} = useCondenser();
-    const {fanSetting, setFanStatus} = useFan();
     const {isFollowingSchedule} = useSchedule();
     const [selectedSetting, setSelectedSetting] = useState<Mode>(mode);
 
@@ -59,16 +58,14 @@ const System = ({setMenu}:SystemParams) => {
                             textClass={"fan-control"}
                             text={"Done"}
                             clickEvent={() => handleDoneClick(
+                                dispatch,
                                 selectedSetting,
                                 isFollowingSchedule,
                                 mode,
-                                setMode,
                                 setMenu,
                                 callForCooling,
                                 fanSetting,
-                                setStatus,
                                 setCallForCooling,
-                                setFanStatus,
                                 setTemp,
                                 currentTemp
                             )}

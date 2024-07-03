@@ -1,42 +1,39 @@
 import { updateStatus } from './updateStatus';
 import { FanSetting, FanStatus, SystemStatus } from "@customTypes/enums";
 import React from "react";
+import {Dispatch} from "redux";
 
 interface HandleHeatModeParams {
+    dispatch: Dispatch;
     setTemp: number;
     currentTemp: number;
     fanSetting: FanSetting;
     callForCooling: boolean;
-    setStatus: (val: SystemStatus) => void;
     setCallForCooling: React.Dispatch<React.SetStateAction<boolean>>;
-    setFanStatus: (status: FanStatus) => void;
 }
 
 export const handleHeatMode = ({
+                                   dispatch,
                                    setTemp,
                                    currentTemp,
                                    fanSetting,
                                    callForCooling,
-                                   setStatus,
                                    setCallForCooling,
-                                   setFanStatus,
                                }: HandleHeatModeParams) => {
     console.log("Setting to heat...");
     if (setTemp > currentTemp) {
         if (fanSetting === FanSetting.On) {
             updateStatus({
-                setStatus,
+                dispatch,
                 setCallForCooling,
-                setFanStatus,
                 waitTime: 5000,
                 finalStatus: SystemStatus.Heat,
                 coolingStatus: true,
             });
         } else if (fanSetting === FanSetting.Auto) {
             updateStatus({
-                setStatus,
+                dispatch,
                 setCallForCooling,
-                setFanStatus,
                 waitTime: 5000,
                 finalStatus: SystemStatus.Heat,
                 coolingStatus: true,
@@ -46,9 +43,8 @@ export const handleHeatMode = ({
     } else if (setTemp < currentTemp) {
         if (callForCooling) {
             updateStatus({
-                setStatus,
+                dispatch,
                 setCallForCooling,
-                setFanStatus,
                 waitTime: 5000,
                 finalStatus: SystemStatus.AtTemp,
                 coolingStatus: false,
@@ -56,9 +52,8 @@ export const handleHeatMode = ({
             });
         } else {
             updateStatus({
-                setStatus,
+                dispatch,
                 setCallForCooling,
-                setFanStatus,
                 waitTime: 1000,
                 finalStatus: SystemStatus.AtTemp,
             });
