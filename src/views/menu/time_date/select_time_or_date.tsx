@@ -3,13 +3,24 @@ import SelectPrompt from "@components/prompts/select_prompt.tsx";
 import React, {useState} from "react";
 import SetTimePrompt from "@components/prompts/set_time_prompt.tsx";
 import SetDatePrompt from "@components/prompts/set_date_prompt.tsx";
-import {useDatetimeStates} from "@contexts/datetime_context.tsx";
 import {Months} from "@customTypes/enums.ts";
+import {manuallySetDate} from "@utils/manuallySetDate.ts";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../../../state/store.ts";
+import {manuallySetTime} from "@utils/manuallySetTime.ts";
 
 interface SelectTimeOrDate {
     setView: React.Dispatch<React.SetStateAction<number>>;
 }
 const SelectTimeOrDate:React.FC<SelectTimeOrDate> = ({setView}) => {
+    const dispatch = useDispatch();
+    const isManualTime = useSelector((state:RootState) => state.datetime.isManualTime);
+    const isManualDate = useSelector((state:RootState) => state.datetime.isManualDate);
+    const manualHour = useSelector((state:RootState) => state.datetime.manualHour);
+    const manualMinute = useSelector((state:RootState) => state.datetime.manualMinute);
+    const manualMonth = useSelector((state:RootState) => state.datetime.manualMonth);
+    const manualDay = useSelector((state:RootState) => state.datetime.manualDay);
+
     const [prompted, setPrompted] = useState<boolean>(false);
     const [selected, setSelected] = useState<number>(0);
 
@@ -34,14 +45,13 @@ const SelectTimeOrDate:React.FC<SelectTimeOrDate> = ({setView}) => {
     }
 
     /* Setting time */
-    const {manuallySetTime, manuallySetDate} = useDatetimeStates();
     const [timeSelect, setTimeSelect] = useState<number>(0);
 
     const [tempHour, setTempHour] = useState(0);
     const [tempMinute, setTempMinute] = useState(0);
 
     const handleDoneClickTime = () => {
-        manuallySetTime(tempHour, tempMinute);
+        manuallySetTime(dispatch, isManualDate, tempHour, tempMinute, manualMonth, manualDay);
         setView(-1);
     }
     const handleLeftClickTime = () => {
@@ -65,7 +75,7 @@ const SelectTimeOrDate:React.FC<SelectTimeOrDate> = ({setView}) => {
     }
 
     const handleDoneClickDate = () => {
-        manuallySetDate(tempMonth, tempDay);
+        manuallySetDate(dispatch, isManualTime, tempMonth, tempDay, manualHour, manualMinute);
         setView(-1);
     }
 

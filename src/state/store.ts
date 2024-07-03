@@ -2,11 +2,15 @@ import {configureStore} from "@reduxjs/toolkit";
 
 import generalReducer from './slices/generalSlice.ts'
 import fanReducer from './slices/fanSlice.ts'
+import condenserReducer from './slices/condenserSlice.ts'
+import datetimeSlice from "./slices/datetimeSlice.ts";
 
 export const store = configureStore({
     reducer: {
         general: generalReducer,
-        fan: fanReducer
+        fan: fanReducer,
+        condenser: condenserReducer,
+        datetime: datetimeSlice
     },
 })
 

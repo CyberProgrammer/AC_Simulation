@@ -10,7 +10,7 @@ import ControlButton from '@components/buttons/control_button';
 
 /* Contexts */
 import {handleDoneClick} from "./utils/handleDoneClick.ts";
-import {useCondenser} from "@contexts/condenser_context.tsx";
+
 import {handleNextClick} from "./utils/handleNextClick.ts";
 import {handlePrevClick} from "./utils/handlePrevClick.ts";
 import {useDispatch, useSelector} from "react-redux";
@@ -20,10 +20,10 @@ interface FanProps{
     setMenu: (value:Mode) => void;
 }
 const Fan = ({setMenu}:FanProps) => {
-    const {callForCooling} = useCondenser();
 
     const dispatch = useDispatch();
     const fanSetting = useSelector((state: RootState) => state.fan.fanSetting);
+    const callForCooling = useSelector((state: RootState) => state.condenser.callForCooling);
 
     const [selectedSetting, setSelectedSetting] = useState<FanSetting>(fanSetting);
 

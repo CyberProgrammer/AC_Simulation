@@ -1,4 +1,3 @@
-import React from "react";
 
 import {FanSetting, Mode} from "@customTypes/enums.ts";
 import {handleOffMode} from "@utils/system_handlers/handleOffMode.ts";
@@ -17,7 +16,6 @@ export const handleDoneClick =
         setMenu: (menu: number) => void,
         callForCooling: boolean,
         fanSetting: FanSetting,
-        setCallForCooling: React.Dispatch<React.SetStateAction<boolean>>,
         setTemp: number,
         currentTemp: number
     ) => {
@@ -36,16 +34,16 @@ export const handleDoneClick =
 
     switch (selectedSetting) {
         case Mode.Off:
-            handleOffMode({dispatch, callForCooling, fanSetting, setCallForCooling});
+            handleOffMode({dispatch, callForCooling, fanSetting});
             break;
         case Mode.Cool:
-            handleCoolMode({dispatch, callForCooling, setTemp, currentTemp, fanSetting, setCallForCooling});
+            handleCoolMode({dispatch, callForCooling, setTemp, currentTemp, fanSetting});
             break;
         case Mode.Heat:
-            handleHeatMode({dispatch, callForCooling, setTemp, currentTemp, fanSetting, setCallForCooling});
+            handleHeatMode({dispatch, callForCooling, setTemp, currentTemp, fanSetting});
             break;
         case Mode.Auto:
-            handleAutoMode({dispatch, currentTemp, setTemp, fanSetting, setCallForCooling});
+            handleAutoMode({dispatch, currentTemp, setTemp, fanSetting});
             break;
     }
 

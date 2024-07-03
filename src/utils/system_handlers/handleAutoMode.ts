@@ -1,6 +1,5 @@
 import { updateStatus } from './updateStatus';
 import { FanSetting, FanStatus, SystemStatus } from "@customTypes/enums";
-import React from "react";
 import {Dispatch} from "redux";
 
 interface HandleAutoModeParams {
@@ -8,7 +7,6 @@ interface HandleAutoModeParams {
     currentTemp: number;
     setTemp: number;
     fanSetting: FanSetting;
-    setCallForCooling: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const handleAutoMode = (
@@ -17,7 +15,6 @@ export const handleAutoMode = (
         currentTemp,
         setTemp,
         fanSetting,
-        setCallForCooling,
     }: HandleAutoModeParams) => {
 
     console.log("Setting to auto...");
@@ -25,7 +22,6 @@ export const handleAutoMode = (
         if (fanSetting === FanSetting.On) {
             updateStatus({
                 dispatch,
-                setCallForCooling,
                 waitTime: 5000,
                 finalStatus: SystemStatus.Cool,
                 coolingStatus: true,
@@ -33,7 +29,6 @@ export const handleAutoMode = (
         } else {
             updateStatus({
                 dispatch,
-                setCallForCooling,
                 waitTime: 5000,
                 finalStatus: SystemStatus.Cool,
                 coolingStatus: true,
@@ -44,7 +39,6 @@ export const handleAutoMode = (
         if (fanSetting === FanSetting.On) {
             updateStatus({
                 dispatch,
-                setCallForCooling,
                 waitTime: 5000,
                 finalStatus: SystemStatus.Heat,
                 coolingStatus: true,
@@ -52,7 +46,6 @@ export const handleAutoMode = (
         } else {
             updateStatus({
                 dispatch,
-                setCallForCooling,
                 waitTime: 5000,
                 finalStatus: SystemStatus.Heat,
                 coolingStatus: true,

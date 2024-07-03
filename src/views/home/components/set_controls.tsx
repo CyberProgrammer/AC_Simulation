@@ -8,25 +8,20 @@ import {RootState} from "../../../state/store.ts";
 
 interface SetControlsParams{
     isFollowingSchedule: boolean;
-    setTemp: number;
-    currentTemp: number;
-    callForCooling: boolean;
-    setCallForCooling: (setCallForCooling: boolean) => void;
 }
 const SetControls = ({
         isFollowingSchedule,
-        setTemp,
-        currentTemp,
-        callForCooling,
-        setCallForCooling
+
 }:SetControlsParams) => {
 
     const dispatch = useDispatch();
 
     const mode = useSelector((state:RootState) => state.general.mode);
     const status = useSelector((state:RootState) => state.general.status);
-
+    const setTemp = useSelector((state: RootState) => state.general.setTemp);
+    const currentTemp = useSelector((state: RootState) => state.general.currentTemp);
     const fanSetting = useSelector((state: RootState) => state.fan.fanSetting);
+    const callForCooling = useSelector((state: RootState) => state.condenser.callForCooling);
 
     return (
         <div className={"set-controls"}>
@@ -40,13 +35,12 @@ const SetControls = ({
                     isDisabled={status === SystemStatus.Wait || isFollowingSchedule}
                     clickEvent={() => handleSetTempUp(
                         {
+                            dispatch,
                         mode,
                         setTemp,
                         currentTemp,
-                        callForCooling,
-                        setCallForCooling,
-                        fanSetting,
-                        dispatch,
+                            callForCooling,
+                        fanSetting
                     })}
                     icon={TriangleUp}
                 />
@@ -58,13 +52,12 @@ const SetControls = ({
                     className={"temp-button"}
                     isDisabled={status === SystemStatus.Wait || isFollowingSchedule}
                     clickEvent={() => handleSetTempDown({
+                        dispatch,
                         mode,
                         setTemp,
                         currentTemp,
                         callForCooling,
-                        setCallForCooling,
                         fanSetting,
-                        dispatch
                     })}
                     icon={TriangleDown}
                 />

@@ -1,12 +1,10 @@
 import './navigation.css'
 
-import {SystemStatus} from "@customTypes/enums";
 import ThermostatButton from "@components/buttons/thermostat_button.tsx";
 import React from "react";
 
 interface NavigationProps{
     menu: number;
-    status: SystemStatus;
     setMenu: (val:number) => void;
     isNavigationActive: boolean;
 }

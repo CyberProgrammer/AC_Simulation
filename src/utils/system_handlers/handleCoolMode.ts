@@ -1,6 +1,5 @@
 import { updateStatus } from './updateStatus';
 import { FanSetting, FanStatus, SystemStatus } from "@customTypes/enums";
-import React from "react";
 import {Dispatch} from "redux";
 
 interface HandleCoolModeParams {
@@ -9,7 +8,6 @@ interface HandleCoolModeParams {
     currentTemp: number;
     fanSetting: FanSetting;
     callForCooling: boolean;
-    setCallForCooling: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export const handleCoolMode = (
     {
@@ -18,7 +16,6 @@ export const handleCoolMode = (
         currentTemp,
         fanSetting,
         callForCooling,
-        setCallForCooling,
     }: HandleCoolModeParams) => {
 
     console.log("Setting to cool...");
@@ -26,7 +23,6 @@ export const handleCoolMode = (
         if (fanSetting === FanSetting.On) {
             updateStatus({
                 dispatch,
-                setCallForCooling,
                 waitTime: 5000,
                 finalStatus: SystemStatus.Cool,
                 coolingStatus: true,
@@ -34,7 +30,6 @@ export const handleCoolMode = (
         } else if (fanSetting === FanSetting.Auto) {
             updateStatus({
                 dispatch,
-                setCallForCooling,
                 waitTime: 5000,
                 finalStatus: SystemStatus.Cool,
                 coolingStatus: true,
@@ -45,7 +40,6 @@ export const handleCoolMode = (
         if (callForCooling) {
             updateStatus({
                 dispatch,
-                setCallForCooling,
                 waitTime: 5000,
                 finalStatus: SystemStatus.AtTemp,
                 coolingStatus: false,
@@ -54,7 +48,6 @@ export const handleCoolMode = (
         } else {
             updateStatus({
                 dispatch,
-                setCallForCooling,
                 waitTime: 1000,
                 finalStatus: SystemStatus.AtTemp,
             });

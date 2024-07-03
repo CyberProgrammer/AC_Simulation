@@ -10,7 +10,6 @@ import SystemOption from "@components/option/system_option.tsx";
 import HelpContainer from '@shared/help_container';
 
 /* Contexts */
-import {useCondenser} from "@contexts/condenser_context.tsx";
 import {useSchedule} from "@contexts/schedule_context.tsx";
 
 /* Utils */
@@ -28,10 +27,9 @@ const System = ({setMenu}:SystemParams) => {
     const currentTemp = useSelector((state: RootState) => state.general.currentTemp);
     const setTemp = useSelector((state: RootState) => state.general.setTemp);
     const mode = useSelector((state: RootState) => state.general.mode);
-
     const fanSetting = useSelector((state: RootState) => state.fan.fanSetting);
+    const callForCooling = useSelector((state: RootState) => state.condenser.callForCooling);
 
-    const {callForCooling, setCallForCooling} = useCondenser();
     const {isFollowingSchedule} = useSchedule();
     const [selectedSetting, setSelectedSetting] = useState<Mode>(mode);
 
@@ -65,7 +63,6 @@ const System = ({setMenu}:SystemParams) => {
                                 setMenu,
                                 callForCooling,
                                 fanSetting,
-                                setCallForCooling,
                                 setTemp,
                                 currentTemp
                             )}

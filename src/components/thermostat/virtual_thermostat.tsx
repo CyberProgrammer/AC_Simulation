@@ -8,14 +8,14 @@ import LEDDisplay from '../../shared/led/LEDDisplay';
 
 import {FanSetting, FanStatus, Mode, SystemStatus} from '../../types/enums'
 import Menu from '../../views/menu/menu';
-import {checkStatus} from "../../utils/thermostatUtils.ts";
-import {useCondenser} from "../../contexts/condenser_context.tsx";
+import {checkStatus} from "@utils/thermostatUtils.ts";
 
 // Redux
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../state/store.ts";
 import {setCurrentTemp, setStatus} from "../../state/slices/generalSlice.ts";
 import {setFanStatus} from "../../state/slices/fanSlice.ts";
+import {setCallForCooling} from "../../state/slices/condenserSlice.ts";
 
 const Virtual_Thermostat = () => {
     const dispatch = useDispatch();
@@ -27,7 +27,7 @@ const Virtual_Thermostat = () => {
     const fanSetting = useSelector((state: RootState) => state.fan.fanSetting);
     const fanStatus = useSelector((state: RootState) => state.fan.fanStatus);
 
-    const {callForCooling, setCallForCooling} = useCondenser();
+    const callForCooling = useSelector((state: RootState) => state.condenser.callForCooling);
 
     const [menu, setMenu] = useState<number>(0);
 
@@ -49,6 +49,10 @@ const Virtual_Thermostat = () => {
 
     const changeFanStatus = (newFanStatus: FanStatus) => {
         dispatch(setFanStatus(newFanStatus));
+    }
+
+    const updateCallForCooling = (isCallForCooling: boolean) => {
+        dispatch(setCallForCooling(isCallForCooling));
     }
 
     // Artificially change the current temp to simulate real change
@@ -83,7 +87,7 @@ const Virtual_Thermostat = () => {
 
         adjustTemperature();
 
-        checkStatus(dispatch, mode, currentTemp, setTemp, status, fanSetting, setCallForCooling);
+        checkStatus(dispatch, mode, currentTemp, setTemp, status, fanSetting);
 
         return () => clearInterval(tempChange);
     }, [mode, currentTemp, setTemp, status]);
@@ -99,7 +103,7 @@ const Virtual_Thermostat = () => {
                         changeStatus(SystemStatus.Wait);
                         setTimeout(() => {
                             changeStatus(SystemStatus.Heat);
-                            setCallForCooling(true);
+                            updateCallForCooling(true);
                         }, 5000);
                     } else {
                         changeStatus(SystemStatus.Wait);
@@ -107,7 +111,7 @@ const Virtual_Thermostat = () => {
                         setTimeout(() => {
                             changeFanStatus(FanStatus.On);
                             changeStatus(SystemStatus.Heat);
-                            setCallForCooling(true);
+                            updateCallForCooling(true);
                         }, 5000);
                     }
                 }
@@ -117,7 +121,7 @@ const Virtual_Thermostat = () => {
                         changeStatus(SystemStatus.Wait);
                         setTimeout(() => {
                             changeStatus(SystemStatus.Cool);
-                            setCallForCooling(true);
+                            updateCallForCooling(true);
                         }, 5000);
                     } else {
                         changeStatus(SystemStatus.Wait);
@@ -125,7 +129,7 @@ const Virtual_Thermostat = () => {
                         setTimeout(() => {
                             changeFanStatus(FanStatus.On);
                             changeStatus(SystemStatus.Cool);
-                            setCallForCooling(true);
+                            updateCallForCooling(true);
                         }, 5000);
                     }
                 }
@@ -133,15 +137,14 @@ const Virtual_Thermostat = () => {
         }
 
         return () => clearInterval(checkTime);
-    }, [mode, currentTemp, setTemp, status, fanSetting, fanStatus, setCallForCooling]);
+    }, [mode, currentTemp, setTemp, status, fanSetting, fanStatus, callForCooling]);
 
     return (
         <>
             <div id={"main-container"}>
                 <div className={"thermostat-body"}>
                     <div className={"thermostat-content"}>
-                        <Navigation menu={menu} status={status} setMenu={setMenu}
-                                    isNavigationActive={isNavigationActive}/>
+                        <Navigation menu={menu} setMenu={setMenu} isNavigationActive={isNavigationActive}/>
                         {menu === 0 && (
                             <Home/>
                         )}

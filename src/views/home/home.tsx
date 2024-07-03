@@ -8,11 +8,10 @@ import {Mode} from '@customTypes/enums';
 
 /* Contexts */
 import {useSchedule} from "@contexts/schedule_context.tsx";
-import {useCondenser} from "@contexts/condenser_context.tsx";
 
 import ControlButton from "@components/buttons/control_button.tsx";
 import {handleScheduleChange} from "./utils/handleScheduleChange.ts";
-import {useDatetimeStates} from "@contexts/datetime_context.tsx";
+
 import {checkAutomaticTime} from "./utils/checkAutomaticTime.ts";
 import {checkManualTime} from "./utils/checkManualTime.ts";
 import SystemStatusText from "./components/system_status_text.tsx";
@@ -32,27 +31,19 @@ const Home = () => {
     const currentTemp = useSelector((state: RootState) => state.general.currentTemp);
     const mode = useSelector((state:RootState) => state.general.mode);
     const status = useSelector((state:RootState) => state.general.status);
-    const setTemp = useSelector((state:RootState) => state.general.setTemp);
 
+    const isManualTime = useSelector((state:RootState) => state.datetime.isManualTime);
+    const isManualDate = useSelector((state:RootState) => state.datetime.isManualDate);
+    const manualMonth = useSelector((state:RootState) => state.datetime.manualMonth);
+    const manualDay = useSelector((state:RootState) => state.datetime.manualDay);
+    const manualHour = useSelector((state:RootState) => state.datetime.manualHour);
+    const manualPeriod = useSelector((state:RootState) => state.datetime.manualPeriod);
+    const manualCalendarDay= useSelector((state:RootState) => state.datetime.manualCalendarDay);
+    const manualMinute = useSelector((state:RootState) => state.datetime.manualMinute);
+    const fullDateTime = useSelector((state:RootState) => state.datetime.fullDateTime);
+    const formattedManualTime = useSelector((state:RootState) => state.datetime.formattedManualTime);
 
-    //
-    const {callForCooling, setCallForCooling} = useCondenser();
     const {isFollowingSchedule, setIsFollowingSchedule, isScheduleSet, checkSchedule} = useSchedule();
-    const {
-        formattedManualTime,
-        fullDateTime,
-        manuallySetTime,
-        manualPeriod,
-        isManualTime,
-        isManualDate,
-        manualMonth,
-        manualDay,
-        manualCalendarDay,
-        manualHour,
-        manualMinute,
-        setManualMinute,
-        setManualHour
-    } = useDatetimeStates();
 
     // State for time and period
     const [currentTime, setCurrentTime] = useState(getCurrentTime().time);
@@ -72,11 +63,13 @@ const Home = () => {
             if (!isManualTime) {
                 checkAutomaticTime(setCurrentTime, setIsAM);
             } else {
-                checkManualTime(manualMinute,
+                checkManualTime(
+                    dispatch,
+                    isManualDate,
+                    manualMonth,
+                    manualDay,
+                    manualMinute,
                     manualHour,
-                    setManualHour,
-                    setManualMinute,
-                    manuallySetTime,
                     manualPeriod,
                     setIsAM);
                 checkSchedule(!isManualTime && !isManualDate ? { dispatch } : { dispatch, isManualTime, isManualDate, manualMonth, manualDay, manualCalendarDay, fullDateTime });
@@ -114,10 +107,6 @@ const Home = () => {
                             <FollowingScheduleInfo isFollowingSchedule={isFollowingSchedule} />
                             <SetControls
                                 isFollowingSchedule={isFollowingSchedule}
-                                setTemp={setTemp}
-                                currentTemp={currentTemp}
-                                callForCooling={callForCooling}
-                                setCallForCooling={setCallForCooling}
                             />
                         </>
                     )}
