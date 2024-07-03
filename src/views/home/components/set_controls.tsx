@@ -1,34 +1,36 @@
 import ArrowButton from "@components/buttons/arrow_button.tsx";
-import {FanSetting, FanStatus, Mode, SystemStatus} from "@customTypes/enums.ts";
+import {FanSetting, FanStatus, SystemStatus} from "@customTypes/enums.ts";
 import TriangleUp from '@assets/icons/triangle-up.svg';
 import TriangleDown from '@assets/icons/triangle-down.svg';
 import {handleSetTempDown, handleSetTempUp} from '../../../utils'
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../../../state/store.ts";
 
 interface SetControlsParams{
-    mode: Mode;
-    status: SystemStatus;
     isFollowingSchedule: boolean;
     setTemp: number;
-    setSetTemp: (setTemp: number) => void;
     currentTemp: number;
     callForCooling: boolean;
     setCallForCooling: (setCallForCooling: boolean) => void;
     fanSetting: FanSetting;
-    setStatus: (val: SystemStatus) => void;
     setFanStatus: (status: FanStatus) => void;
 }
 const SetControls = ({
-        mode,
-        status,
         isFollowingSchedule,
         setTemp,
-        setSetTemp,
         currentTemp,
         callForCooling,
         setCallForCooling,
         fanSetting,
-        setStatus,
         setFanStatus}:SetControlsParams) => {
+
+    const dispatch = useDispatch();
+
+    const mode = useSelector((state:RootState) => state.general.mode);
+    const status = useSelector((state:RootState) => state.general.status);
+    // FOR REDUX I NEED TO USE HANDLE SET TEMP DOWN AND UP TO RETURN WHAT TO DO
+    
+    // THE system status is not updating now but i can set a new temp
     return (
         <div className={"set-controls"}>
             <div className={"set-info"}>
@@ -43,13 +45,12 @@ const SetControls = ({
                         {
                         mode,
                         setTemp,
-                        setSetTemp,
                         currentTemp,
                         callForCooling,
                         setCallForCooling,
                         fanSetting,
-                        setStatus,
-                        setFanStatus
+                        setFanStatus,
+                        dispatch,
                     })}
                     icon={TriangleUp}
                 />
@@ -63,13 +64,12 @@ const SetControls = ({
                     clickEvent={() => handleSetTempDown({
                         mode,
                         setTemp,
-                        setSetTemp,
                         currentTemp,
                         callForCooling,
                         setCallForCooling,
                         fanSetting,
-                        setStatus,
-                        setFanStatus
+                        setFanStatus,
+                        dispatch
                     })}
                     icon={TriangleDown}
                 />

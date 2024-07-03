@@ -1,29 +1,32 @@
 import { updateStatus } from './updateStatus';
 import { FanSetting, FanStatus, SystemStatus } from "@customTypes/enums";
 import React from "react";
+import {Dispatch} from "redux";
 
 interface HandleAutoModeParams {
+    dispatch: Dispatch;
     currentTemp: number;
     setTemp: number;
     fanSetting: FanSetting;
-    setStatus: (val: SystemStatus) => void;
     setCallForCooling: React.Dispatch<React.SetStateAction<boolean>>;
     setFanStatus: (status: FanStatus) => void;
 }
 
-export const handleAutoMode = ({
-                                   currentTemp,
-                                   setTemp,
-                                   fanSetting,
-                                   setStatus,
-                                   setCallForCooling,
-                                   setFanStatus,
-                               }: HandleAutoModeParams) => {
+export const handleAutoMode = (
+    {
+        dispatch,
+        currentTemp,
+        setTemp,
+        fanSetting,
+        setCallForCooling,
+        setFanStatus,
+    }: HandleAutoModeParams) => {
+
     console.log("Setting to auto...");
     if (currentTemp > setTemp) {
         if (fanSetting === FanSetting.On) {
             updateStatus({
-                setStatus,
+                dispatch,
                 setCallForCooling,
                 setFanStatus,
                 waitTime: 5000,
@@ -32,7 +35,7 @@ export const handleAutoMode = ({
             });
         } else {
             updateStatus({
-                setStatus,
+                dispatch,
                 setCallForCooling,
                 setFanStatus,
                 waitTime: 5000,
@@ -44,7 +47,7 @@ export const handleAutoMode = ({
     } else if (currentTemp < setTemp) {
         if (fanSetting === FanSetting.On) {
             updateStatus({
-                setStatus,
+                dispatch,
                 setCallForCooling,
                 setFanStatus,
                 waitTime: 5000,
@@ -53,7 +56,7 @@ export const handleAutoMode = ({
             });
         } else {
             updateStatus({
-                setStatus,
+                dispatch,
                 setCallForCooling,
                 setFanStatus,
                 waitTime: 5000,

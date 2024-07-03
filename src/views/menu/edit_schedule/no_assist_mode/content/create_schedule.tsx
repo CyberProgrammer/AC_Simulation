@@ -10,7 +10,6 @@ import ScheduleDaysControls from "@components/prompts/controls/schedule_days.tsx
 import {Mode} from "@customTypes/enums.ts";
 /* Contexts */
 import {useSchedule} from "@contexts/schedule_context.tsx";
-import {useGeneralStates} from "@contexts/general_context.tsx";
 import {useFan} from "@contexts/fan_context.tsx";
 import {useCondenser} from "@contexts/condenser_context.tsx";
 /* Utils */
@@ -22,6 +21,9 @@ import {handleTempUp} from "@utils/schedule_handlers/handleTempUp.ts";
 import {handleTempDown} from "@utils/schedule_handlers/handleTempDown.ts";
 import {useDatetimeStates} from "@contexts/datetime_context.tsx";
 import TextPrompt from "./components/text_prompt.tsx";
+import {useDispatch, useSelector} from "react-redux";
+import {setMode} from "../../../../../state/slices/generalSlice.ts";
+import {RootState} from "../../../../../state/store.ts";
 
 interface CreateScheduleParams{
     setView: React.Dispatch<React.SetStateAction<number>>;
@@ -43,12 +45,15 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
         checkSchedule
     } = useSchedule()
 
+    const dispatch = useDispatch();
+    const currentTemp = useSelector((state: RootState) => state.general.currentTemp);
+    const setTemp = useSelector((state: RootState) => state.general.setTemp);
+
     const [isWakeSet, setIsWakeSet] = useState<boolean>(false);
 
     const {isManualTime, manualCalendarDay, isManualDate, manualMonth, manualDay} = useDatetimeStates();
     const {setCallForCooling} = useCondenser();
     const {fanSetting, setFanStatus} = useFan();
-    const {setMode, currentTemp, setTemp, setStatus, setSetTemp} = useGeneralStates();
     const handleButtonClick = (id:number) => {
         switch (id){
             case 1:
@@ -66,15 +71,15 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
 
                 if(scheduleDays.includes(isManualDate ? manualCalendarDay : new Date().getDay())){
                     // Switch to auto mode and handle transition
-                    setMode(Mode.Auto);
-                    handleAutoMode({currentTemp, setTemp, fanSetting, setStatus, setCallForCooling, setFanStatus,});
+                    dispatch(setMode(Mode.Auto));
+                    handleAutoMode({dispatch, currentTemp, setTemp, fanSetting, setCallForCooling, setFanStatus,});
 
                     setIsFollowingSchedule(true);
                     console.log("Create schedule is manual time? : ", isManualTime)
                     // Switch the set temp to follow the schedule
                     checkSchedule(!isManualTime && !isManualDate
-                        ? {setSetTemp} :
-                        {setSetTemp, isManualTime, isManualDate, manualMonth, manualDay, manualCalendarDay});
+                        ? {dispatch} :
+                        {dispatch, isManualTime, isManualDate, manualMonth, manualDay, manualCalendarDay});
                 }
 
                 // Restore navigation and switch back to home

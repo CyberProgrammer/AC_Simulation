@@ -11,10 +11,19 @@ import Menu from '../../views/menu/menu';
 import {checkStatus} from "../../utils/thermostatUtils.ts";
 import {useFan} from "../../contexts/fan_context.tsx";
 import {useCondenser} from "../../contexts/condenser_context.tsx";
-import {useGeneralStates} from "../../contexts/general_context.tsx";
+
+// Redux
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../../state/store.ts";
+import {setCurrentTemp, setStatus} from "../../state/slices/generalSlice.ts";
 
 const Virtual_Thermostat = () => {
-    const {mode, currentTemp, setTemp, setCurrentTemp, status, setStatus} = useGeneralStates();
+    const dispatch = useDispatch();
+    const mode = useSelector((state: RootState) => state.general.mode);
+    const currentTemp = useSelector((state: RootState) => state.general.currentTemp);
+    const setTemp = useSelector((state: RootState) => state.general.setTemp);
+    const status =  useSelector((state: RootState) => state.general.status);
+
     const {fanSetting, setFanStatus} = useFan();
     const {callForCooling, setCallForCooling} = useCondenser();
 
@@ -23,6 +32,19 @@ const Virtual_Thermostat = () => {
     // Disable navigation state
     const [isNavigationActive, setIsNavigationActive] = useState<boolean>(true);
 
+    // Redux
+    const increaseTemp = (temp: number) => {
+        dispatch(setCurrentTemp(temp + 1));
+    }
+
+    const decreaseTemp = (temp: number) => {
+        dispatch(setCurrentTemp(temp - 1));
+    }
+
+    const changeStatus = (newStatus: SystemStatus) => {
+        dispatch(setStatus(newStatus));
+    }
+
     // Artificially change the current temp to simulate real change
     useEffect(() => {
         let tempChange: NodeJS.Timeout;
@@ -30,24 +52,24 @@ const Virtual_Thermostat = () => {
         const adjustTemperature = () => {
             if (mode === Mode.Cool && currentTemp > setTemp) {
                 tempChange = setInterval(() => {
-                    setCurrentTemp((prevTemp: number) => prevTemp - 1);
+                    decreaseTemp(currentTemp);
                 }, 10000);
             } else if (mode === Mode.Heat && currentTemp < setTemp) {
                 tempChange = setInterval(() => {
-                    setCurrentTemp((prevTemp: number) => prevTemp + 1);
+                    increaseTemp(currentTemp);
                 }, 10000);
             } else if (mode === Mode.Auto) {
                 if (currentTemp < setTemp && status === SystemStatus.Heat) {
                     tempChange = setInterval(() => {
-                        setCurrentTemp((prevTemp: number) => prevTemp + 1);
+                        increaseTemp(currentTemp);
                     }, 10000);
                 } else if (currentTemp > setTemp && status === SystemStatus.Cool) {
                     tempChange = setInterval(() => {
-                        setCurrentTemp((prevTemp: number) => prevTemp - 1);
+                        decreaseTemp(currentTemp);
                     }, 10000);
                 } else {
                     tempChange = setInterval(() => {
-                        setCurrentTemp((prevTemp: number) => prevTemp - 2);
+                        decreaseTemp(currentTemp);
                     }, 10000);
                 }
             }
@@ -55,7 +77,7 @@ const Virtual_Thermostat = () => {
 
         adjustTemperature();
 
-        checkStatus(mode, currentTemp, setTemp, status, fanSetting, setStatus, setFanStatus, setCallForCooling);
+        checkStatus(dispatch, mode, currentTemp, setTemp, status, fanSetting, setFanStatus, setCallForCooling);
 
         return () => clearInterval(tempChange);
     }, [mode, currentTemp, setTemp, status]);
@@ -68,17 +90,17 @@ const Virtual_Thermostat = () => {
             checkTime = setInterval(() => {
                 if (currentTemp < setTemp && status === SystemStatus.AtTemp) {
                     if (fanSetting === FanSetting.On) {
-                        setStatus(SystemStatus.Wait);
+                        changeStatus(SystemStatus.Wait);
                         setTimeout(() => {
-                            setStatus(SystemStatus.Heat);
+                            changeStatus(SystemStatus.Heat);
                             setCallForCooling(true);
                         }, 5000);
                     } else {
-                        setStatus(SystemStatus.Wait);
+                        changeStatus(SystemStatus.Wait);
                         setFanStatus(FanStatus.Wait);
                         setTimeout(() => {
                             setFanStatus(FanStatus.On);
-                            setStatus(SystemStatus.Heat);
+                            changeStatus(SystemStatus.Heat);
                             setCallForCooling(true);
                         }, 5000);
                     }
@@ -86,17 +108,17 @@ const Virtual_Thermostat = () => {
 
                 if (currentTemp > setTemp && status === SystemStatus.AtTemp) {
                     if (fanSetting === FanSetting.On) {
-                        setStatus(SystemStatus.Wait);
+                        changeStatus(SystemStatus.Wait);
                         setTimeout(() => {
-                            setStatus(SystemStatus.Cool);
+                            changeStatus(SystemStatus.Cool);
                             setCallForCooling(true);
                         }, 5000);
                     } else {
-                        setStatus(SystemStatus.Wait);
+                        changeStatus(SystemStatus.Wait);
                         setFanStatus(FanStatus.Wait);
                         setTimeout(() => {
                             setFanStatus(FanStatus.On);
-                            setStatus(SystemStatus.Cool);
+                            changeStatus(SystemStatus.Cool);
                             setCallForCooling(true);
                         }, 5000);
                     }

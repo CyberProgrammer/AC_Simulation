@@ -11,7 +11,6 @@ import HelpContainer from '@shared/help_container';
 
 /* Contexts */
 import {useFan} from "@contexts/fan_context.tsx";
-import {useGeneralStates} from "@contexts/general_context.tsx";
 import {useCondenser} from "@contexts/condenser_context.tsx";
 import {useSchedule} from "@contexts/schedule_context.tsx";
 
@@ -19,13 +18,19 @@ import {useSchedule} from "@contexts/schedule_context.tsx";
 import {handleNextClick} from "./utils/handleNextClick.ts";
 import {handlePrevClick} from "./utils/handlePrevClick.ts";
 import {handleDoneClick} from "./utils/handleDoneClick.ts";
+import {useSelector} from "react-redux";
+import {RootState} from "../../state/store.ts";
+import {setMode, setStatus} from "../../state/slices/generalSlice.ts";
 
 interface SystemParams{
     setMenu: (menu: number) => void;
 }
 const System = ({setMenu}:SystemParams) => {
 
-    const {currentTemp, setTemp, mode, setMode, setStatus} = useGeneralStates();
+    const currentTemp = useSelector((state: RootState) => state.general.currentTemp);
+    const setTemp = useSelector((state: RootState) => state.general.setTemp);
+    const mode = useSelector((state: RootState) => state.general.mode);
+
     const {callForCooling, setCallForCooling} = useCondenser();
     const {fanSetting, setFanStatus} = useFan();
     const {isFollowingSchedule} = useSchedule();

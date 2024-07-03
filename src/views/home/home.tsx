@@ -1,6 +1,6 @@
 // noinspection t
 
-import {useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import './home.css';
 
 import {getCurrentTime} from '../../utils';
@@ -8,7 +8,6 @@ import {Mode} from '@customTypes/enums';
 
 /* Contexts */
 import {useSchedule} from "@contexts/schedule_context.tsx";
-import {useGeneralStates} from "@contexts/general_context.tsx";
 import {useCondenser} from "@contexts/condenser_context.tsx";
 import {useFan} from "@contexts/fan_context.tsx";
 
@@ -24,15 +23,18 @@ import TempInfo from "./components/temp_info.tsx";
 import HumidityInfo from "./components/humidity_info.tsx";
 import SetControls from "./components/set_controls.tsx";
 import FollowingScheduleInfo from "./components/following_schedule_info.tsx";
+
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../../state/store.ts";
 const Home = () => {
-    const {
-        mode,
-        setMode, setTemp,
-        setSetTemp,
-        currentTemp,
-        status,
-        setStatus
-    } = useGeneralStates();
+    const dispatch = useDispatch();
+
+    // Redux so far
+    const currentTemp = useSelector((state: RootState) => state.general.currentTemp);
+    const mode = useSelector((state:RootState) => state.general.mode);
+    const status = useSelector((state:RootState) => state.general.status);
+    const setTemp = useSelector((state:RootState) => state.general.setTemp);
+    //
     const {callForCooling, setCallForCooling} = useCondenser();
     const {fanSetting, setFanStatus} = useFan();
     const {isFollowingSchedule, setIsFollowingSchedule, isScheduleSet, checkSchedule} = useSchedule();
@@ -58,8 +60,8 @@ const Home = () => {
     useEffect(() => {
         // Args depend on is manual time is set or not
         checkSchedule(!isManualTime && !isManualDate
-            ? {setSetTemp} :
-            {setSetTemp, isManualTime, isManualDate, manualMonth, manualDay, manualCalendarDay, fullDateTime})
+            ? {dispatch} :
+            {dispatch, isManualTime, isManualDate, manualMonth, manualDay, manualCalendarDay, fullDateTime})
     }, [currentTime]);
 
     // Checks for new time on interval
@@ -77,7 +79,7 @@ const Home = () => {
                     manuallySetTime,
                     manualPeriod,
                     setIsAM);
-                checkSchedule(!isManualTime && !isManualDate ? { setSetTemp } : { setSetTemp, isManualTime, isManualDate, manualMonth, manualDay, manualCalendarDay, fullDateTime });
+                checkSchedule(!isManualTime && !isManualDate ? { dispatch } : { dispatch, isManualTime, isManualDate, manualMonth, manualDay, manualCalendarDay, fullDateTime });
             }
         }, refreshTime); // Update every 60 seconds
 
@@ -93,7 +95,7 @@ const Home = () => {
                     <div className={"update-schedule-status"}>
                         <ControlButton
                             buttonClass={"schedule-status"}
-                            clickEvent={() => handleScheduleChange({isFollowingSchedule, setMode, checkSchedule, setSetTemp, setIsFollowingSchedule})}
+                            clickEvent={() => handleScheduleChange({isFollowingSchedule, checkSchedule, setIsFollowingSchedule, dispatch})}
                             textClass={""}
                             text={isFollowingSchedule ? "Override Schedule" : "Resume Schedule"}
                         />
@@ -111,16 +113,12 @@ const Home = () => {
                         <>
                             <FollowingScheduleInfo isFollowingSchedule={isFollowingSchedule} />
                             <SetControls
-                                mode={mode}
-                                status={status}
                                 isFollowingSchedule={isFollowingSchedule}
                                 setTemp={setTemp}
-                                setSetTemp={setSetTemp}
                                 currentTemp={currentTemp}
                                 callForCooling={callForCooling}
                                 setCallForCooling={setCallForCooling}
                                 fanSetting={fanSetting}
-                                setStatus={setStatus}
                                 setFanStatus={setFanStatus}
                             />
                         </>

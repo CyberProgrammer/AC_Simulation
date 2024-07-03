@@ -2,10 +2,11 @@
 // Update status handles logic to tell the system what to do once a mode has been set
 import {FanStatus, SystemStatus} from "@customTypes/enums";
 import React from "react";
-
+import {Dispatch} from "redux";
+import {setStatus} from "../../state/slices/generalSlice.ts";
 
 interface UpdateStatusParams {
-    setStatus: (val: SystemStatus) => void;
+    dispatch: Dispatch;
     setCallForCooling: React.Dispatch<React.SetStateAction<boolean>>;
     setFanStatus: (status: FanStatus) => void;
     waitTime: number;
@@ -14,15 +15,15 @@ interface UpdateStatusParams {
     fanStatus?: FanStatus | null;
 }
 export const updateStatus = (
-    { setStatus, setCallForCooling, setFanStatus, waitTime, finalStatus, coolingStatus = false, fanStatus = null }: UpdateStatusParams
+    {dispatch, setCallForCooling, setFanStatus, waitTime, finalStatus, coolingStatus = false, fanStatus = null }: UpdateStatusParams
 ) => {
     // If coolingStatus then that means a transition in state is happening
-    if(coolingStatus) setStatus(SystemStatus.Wait);
+    if(coolingStatus) dispatch(setStatus(SystemStatus.Wait));
 
     // If fan status then that means a transition in state is happening
     if (fanStatus !== null) setFanStatus(FanStatus.Wait);
     setTimeout(() => {
-        setStatus(finalStatus);
+        dispatch(setStatus(finalStatus));
         setCallForCooling(coolingStatus);
         if (fanStatus !== null) setFanStatus(fanStatus);
     }, waitTime);

@@ -1,63 +1,65 @@
 import {FanSetting, FanStatus, Mode, SystemStatus} from '@customTypes/enums';
 import {changeStatus} from "../views/home/utils/handleChangeSystemStatus.ts";
+import {setSetTemp} from "../state/slices/generalSlice.ts";
+import {Dispatch} from "redux";
 
 interface setTempParams{
     mode: Mode;
     setTemp: number;
-    setSetTemp: (value:number) => void;
     currentTemp: number;
     callForCooling: boolean;
     setCallForCooling: (value: boolean) => void;
     fanSetting: FanSetting,
-    setStatus: (status: SystemStatus) => void,
     setFanStatus: (fanStatus: FanStatus) => void,
+    dispatch: Dispatch;
 }
 
 export const handleSetTempUp = (
     {
         mode,
         setTemp,
-        setSetTemp,
         currentTemp,
         callForCooling,
         setCallForCooling,
         fanSetting,
-        setStatus,
-        setFanStatus
+        setFanStatus,
+        dispatch,
     }: setTempParams) => {
+    // Create new temp and send it to dispatch
     const nextTemp = setTemp + 1;
-    setSetTemp(nextTemp);
+    dispatch(setSetTemp(nextTemp));
 
     console.log("Set up");
+    console.log("Next temp: ", nextTemp)
 
     // If cool mode
-    manageCoolStatus(mode, nextTemp, currentTemp, callForCooling, setCallForCooling, fanSetting, setStatus, setFanStatus);
+    manageCoolStatus(mode, nextTemp, currentTemp, callForCooling, setCallForCooling, fanSetting, setFanStatus, dispatch);
 
     // If heat mode
-    manageHeatStatus(mode, nextTemp, currentTemp, callForCooling, setCallForCooling, fanSetting, setStatus, setFanStatus);
+    manageHeatStatus(mode, nextTemp, currentTemp, callForCooling, setCallForCooling, fanSetting, setFanStatus, dispatch);
 }
 
 export const handleSetTempDown = (
     {
         mode,
         setTemp,
-        setSetTemp,
         currentTemp,
         callForCooling,
         setCallForCooling,
         fanSetting,
-        setStatus,
-        setFanStatus
+        setFanStatus,
+        dispatch
     }:setTempParams) => {
     const nextTemp = setTemp - 1;
-    setSetTemp(nextTemp);
+    dispatch(setSetTemp(nextTemp));
 
     console.log("Set down");
+    console.log("Next temp: ", nextTemp)
     // If cool mode
-    manageCoolStatus(mode, nextTemp, currentTemp, callForCooling, setCallForCooling, fanSetting, setStatus, setFanStatus);
+    manageCoolStatus(mode, nextTemp, currentTemp, callForCooling, setCallForCooling, fanSetting, setFanStatus, dispatch);
 
     // If heat mode
-    manageHeatStatus(mode, nextTemp, currentTemp, callForCooling, setCallForCooling, fanSetting, setStatus, setFanStatus);
+    manageHeatStatus(mode, nextTemp, currentTemp, callForCooling, setCallForCooling, fanSetting, setFanStatus, dispatch);
 }
 
 const manageCoolStatus = (
@@ -67,8 +69,8 @@ const manageCoolStatus = (
     callForCooling: boolean,
     setCallForCooling: (value: boolean) => void,
     fanSetting: FanSetting,
-    setStatus: (status: SystemStatus) => void,
     setFanStatus: (fanStatus: FanStatus) => void,
+    dispatch: Dispatch,
 ) => {
 
     if(mode === Mode.Cool){
@@ -79,12 +81,12 @@ const manageCoolStatus = (
         if(nextTemp >= currentTemp){
             if(callForCooling){
                 setCallForCooling(false);
-                changeStatus(SystemStatus.AtTemp, fanSetting, setStatus, setFanStatus);
+                changeStatus(SystemStatus.AtTemp, fanSetting, setFanStatus, dispatch);
             }
         }
         else if(!callForCooling){
             setCallForCooling(true);
-            changeStatus(SystemStatus.Cool, fanSetting, setStatus, setFanStatus);
+            changeStatus(SystemStatus.Cool, fanSetting, setFanStatus, dispatch);
         }
     }
 }
@@ -95,19 +97,19 @@ const manageHeatStatus = (
     callForCooling: boolean,
     setCallForCooling: (value: boolean) => void,
     fanSetting: FanSetting,
-    setStatus: (status: SystemStatus) => void,
     setFanStatus: (fanStatus: FanStatus) => void,
+    dispatch: Dispatch,
 ) => {
     if(mode === Mode.Heat){
         if(nextTemp <= currentTemp){
             if(callForCooling){
                 setCallForCooling(false);
-                changeStatus(SystemStatus.AtTemp, fanSetting, setStatus, setFanStatus);
+                changeStatus(SystemStatus.AtTemp, fanSetting, setFanStatus, dispatch);
             }
         }
         else if(!callForCooling){
             setCallForCooling(true);
-            changeStatus(SystemStatus.Heat, fanSetting, setStatus, setFanStatus);
+            changeStatus(SystemStatus.Heat, fanSetting, setFanStatus, dispatch);
         }
     }
 }

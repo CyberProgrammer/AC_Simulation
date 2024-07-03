@@ -3,6 +3,8 @@ import {DayOfWeek} from "@customTypes/enums.ts";
 import {isValidScheduleDay} from "@contexts/utils/schedule/checkValidScheduleDay.ts";
 import {handleManualTime} from "@contexts/utils/schedule/handleManualTime.ts";
 import {handleAutomaticTime} from "@contexts/utils/schedule/handleAutomaticTime.ts";
+import {ActionCreatorWithPayload} from "@reduxjs/toolkit";
+import {Dispatch} from "redux";
 
 interface ScheduleContextProps {
     scheduleDays: number[];
@@ -20,7 +22,7 @@ interface ScheduleContextProps {
     removeSchedule: () => void;
     isFollowingSchedule: boolean;
     setIsFollowingSchedule: React.Dispatch<React.SetStateAction<boolean>>;
-    checkSchedule: ({ setSetTemp, isManualTime, isManualDate, manualMonth, manualDay, manualCalendarDay, fullDateTime}: CheckScheduleParams) => void;
+    checkSchedule: ({ dispatch, isManualTime, isManualDate, manualMonth, manualDay, manualCalendarDay, fullDateTime}: CheckScheduleParams) => void;
 }
 
 interface ScheduleProviderProps {
@@ -28,7 +30,7 @@ interface ScheduleProviderProps {
 }
 
 interface CheckScheduleParams{
-    setSetTemp: React.Dispatch<React.SetStateAction<number>>;
+    dispatch: Dispatch;
     isManualTime?: boolean;
     isManualDate?: boolean;
     manualMonth?: number;
@@ -59,7 +61,7 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({ children }) 
         setScheduleSet(false);
         setIsFollowingSchedule(false);
     }
-    const checkSchedule = ({ setSetTemp , isManualTime, isManualDate, manualMonth, manualDay, manualCalendarDay, fullDateTime}: CheckScheduleParams) => {
+    const checkSchedule = ({ dispatch , isManualTime, isManualDate, manualMonth, manualDay, manualCalendarDay, fullDateTime}: CheckScheduleParams) => {
         const currentTime = new Date();
 
         if (!isValidScheduleDay(scheduleDays, currentTime.getDay(), manualCalendarDay, isManualDate)) {
@@ -73,10 +75,10 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({ children }) 
 
         if (isManualTime && fullDateTime) {
             console.log("Manual time...");
-            handleManualTime(wakeTime, sleepTime, wakeTemp, sleepTemp, fullDateTime, setSetTemp, isManualDate, manualMonth, manualDay);
+            handleManualTime(dispatch, wakeTime, sleepTime, wakeTemp, sleepTemp, fullDateTime, isManualDate, manualMonth, manualDay);
         } else {
             console.log("Not manual time...");
-            handleAutomaticTime(wakeTime, sleepTime, wakeTemp, sleepTemp, currentTime, setSetTemp);
+            handleAutomaticTime(dispatch, wakeTime, sleepTime, wakeTemp, sleepTemp, currentTime);
         }
     };
 

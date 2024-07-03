@@ -1,11 +1,12 @@
-import React from "react";
+import {Dispatch} from "redux";
+import {setSetTemp} from "../../../state/slices/generalSlice.ts";
 
-export const handleAutomaticTime = (wakeTime:Date, sleepTime:Date, wakeTemp:number, sleepTemp:number, currentTime: Date, setSetTemp: React.Dispatch<React.SetStateAction<number>>) => {
+export const handleAutomaticTime = (dispatch: Dispatch, wakeTime:Date, sleepTime:Date, wakeTemp:number, sleepTemp:number, currentTime: Date) => {
     if (currentTime >= wakeTime && currentTime < sleepTime) {
         console.log("Wake schedule...");
-        setSetTemp(wakeTemp);
+        dispatch(setSetTemp(wakeTemp));
     } else if (currentTime >= sleepTime) {
         console.log("Sleep schedule...");
-        setSetTemp(sleepTemp);
+        dispatch(setSetTemp(sleepTemp));
     }
 };

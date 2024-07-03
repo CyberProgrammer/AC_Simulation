@@ -1,4 +1,6 @@
 import {FanSetting, FanStatus, SystemStatus} from "@customTypes/enums.ts";
+import {Dispatch} from "redux";
+import {setStatus} from "../../../state/slices/generalSlice.ts";
 
 /*
     Change status is responsible for keeping the condenser and fan status
@@ -7,11 +9,11 @@ import {FanSetting, FanStatus, SystemStatus} from "@customTypes/enums.ts";
 export const changeStatus = (
     updateStatus: SystemStatus,
     fanSetting: FanSetting,
-    setStatus: (status: SystemStatus) => void,
     setFanStatus: (fanStatus: FanStatus) => void,
+    dispatch: Dispatch,
     ) => {
 
-    setStatus(SystemStatus.Wait);
+    dispatch(setStatus(SystemStatus.Wait));
     // If the fan is on auto, the fan follows the condenser status.
     // When the compressor is on, the fan is on. When the compressor is off, the fan is off.
     // Each time a change in status occurs and the fan is on auto, the fan status is yellow.
@@ -26,6 +28,6 @@ export const changeStatus = (
             setFanStatus(FanStatus.Off);
         }
 
-        setStatus(updateStatus);
+        dispatch(setStatus(updateStatus));
     }, 5000);
 };
