@@ -2,7 +2,7 @@
 export const returnUpdatedDate = (date:Date, isManualDate:boolean, manualMonth: number, manualDay:number) => {
     if(!isManualDate){
         console.log("No wake or sleep date to update, automatic date");
-        return date;
+        return date.getTime();
     }
 
     console.log("Updating date for wake or sleep time");
@@ -13,5 +13,5 @@ export const returnUpdatedDate = (date:Date, isManualDate:boolean, manualMonth: 
     updatedDate.setHours(date.getHours());
     updatedDate.setMinutes(date.getMinutes());
     updatedDate.setSeconds(date.getSeconds());
-    return updatedDate;
+    return updatedDate.getTime();
 }

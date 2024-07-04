@@ -1,15 +1,15 @@
-import React from "react";
+import {Dispatch} from "redux";
+import {setSleepTemp, setWakeTemp} from "../../state/slices/scheduleSlice.ts";
 
 interface HandleTempUpParams{
+    dispatch: Dispatch;
     isWakeSet: boolean;
     wakeTemp: number;
-    setWakeTemp: React.Dispatch<React.SetStateAction<number>>;
     sleepTemp: number;
-    setSleepTemp: React.Dispatch<React.SetStateAction<number>>;
 }
-export const handleTempUp = ({isWakeSet, wakeTemp, setWakeTemp, sleepTemp, setSleepTemp}: HandleTempUpParams) => {
+export const handleTempUp = ({dispatch, isWakeSet, wakeTemp, sleepTemp}: HandleTempUpParams) => {
     if(!isWakeSet)
-        setWakeTemp(wakeTemp+1);
+        dispatch(setWakeTemp(wakeTemp+1));
     else
-        setSleepTemp(sleepTemp+1);
+        dispatch(setSleepTemp(sleepTemp+1));
 }

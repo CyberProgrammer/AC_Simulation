@@ -12,7 +12,7 @@ interface DatetimeState {
     formattedDate: string;
     manualCalendarDay: DayOfWeek;
     isManualDate: boolean;
-    fullDateTime: Date;
+    fullDateTime: number;
 }
 
 const initialState: DatetimeState = {
@@ -26,7 +26,7 @@ const initialState: DatetimeState = {
     formattedDate: "",
     manualCalendarDay: DayOfWeek.Sunday,
     isManualDate: false,
-    fullDateTime: new Date(),
+    fullDateTime: new Date().getTime(),
 }
 
 const datetimeSlice = createSlice({
@@ -42,7 +42,7 @@ const datetimeSlice = createSlice({
         setManualCalendarDay: (state, action: PayloadAction<DayOfWeek>) => {
             state.manualCalendarDay = action.payload;
         },
-        setFullDateTime: (state, action: PayloadAction<Date>) => {
+        setFullDateTime: (state, action: PayloadAction<number>) => {
             state.fullDateTime = action.payload;
         },
         setManualHour: (state, action: PayloadAction<number>) => {

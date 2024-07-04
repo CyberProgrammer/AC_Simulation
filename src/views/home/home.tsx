@@ -7,10 +7,8 @@ import {getCurrentTime} from '../../utils';
 import {Mode} from '@customTypes/enums';
 
 /* Contexts */
-import {useSchedule} from "@contexts/schedule_context.tsx";
-
 import ControlButton from "@components/buttons/control_button.tsx";
-import {handleScheduleChange} from "./utils/handleScheduleChange.ts";
+import {useHandleScheduleChange} from "./utils/handleScheduleChange.ts";
 
 import {checkAutomaticTime} from "./utils/checkAutomaticTime.ts";
 import {checkManualTime} from "./utils/checkManualTime.ts";
@@ -24,35 +22,62 @@ import FollowingScheduleInfo from "./components/following_schedule_info.tsx";
 
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../state/store.ts";
+import {checkSchedule} from "@utils/schedule_handlers/checkSchedule.ts";
 const Home = () => {
     const dispatch = useDispatch();
 
-    // Redux so far
-    const currentTemp = useSelector((state: RootState) => state.general.currentTemp);
-    const mode = useSelector((state:RootState) => state.general.mode);
-    const status = useSelector((state:RootState) => state.general.status);
+    // General state
+    const { currentTemp, mode, status } = useSelector((state: RootState) => state.general);
 
-    const isManualTime = useSelector((state:RootState) => state.datetime.isManualTime);
-    const isManualDate = useSelector((state:RootState) => state.datetime.isManualDate);
-    const manualMonth = useSelector((state:RootState) => state.datetime.manualMonth);
-    const manualDay = useSelector((state:RootState) => state.datetime.manualDay);
-    const manualHour = useSelector((state:RootState) => state.datetime.manualHour);
-    const manualPeriod = useSelector((state:RootState) => state.datetime.manualPeriod);
-    const manualCalendarDay= useSelector((state:RootState) => state.datetime.manualCalendarDay);
-    const manualMinute = useSelector((state:RootState) => state.datetime.manualMinute);
-    const fullDateTime = useSelector((state:RootState) => state.datetime.fullDateTime);
-    const formattedManualTime = useSelector((state:RootState) => state.datetime.formattedManualTime);
+    // DateTime state
+    const {
+        isManualTime,
+        isManualDate,
+        manualMonth,
+        manualDay,
+        manualHour,
+        manualPeriod,
+        manualCalendarDay,
+        manualMinute,
+        fullDateTime,
+        formattedManualTime
+    } = useSelector((state: RootState) => state.datetime);
 
-    const {isFollowingSchedule, setIsFollowingSchedule, isScheduleSet, checkSchedule} = useSchedule();
+    // Schedule state
+    const {
+        scheduleDays,
+        isFollowingSchedule,
+        isScheduleSet,
+        wakeTime,
+        sleepTime,
+        wakeTemp,
+        sleepTemp
+    } = useSelector((state: RootState) => state.schedule);
 
     // State for time and period
     const [currentTime, setCurrentTime] = useState(getCurrentTime().time);
     const [isAM, setIsAM] = useState(getCurrentTime().isAM);
+
+    const handleCheckSchedule = () => {
+        checkSchedule({
+            dispatch ,
+            scheduleDays,
+            isFollowingSchedule,
+            isManualTime,
+            isManualDate,
+            manualMonth,
+            manualDay,
+            manualCalendarDay,
+            fullDateTime,
+            wakeTime,
+            sleepTime,
+            wakeTemp,
+            sleepTemp,
+        })
+    }
     useEffect(() => {
         // Args depend on is manual time is set or not
-        checkSchedule(!isManualTime && !isManualDate
-            ? {dispatch} :
-            {dispatch, isManualTime, isManualDate, manualMonth, manualDay, manualCalendarDay, fullDateTime})
+        handleCheckSchedule();
     }, [currentTime]);
 
     // Checks for new time on interval
@@ -72,12 +97,17 @@ const Home = () => {
                     manualHour,
                     manualPeriod,
                     setIsAM);
-                checkSchedule(!isManualTime && !isManualDate ? { dispatch } : { dispatch, isManualTime, isManualDate, manualMonth, manualDay, manualCalendarDay, fullDateTime });
+                handleCheckSchedule();
             }
         }, refreshTime); // Update every 60 seconds
 
         return () => clearInterval(interval);
     }, [isManualTime, manualHour, manualMinute, refreshTime]);
+
+    const handleScheduleChange = useHandleScheduleChange();
+    const handleButtonClick = () => {
+        handleScheduleChange({ dispatch, isFollowingSchedule });
+    };
 
     return(
         <>
@@ -88,7 +118,7 @@ const Home = () => {
                     <div className={"update-schedule-status"}>
                         <ControlButton
                             buttonClass={"schedule-status"}
-                            clickEvent={() => handleScheduleChange({isFollowingSchedule, checkSchedule, setIsFollowingSchedule, dispatch})}
+                            clickEvent={handleButtonClick}
                             textClass={""}
                             text={isFollowingSchedule ? "Override Schedule" : "Resume Schedule"}
                         />

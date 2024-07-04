@@ -1,6 +1,7 @@
 import React from "react";
 import ThermostatButton from "@components/buttons/thermostat_button.tsx";
-import {useSchedule} from "@contexts/schedule_context.tsx";
+import {removeSchedule} from "@utils/schedule_handlers/initializeSchedule.ts";
+import {useDispatch} from "react-redux";
 
 interface RemoveScheduleParams{
     setView: React.Dispatch<React.SetStateAction<number>>;
@@ -14,11 +15,11 @@ const RemoveSchedule = (
 
     setIsNavigationActive(false);
 
-    const {removeSchedule} = useSchedule();
+    const dispatch = useDispatch();
     const handleButtonClick = (id:number) => {
         switch (id){
             case 1:
-                removeSchedule();
+                removeSchedule(dispatch);
                 setView(-1);
                 setIsNavigationActive(true);
                 break;

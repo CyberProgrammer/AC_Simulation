@@ -3,12 +3,12 @@ import React, {useRef, useState} from "react";
 import TriangleUp from "@assets/icons/triangle-up.svg";
 import TriangleDown from "@assets/icons/triangle-down.svg";
 
-import {useSchedule} from "@contexts/schedule_context.tsx";
-
 import ArrowButton from "@components/buttons/arrow_button.tsx";
 import ThermostatButton from "@components/buttons/thermostat_button.tsx";
 
 import {handleDown, handleSelect, handleUp} from "@utils/settings/settingsUtils.ts";
+import {useSelector} from "react-redux";
+import {RootState} from "../../../state/store.ts";
 
 
 interface MainParams{
@@ -16,7 +16,7 @@ interface MainParams{
     setIsNavigationActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const Main = ({setView, setIsNavigationActive}: MainParams) => {
-    const {isScheduleSet} = useSchedule();
+    const isScheduleSet = useSelector((state: RootState) => state.schedule.isScheduleSet);
 
     let options;
     // If schedule is set include the option to remove schedule

@@ -3,19 +3,19 @@ import {Dispatch} from "redux";
 import {setSetTemp} from "../../../state/slices/generalSlice.ts";
 export const handleManualTime = (
     dispatch: Dispatch,
-    wakeTime: Date,
-    sleepTime: Date,
+    wakeTime: number,
+    sleepTime: number,
     wakeTemp: number,
     sleepTemp: number,
-    fullDateTime: Date,
+    fullDateTime: number,
     isManualDate: boolean,
     manualMonth: number,
     manualDay:number
     ) => {
 
     if(isManualDate){
-        wakeTime = returnUpdatedDate(wakeTime, isManualDate, manualMonth, manualDay);
-        sleepTime = returnUpdatedDate(sleepTime, isManualDate, manualMonth, manualDay);
+        wakeTime = returnUpdatedDate(new Date(wakeTime), isManualDate, manualMonth, manualDay);
+        sleepTime = returnUpdatedDate(new Date(sleepTime), isManualDate, manualMonth, manualDay);
     }
 
     console.log("Full date time: ", fullDateTime);

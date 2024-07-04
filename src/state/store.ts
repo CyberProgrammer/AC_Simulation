@@ -4,13 +4,15 @@ import generalReducer from './slices/generalSlice.ts'
 import fanReducer from './slices/fanSlice.ts'
 import condenserReducer from './slices/condenserSlice.ts'
 import datetimeSlice from "./slices/datetimeSlice.ts";
+import scheduleSlice from "./slices/scheduleSlice.ts";
 
 export const store = configureStore({
     reducer: {
         general: generalReducer,
         fan: fanReducer,
         condenser: condenserReducer,
-        datetime: datetimeSlice
+        datetime: datetimeSlice,
+        schedule: scheduleSlice,
     },
 })
 

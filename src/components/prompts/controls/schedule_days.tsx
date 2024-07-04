@@ -1,15 +1,17 @@
 import '@components/styles/schedule_days.css'
 
 import checkIcon from '@assets/icons/check_mark.svg';
-import {useSchedule} from "@contexts/schedule_context.tsx";
+import {useDispatch, useSelector} from "react-redux";
+import {setScheduleDays} from "../../../state/slices/scheduleSlice.ts";
+import {RootState} from "../../../state/store.ts";
 const ScheduleDaysControls = () => {
-    const {scheduleDays, setScheduleDays} = useSchedule();
+    const dispatch = useDispatch();
+    const scheduleDays = useSelector((state: RootState) => state.schedule.scheduleDays);
     const handleDayClick = (dayID: number) => {
-        setScheduleDays(prevDays =>
-            prevDays.includes(dayID)
-                ? prevDays.filter(day => day !== dayID)
-                : [...prevDays, dayID]
-        );
+        const updatedScheduleDays = scheduleDays.includes(dayID) ?
+            scheduleDays.filter(day => day !== dayID)
+            : [...scheduleDays, dayID]
+        dispatch(setScheduleDays(updatedScheduleDays));
     };
 
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];

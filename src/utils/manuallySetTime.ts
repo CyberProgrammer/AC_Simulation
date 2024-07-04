@@ -23,9 +23,9 @@ export const manuallySetTime = (dispatch:Dispatch, isManualDate:boolean, hourInp
     // Set the full date time
     if (isManualDate) {
         console.log("Manual date, setting manual time");
-        dispatch(setFullDateTime(getFullDateTime(currentDate.getFullYear(), manualMonth, manualDay, hourInput, minuteInput)));
+        dispatch(setFullDateTime(getFullDateTime(currentDate.getFullYear(), manualMonth, manualDay, hourInput, minuteInput).getTime()));
     } else {
         console.log("No manual date, setting manual time");
-        dispatch(setFullDateTime(getFullDateTime(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), hourInput, minuteInput)));
+        dispatch(setFullDateTime(getFullDateTime(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), hourInput, minuteInput).getTime()));
     }
 }

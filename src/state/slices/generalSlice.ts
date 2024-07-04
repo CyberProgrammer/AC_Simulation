@@ -9,7 +9,7 @@ interface GeneralState {
 }
 
 const initialState: GeneralState = {
-    mode: Mode.Cool,
+    mode: Mode.Off,
     status: SystemStatus.AtTemp,
     currentTemp: 75,
     setTemp: 76,

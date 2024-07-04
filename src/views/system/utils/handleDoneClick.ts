@@ -47,6 +47,6 @@ export const handleDoneClick =
             break;
     }
 
-    setMode(selectedSetting);
+    dispatch(setMode(selectedSetting));
     setMenu(0);
 };

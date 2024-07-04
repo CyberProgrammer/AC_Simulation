@@ -9,9 +9,6 @@ import ControlButton from '@components/buttons/control_button';
 import SystemOption from "@components/option/system_option.tsx";
 import HelpContainer from '@shared/help_container';
 
-/* Contexts */
-import {useSchedule} from "@contexts/schedule_context.tsx";
-
 /* Utils */
 import {handleNextClick} from "./utils/handleNextClick.ts";
 import {handlePrevClick} from "./utils/handlePrevClick.ts";
@@ -24,13 +21,11 @@ interface SystemParams{
 }
 const System = ({setMenu}:SystemParams) => {
     const dispatch = useDispatch();
-    const currentTemp = useSelector((state: RootState) => state.general.currentTemp);
-    const setTemp = useSelector((state: RootState) => state.general.setTemp);
-    const mode = useSelector((state: RootState) => state.general.mode);
+    const {currentTemp, setTemp, mode} = useSelector((state: RootState) => state.general);
     const fanSetting = useSelector((state: RootState) => state.fan.fanSetting);
     const callForCooling = useSelector((state: RootState) => state.condenser.callForCooling);
 
-    const {isFollowingSchedule} = useSchedule();
+    const isFollowingSchedule = useSelector((state: RootState) => state.schedule.isFollowingSchedule);
     const [selectedSetting, setSelectedSetting] = useState<Mode>(mode);
 
     return(

@@ -8,8 +8,6 @@ import ThermostatButton from "@components/buttons/thermostat_button.tsx";
 import ArrowButton from "@components/buttons/arrow_button.tsx";
 import ScheduleDaysControls from "@components/prompts/controls/schedule_days.tsx";
 import {Mode} from "@customTypes/enums.ts";
-/* Contexts */
-import {useSchedule} from "@contexts/schedule_context.tsx";
 
 /* Utils */
 import {handleAutoMode} from "@utils/system_handlers/handleAutoMode.ts";
@@ -22,26 +20,15 @@ import TextPrompt from "./components/text_prompt.tsx";
 import {useDispatch, useSelector} from "react-redux";
 import {setMode} from "../../../../../state/slices/generalSlice.ts";
 import {RootState} from "../../../../../state/store.ts";
+import {setIsFollowingSchedule, setIsScheduleSet} from "../../../../../state/slices/scheduleSlice.ts";
+import {checkSchedule} from "@utils/schedule_handlers/checkSchedule.ts";
 
 interface CreateScheduleParams{
     setView: React.Dispatch<React.SetStateAction<number>>;
     setIsNavigationActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) => {
-    const {
-        wakeTime,
-        wakeTemp,
-        setWakeTime,
-        setWakeTemp,
-        sleepTime,
-        setSleepTime,
-        sleepTemp ,
-        setSleepTemp,
-        setScheduleSet,
-        scheduleDays,
-        setIsFollowingSchedule,
-        checkSchedule
-    } = useSchedule()
+
 
     const dispatch = useDispatch();
     const currentTemp = useSelector((state: RootState) => state.general.currentTemp);
@@ -56,6 +43,14 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
     const isManualDate = useSelector((state: RootState) => state.datetime.isManualDate);
     const manualMonth = useSelector((state: RootState) => state.datetime.manualMonth);
     const manualDay = useSelector((state: RootState) => state.datetime.manualDay);
+    const fullDateTime = useSelector((state:RootState) => state.datetime.fullDateTime);
+
+    const scheduleDays = useSelector((state:RootState) => state.schedule.scheduleDays);
+    const isFollowingSchedule = useSelector((state:RootState) => state.schedule.isFollowingSchedule);
+    const wakeTime = useSelector((state:RootState) => state.schedule.wakeTime);
+    const sleepTime = useSelector((state:RootState) => state.schedule.sleepTime);
+    const wakeTemp = useSelector((state:RootState) => state.schedule.wakeTemp);
+    const sleepTemp = useSelector((state:RootState) => state.schedule.sleepTemp);
     const handleButtonClick = (id:number) => {
         switch (id){
             case 1:
@@ -69,19 +64,31 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
                 break;
             case 3: // Create schedule
                 // Set and follow schedule
-                setScheduleSet(true);
+                dispatch(setIsScheduleSet(true));
 
                 if(scheduleDays.includes(isManualDate ? manualCalendarDay : new Date().getDay())){
                     // Switch to auto mode and handle transition
                     dispatch(setMode(Mode.Auto));
                     handleAutoMode({dispatch, currentTemp, setTemp, fanSetting});
 
-                    setIsFollowingSchedule(true);
+                    dispatch(setIsFollowingSchedule(true));
                     console.log("Create schedule is manual time? : ", isManualTime)
                     // Switch the set temp to follow the schedule
-                    checkSchedule(!isManualTime && !isManualDate
-                        ? {dispatch} :
-                        {dispatch, isManualTime, isManualDate, manualMonth, manualDay, manualCalendarDay});
+                    checkSchedule({
+                        dispatch,
+                        scheduleDays,
+                        isFollowingSchedule,
+                        isManualTime,
+                        isManualDate,
+                        manualMonth,
+                        manualDay,
+                        manualCalendarDay,
+                        fullDateTime,
+                        wakeTime,
+                        sleepTime,
+                        wakeTemp,
+                        sleepTemp
+                    });
                 }
 
                 // Restore navigation and switch back to home
@@ -120,28 +127,26 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
                             isDisabled={false}
                             clickEvent={() =>
                                 handleTimeUp({
+                                    dispatch,
                                     isWakeSet,
                                     wakeTime,
-                                    setWakeTime,
                                     sleepTime,
-                                    setSleepTime,
                                     isManualDate,
                                     manualMonth,
                                     manualDay
                                 })}
                             icon={TriangleUp}
                         />
-                        <h4 className={"time digital-text"}>{formatTime(!isWakeSet ? wakeTime : sleepTime)}</h4>
+                        <h4 className={"time digital-text"}>{formatTime(!isWakeSet ? new Date(wakeTime) : new Date(sleepTime))}</h4>
                         <ArrowButton
                             className={"temp-button"}
                             isDisabled={false}
                             clickEvent={() =>
                                 handleTimeDown({
+                                    dispatch,
                                     isWakeSet,
                                     wakeTime,
-                                    setWakeTime,
                                     sleepTime,
-                                    setSleepTime,
                                     isManualDate,
                                     manualMonth,
                                     manualDay
@@ -154,13 +159,13 @@ const CreateSchedule = ({setView, setIsNavigationActive}:CreateScheduleParams) =
                     <div className={"schedule-control"}>
                         <ArrowButton className={"temp-button"}
                                      isDisabled={false}
-                                     clickEvent={() => handleTempUp({isWakeSet, wakeTemp, setWakeTemp, sleepTemp, setSleepTemp})}
+                                     clickEvent={() => handleTempUp({dispatch, isWakeSet, wakeTemp, sleepTemp})}
                                      icon={TriangleUp}
                         />
                         <h2 className={"temp digital-text"}>{!isWakeSet ? wakeTemp : sleepTemp}</h2>
                         <ArrowButton className={"temp-button"}
                                      isDisabled={false}
-                                     clickEvent={() => handleTempDown({isWakeSet, wakeTemp, setWakeTemp, sleepTemp, setSleepTemp})}
+                                     clickEvent={() => handleTempDown({dispatch, isWakeSet, wakeTemp, sleepTemp})}
                                      icon={TriangleDown}
                         />
                     </div>

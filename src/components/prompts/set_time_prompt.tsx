@@ -1,4 +1,4 @@
-import React, {ReactNode, useState} from "react";
+import React, {ReactNode} from "react";
 import '../styles/select-prompt.css'
 import ArrowButton from "@components/buttons/arrow_button.tsx";
 import TriangleUp from "@assets/icons/triangle-up.svg";
