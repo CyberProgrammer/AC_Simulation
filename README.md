@@ -22,6 +22,9 @@ The end goal of this project is to integrate and simulate condensers and air han
 ## Use Case Diagram
 ![image](documentation/images/main_logic.png)
 
+## Demonstration (Excluding settings)
+![gif](documentation/videos/SimpleShowcase.gif)
+
 ## Dependencies
 * node: ^20.14.7
 * react:  ^18.2.66
