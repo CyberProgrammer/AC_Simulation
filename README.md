@@ -11,8 +11,6 @@ The end goal of this project is to integrate and simulate condensers and air han
 
 ## Installation Instructions
 
-### Live site (Coming soon...)
-
 ### Self host
 1. Clone the repository
 2. Install dependencies (npm install)
